@@ -58,11 +58,14 @@ namespace yaplc { namespace parser {
 			skipEmpty();
 			
 			structure::Node *node = nullptr;
-			
+
+			save();
 			if ((!parse<ExpressionParser>(node, false)) || (node == nullptr)) {
+				restore();
 				error("Value expected.");
 				cancelFatal();
 			}
+			norestore();
 			
 			variableMemberNode->set(node);
 			

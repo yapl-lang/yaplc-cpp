@@ -11,7 +11,7 @@ namespace yaplc { namespace parser {
 				
 				return;
 			}
-			
+
 			switch (get()) {
 			case '#':
 				skip();

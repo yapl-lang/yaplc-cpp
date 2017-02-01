@@ -6,7 +6,7 @@ namespace yaplc { namespace parser {
 		
 		std::string number;
 		
-		if (!get("([0-9]*(\\.[0-9]*)?)", 2, &number, nullptr)) {
+		if (!get("([0-9]*(\\.[0-9]*)?)", {&number, nullptr})) {
 			cancel();
 		}
 		

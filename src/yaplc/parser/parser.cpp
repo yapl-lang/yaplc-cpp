@@ -37,33 +37,65 @@ namespace yaplc { namespace parser {
 		return configuration.code->substr(configuration.position, count);
 	}
 	
-	bool BaseParser::get(const std::string &pattern, unsigned long count, ...) {
+	/*bool BaseParser::get(const std::string &pattern, unsigned long count, ...) {
 		std::vector<std::string> caps;
 		bool result = regex::match("^(" + pattern + ")", (*configuration.code).substr(configuration.position), caps, count + 1);
 		
 		if (result) {
 			configuration.position += caps[0].size();
 			std::string **pointer = (std::string **)&count;
+			++(*pointer);
 			for (unsigned long i = 1; i <= count; ++i) {
 				if (*(++pointer) != nullptr) {
-					**pointer = caps[i];
+					auto &string = **pointer;
+					printf("%s => %s\n", string.c_str(), caps[i].c_str());
+					string = caps[i];
 				}
 			}
 		}
 		
 		return result;
+	}*/
+
+	bool BaseParser::get(const std::string &pattern) {
+		get(pattern, {});
 	}
-	
-	bool BaseParser::getWord(const std::string &word) {
+
+	bool BaseParser::get(const std::string &pattern, const std::vector<std::string *> &caps) {
+		std::vector<std::string> capsArray;
+
+		bool result = regex::match("^(" + pattern + ")", (*configuration.code).substr(configuration.position), capsArray, caps.size() + 1);
+
+		if (result) {
+			configuration.position += capsArray[0].size();
+
+			if (caps.size() != 0) {
+				auto capSource = ++capsArray.begin();
+				auto capTarget = caps.begin();
+
+				for (; capSource != capsArray.end(); ++capSource, ++capTarget) {
+					auto target = *capTarget;
+
+					if (target != nullptr) {
+						*target = *capSource;
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	bool BaseParser::getWord(std::string &word) {
 		skipEmpty();
 		
-		return get("([A-Za-z][A-Za-z0-9]*)", 1, &word);
+		return get("([A-Za-z][A-Za-z0-9]*)", {&word});
 	}
 	
-	bool BaseParser::getLowercaseWord(const std::string &word) {
+	bool BaseParser::getLowercaseWord(std::string &word) {
 		skipEmpty();
 		
-		return get("([a-z][a-z0-9]*)", 1, &word);
+		return get("([a-z][a-z0-9]*)", {&word});
 	}
 	
 	bool BaseParser::getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {
@@ -203,22 +235,24 @@ next:
 	}
 	
 	void BaseParser::skipOrFail(const std::string &string, const std::string &error) {
+		save();
 		skipEmpty();
 		
 		try {
 			if (get(string.size()) != string) {
-				cancel();
+				cancelFatal();
 			}
 		} catch (...) {
 			restore();
-			
+
 			if (error != "") {
 				this->error(error);
 			}
 			
 			throw;
 		}
-		
+
+		norestore();
 		skip(string.size());
 	}
 	
@@ -271,7 +305,7 @@ next:
 			beginColumn = 0,
 			endLine = 0,
 			endColumn = 0;
-		
+
 		util::getlineandcolumn(*configuration.code, begin, beginLine, beginColumn);
 		if (end != 0) {
 			util::getlineandcolumn(*configuration.code, end, endLine, endColumn);

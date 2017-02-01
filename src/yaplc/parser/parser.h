@@ -55,9 +55,11 @@ namespace yaplc { namespace parser {
 		
 		char get();
 		std::string get(unsigned long count);
-		bool get(const std::string &pattern, unsigned long count = 0, ...);
-		bool getWord(const std::string &word);
-		bool getLowercaseWord(const std::string &word);
+		/*bool get(const std::string &pattern, unsigned long count = 0, ...);*/
+		bool get(const std::string &pattern);
+		bool get(const std::string &pattern, const std::vector<std::string *> &caps);
+		bool getWord(std::string &word);
+		bool getLowercaseWord(std::string &word);
 		bool getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers);
 		bool getName(std::string &name, const std::string &prevWord);
 		bool getName(std::string &name, const std::string &prevWord, const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers);

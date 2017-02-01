@@ -13,14 +13,17 @@ namespace yaplc { namespace parser {
 				
 				break;
 			}
-			
+
 			skipOrFail("package", "Expected 'package'.");
 			
 			skipEmpty();
-			
+
 			std::string packageName;
-			get("([A-Za-z0-9\\.]*)", 1, &packageName);
-			
+			if (!get("([A-Za-z0-9\\.]*)", {&packageName})) {
+				error("Expected package name.");
+				cancelFatal();
+			}
+
 			if (!regex::match("^([a-zA-Z][a-zA-Z0-9]*\\.)*[a-zA-Z][a-zA-Z0-9]*$", packageName)) {
 				error("Invalid package name.", position() - packageName.size(), position() - 1);
 			}
@@ -47,6 +50,7 @@ namespace yaplc { namespace parser {
 			}
 			default:
 				error(std::string("Expected ';' or '{'. Got '") + get() + "'.");
+				cancelFatal();
 			}
 			
 			push();
@@ -57,6 +61,7 @@ done:
 		
 		if (!end()) {
 			error("Unexpected content.", position(), length() - 1);
+			cancelFatal();
 		}
 	}
 } }

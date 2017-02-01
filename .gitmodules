@@ -1,0 +1,3 @@
+[submodule "src/regex/slre"]
+	path = src/regex/slre
+	url = git@github.com:cesanta/slre.git

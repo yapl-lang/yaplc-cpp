@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Parser.h"
+#include "parser.h"
 
 namespace yaplc { namespace parser {
 	class CommentsParser : public Parser<> {

@@ -91,11 +91,11 @@ void showError(const std::string &code,
 	}
 }
 
-int main(int argc, char *argv) {
+int main(int argc, char **argv) {
 	try {
 		ParserManager parser;
 		
-		ifstream ifs("/sdcard/AppProjects/yapl/yaplc/test.ypl");
+		ifstream ifs(argv[1]);
 		string content((istreambuf_iterator<char>(ifs)),
 						(istreambuf_iterator<char>()));
 		
