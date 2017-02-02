@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "parsermanager.h"
 #include "syntaxerror.h"
 #include "yaplc/util/getlineandcolumn.h"
 #include "regex/regex.h"

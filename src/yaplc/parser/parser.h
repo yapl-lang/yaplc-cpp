@@ -1,11 +1,12 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include "configuration.h"
 #include "parsermanager.h"
 #include "cancelparseexception.h"
 #include "cancelfatalparseexception.h"
+#include <vector>
+#include <string>
+#include <map>
 
 namespace yaplc { namespace parser {
 	class BaseParser {
