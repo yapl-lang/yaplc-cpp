@@ -2,8 +2,8 @@
 #include "yaplc/structure/variablemembernode.h"
 
 namespace yaplc { namespace parser {
-	void MethodMemberParser::handle(structure::Childable *parentNode) {
-		std::map<std::string, std::string> modifiers;
+	void MethodMemberParser::handle(structure::Node **node) {
+		/*std::map<std::string, std::string> modifiers;
 		
 		if (!getModifiers({
 			{"visibility", {"private", "public", "protected"}},
@@ -19,20 +19,20 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 		
-		auto variableMemberNode = new structure::VariableMemberNode();
-		parentNode->add(name, variableMemberNode);
+		auto methodMemberNode = new structure::MemberNode(name);
+		*node = methodMemberNode
 		
-		variableMemberNode->type = type;
+		methodMemberNode->type = type;
 		
 		{
 			std::string visibility = modifiers["visibility"];
 			
 			if (visibility == "public") {
-				variableMemberNode->visibility = structure::VariableMemberNode::Visibility::Public;
+				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Public;
 			} else if (visibility == "protected") {
-				variableMemberNode->visibility = structure::VariableMemberNode::Visibility::Protected;
+				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Protected;
 			} else if (visibility == "private") {
-				variableMemberNode->visibility = structure::VariableMemberNode::Visibility::Private;
+				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Private;
 			}
 		}
 		
@@ -40,13 +40,14 @@ namespace yaplc { namespace parser {
 			std::string staticality = modifiers["staticality"];
 			
 			if (staticality == "dynamic") {
-				variableMemberNode->staticality = structure::VariableMemberNode::Staticality::Dynamic;
+				methodMemberNode->staticality = structure::VariableMemberNode::Staticality::Dynamic;
 			} else if (staticality == "static") {
-				variableMemberNode->staticality = structure::VariableMemberNode::Staticality::Static;
+				methodMemberNode->staticality = structure::VariableMemberNode::Staticality::Static;
 			}
 		}
 		
 		
-		skipEmpty();
+		skipEmpty();*/
+		cancel();
 	}
 } }

@@ -21,6 +21,7 @@ namespace yaplc { namespace structure {
 
 	public:
 		Node();
+		Node(const std::string &name);
 		Node(const std::string &name, Childable *parent);
 		Node(Listable *parent);
 		virtual ~Node();

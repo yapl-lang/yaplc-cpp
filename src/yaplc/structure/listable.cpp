@@ -10,6 +10,11 @@ namespace yaplc { namespace structure {
 		children() {
 		
 	}
+
+	Listable::Listable(const std::string &name) :
+		Node(name),
+		children() {
+	}
 	
 	Listable::Listable(const std::string &name, Childable *parent) :
 		Node(name, parent),

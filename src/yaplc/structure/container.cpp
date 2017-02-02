@@ -8,10 +8,23 @@ namespace yaplc { namespace structure {
 		child(nullptr) {
 		
 	}
-	
-	Container::Container(Node *child) :
-		Node(),
-		child(child) {
+
+	Container::Container(const std::string &name) :
+		Node(name),
+		child(nullptr) {
+
+	}
+
+	Container::Container(const std::string &name, Childable *parent) :
+		Node(name, parent),
+		child(nullptr) {
+
+	}
+
+	Container::Container(Listable *parent) :
+		Node(parent),
+		child(nullptr) {
+
 	}
 	
 	Container::~Container() {

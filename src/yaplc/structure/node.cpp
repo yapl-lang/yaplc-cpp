@@ -12,6 +12,13 @@ namespace yaplc { namespace structure {
 		listableParent(nullptr) {
 		
 	}
+
+	Node::Node(const std::string &name) :
+		name(name),
+		childableParent(nullptr),
+		listableParent(nullptr) {
+
+	}
 	
 	Node::Node(const std::string &name, Childable *parent) :
 		name(name),

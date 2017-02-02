@@ -36,16 +36,36 @@ namespace yaplc { namespace parser {
 			switch (get()) {
 			case ';': {
 				skip();
-				if (!parse<TypeParser>(packageNode)) {
-					// TODO:
+
+				structure::Node *type;
+
+				if (!parse<TypeParser>(&type)) {
+					error("Type expected.");
+					cancel();
 				}
+
+				packageNode->add(type);
 				
 				goto done;
 			}
 			case '{': {
 				skip();
-				while (parse<TypeParser>(packageNode));
-				// TODO: }
+				while (true) {
+					structure::Node *type;
+
+					if (!parse<TypeParser>(&type)) {
+						break;
+					}
+
+					packageNode->add(type);
+				}
+
+				if (get() != '}') {
+					error(std::string("Expected '}'. Got '") + get() + "'.");
+					cancelFatal();
+				}
+
+				skip();
 				break;
 			}
 			default:

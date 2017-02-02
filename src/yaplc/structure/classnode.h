@@ -13,7 +13,8 @@ namespace yaplc { namespace structure {
 		std::vector<std::string> interfaces;
 		
 	public:
-		inline ClassNode() :
+		inline ClassNode(const std::string &name) :
+			Childable(name),
 			visibility(Visibility::Public),
 			base("Object"),
 			interfaces() {

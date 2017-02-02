@@ -1,20 +1,19 @@
 #include "classparser.h"
 #include "memberparser.h"
 #include "yaplc/structure/classnode.h"
-#include "regex/regex.h"
 #include <algorithm>
 
 namespace yaplc { namespace parser {
-	void ClassParser::handle(structure::Childable *packageNode) {
+	void ClassParser::handle(structure::Node **node) {
 		skipEmpty();
 		push();
 		
 		std::map<std::string, std::string> classModifiers;
 		
 		std::vector<std::string> possibleVisibility;
-		(dynamic_cast<structure::ClassNode *>(packageNode)) ?
-			(possibleVisibility = {"public", "protected", "private"}) :
-			(possibleVisibility = {"public", "private"});
+		(true) ?
+			(possibleVisibility = {"public", "private"}) :
+			(possibleVisibility = {"public", "protected", "private"});
 		
 		std::string className;
 		if (!getName(className, "class", {
@@ -23,8 +22,8 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 		
-		auto classNode = new structure::ClassNode();
-		packageNode->add(className, classNode);
+		auto classNode = new structure::ClassNode(className);
+		*node = classNode;
 		
 		{
 			std::string visibility = classModifiers["visibility"];
@@ -94,7 +93,15 @@ namespace yaplc { namespace parser {
 		skip();
 		skipEmpty();
 		
-		while (parse<MemberParser>(classNode));
+		while (true) {
+			structure::Node *member;
+
+			if (!parse<MemberParser>(&member)) {
+				break;
+			}
+
+			classNode->add(member);
+		}
 		
 		skipEmpty();
 		

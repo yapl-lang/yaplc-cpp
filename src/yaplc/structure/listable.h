@@ -10,6 +10,7 @@ namespace yaplc { namespace structure {
 
 	public:
 		Listable();
+		Listable(const std::string &name);
 		Listable(const std::string &name, Childable *parent);
 		Listable(Listable *parent);
 		virtual ~Listable();

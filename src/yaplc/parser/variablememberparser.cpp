@@ -3,7 +3,7 @@
 #include "yaplc/structure/variablemembernode.h"
 
 namespace yaplc { namespace parser {
-	void VariableMemberParser::handle(structure::Childable *parentNode) {
+	void VariableMemberParser::handle(structure::Node **node) {
 		std::map<std::string, std::string> modifiers;
 		
 		if (!getModifiers({
@@ -19,8 +19,8 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 		
-		auto variableMemberNode = new structure::VariableMemberNode();
-		parentNode->add(name, variableMemberNode);
+		auto variableMemberNode = new structure::VariableMemberNode(name);
+		*node = variableMemberNode;
 		
 		variableMemberNode->type = type;
 		

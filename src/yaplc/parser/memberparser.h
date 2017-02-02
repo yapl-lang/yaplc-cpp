@@ -1,11 +1,11 @@
 #pragma once
 
 #include "parser.h"
-#include "yaplc/structure/childable.h"
+#include "yaplc/structure/node.h"
 
 namespace yaplc { namespace parser {
-	class MemberParser : public Parser<structure::Childable *> {
+	class MemberParser : public Parser<structure::Node **> {
 	protected:
-		virtual void handle(structure::Childable *parentNode);
+		virtual void handle(structure::Node **node);
 	};
 } }

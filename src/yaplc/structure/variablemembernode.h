@@ -41,7 +41,8 @@ namespace yaplc { namespace structure {
 		)
 		
 	public:
-		inline VariableMemberNode() :
+		inline VariableMemberNode(const std::string &name) :
+			Container(name),
 			visibility(Visibility::Public),
 			staticality(Staticality::Dynamic) {}
 	};
