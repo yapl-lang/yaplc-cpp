@@ -38,7 +38,7 @@ namespace yaplc { namespace parser {
 	}
 
 	bool BaseParser::get(const std::string &pattern) {
-		get(pattern, {});
+		return get(pattern, {});
 	}
 
 	bool BaseParser::get(const std::string &pattern, const std::vector<std::string *> &caps) {
