@@ -1,20 +1,20 @@
-#include "variablememberparser.h"
-#include "expressionparser.h"
+#include "methodmemberparser.h"
 #include "yaplc/structure/variablemembernode.h"
 
 namespace yaplc { namespace parser {
-	void VariableMemberParser::handle(structure::Childable *parentNode) {
+	void MethodMemberParser::handle(structure::Childable *parentNode) {
 		std::map<std::string, std::string> modifiers;
 		
 		if (!getModifiers({
 			{"visibility", {"private", "public", "protected"}},
-			{"staticality", {"~dynamic", "static"}}
+			{"staticality", {"~dynamic", "static"}},
+			{"virtuality", {"virtual", "~static"}}
 		}, modifiers)) {
 			cancel();
 		}
 		
 		std::string type, name;
-		
+		error("OK");
 		if ((!getWord(type)) || (!getWord(name))) {
 			cancel();
 		}
@@ -48,37 +48,5 @@ namespace yaplc { namespace parser {
 		
 		
 		skipEmpty();
-		
-		switch (get()) {
-		case ';':
-			skip();
-			break;
-		case '=': {
-			skip();
-			skipEmpty();
-			
-			structure::Node *node = nullptr;
-
-			save();
-			if ((!parse<ExpressionParser>(&node, false)) || (node == nullptr)) {
-				restore();
-				error("Value expected.");
-				cancelFatal();
-			}
-			norestore();
-			
-			variableMemberNode->set(node);
-			
-			skipEmpty();
-			if (get() != ';') {
-				error(std::string("Exprected ';', got '") + get() + "'.");
-				cancelFatal();
-			}
-			skip();
-			break;
-		}
-		default:
-			cancel();
-		}
 	}
 } }

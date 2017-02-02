@@ -112,7 +112,7 @@ namespace yaplc { namespace parser {
 			
 			for (auto allowedModifierSet : allowedModifiers) {
 				for (auto allowedModifier : allowedModifierSet.second) {
-					if (word == allowedModifier) {
+					if ((word == allowedModifier) || ("~" + word == allowedModifier)) {
 						auto it = modifiers.find(allowedModifierSet.first);
 						
 						if (it != modifiers.end()) {
