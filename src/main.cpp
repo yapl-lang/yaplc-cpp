@@ -95,7 +95,11 @@ int main(int argc, char **argv) {
 	try {
 		ParserManager parser;
 		
+#ifdef INPUT_FILE
+		ifstream ifs(INPUT_FILE);
+#else
 		ifstream ifs(argv[1]);
+#endif
 		string content((istreambuf_iterator<char>(ifs)),
 						(istreambuf_iterator<char>()));
 		
