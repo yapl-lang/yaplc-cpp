@@ -55,7 +55,6 @@ namespace yaplc { namespace parser {
 		
 		char get();
 		std::string get(unsigned long count);
-		/*bool get(const std::string &pattern, unsigned long count = 0, ...);*/
 		bool get(const std::string &pattern);
 		bool get(const std::string &pattern, const std::vector<std::string *> &caps);
 		bool getWord(std::string &word);

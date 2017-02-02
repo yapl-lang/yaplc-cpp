@@ -36,26 +36,6 @@ namespace yaplc { namespace parser {
 		
 		return configuration.code->substr(configuration.position, count);
 	}
-	
-	/*bool BaseParser::get(const std::string &pattern, unsigned long count, ...) {
-		std::vector<std::string> caps;
-		bool result = regex::match("^(" + pattern + ")", (*configuration.code).substr(configuration.position), caps, count + 1);
-		
-		if (result) {
-			configuration.position += caps[0].size();
-			std::string **pointer = (std::string **)&count;
-			++(*pointer);
-			for (unsigned long i = 1; i <= count; ++i) {
-				if (*(++pointer) != nullptr) {
-					auto &string = **pointer;
-					printf("%s => %s\n", string.c_str(), caps[i].c_str());
-					string = caps[i];
-				}
-			}
-		}
-		
-		return result;
-	}*/
 
 	bool BaseParser::get(const std::string &pattern) {
 		get(pattern, {});
