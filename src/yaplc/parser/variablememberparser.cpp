@@ -60,7 +60,7 @@ namespace yaplc { namespace parser {
 			structure::Node *node = nullptr;
 
 			save();
-			if ((!parse<ExpressionParser>(node, false)) || (node == nullptr)) {
+			if ((!parse<ExpressionParser>(&node, false)) || (node == nullptr)) {
 				restore();
 				error("Value expected.");
 				cancelFatal();
