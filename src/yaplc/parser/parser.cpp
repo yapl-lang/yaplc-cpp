@@ -134,7 +134,7 @@ next:
 		std::map<std::string, std::vector<std::string>> allowedModifiers;
 		std::map<std::string, std::string> modifiers;
 		
-		getName(name, prevWord, allowedModifiers, modifiers);
+		return getName(name, prevWord, allowedModifiers, modifiers);
 	}
 	
 	bool BaseParser::getName(std::string &name, const std::string &prevWord, const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {
