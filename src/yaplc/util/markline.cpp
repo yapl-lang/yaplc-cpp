@@ -11,7 +11,6 @@ namespace yaplc { namespace util {
 		std::stringstream stream;
 		
 		std::string currentLine = getline(string, line);
-		stream << currentLine;
 		stream << currentLine << std::endl;
 		stream << leftpad("|", getstringwidth(currentLine, column));
 		
