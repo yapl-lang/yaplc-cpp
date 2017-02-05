@@ -1,16 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <vector>
-#include <stdexcept>
-#include <stdio.h>
 
 #include "yaplc/compilingerror.h"
 #include "yaplc/positionalerror.h"
 
 #include "yaplc/parser/parsermanager.h"
-
-#include "yaplc/structure/node.h"
 
 #include "yaplc/util/markline.h"
 
