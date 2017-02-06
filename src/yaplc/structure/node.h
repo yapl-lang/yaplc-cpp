@@ -5,6 +5,7 @@
 #include <sstream>
 
 #define NODE_PROPS(PROPS) protected: virtual void showProps(std::stringstream &stream, unsigned long indent = 0) const { stream << "(" << std::endl; PROPS util::leftpad(stream, indent) << ")"; }
+#define NODE_PROPS_PARENT(PROPS, PARENT) protected: virtual void showProps(std::stringstream &stream, unsigned long indent = 0) const { PARENT::showProps(stream, indent); stream << "(" << std::endl; PROPS util::leftpad(stream, indent) << ")"; }
 #define NODE_PROP(prop, code) util::leftpad(stream, indent + 1) << #prop << " => "; code stream << std::endl;
 
 namespace yaplc { namespace structure {
@@ -29,6 +30,8 @@ namespace yaplc { namespace structure {
 		inline std::string getName() const {
 			return name;
 		}
+
+		void setName(const std::string &name);
 		
 		inline Childable *getChildableParent() const {
 			return childableParent;

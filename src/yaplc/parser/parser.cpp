@@ -65,6 +65,34 @@ namespace yaplc { namespace parser {
 		return result;
 	}
 
+	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::string> &results) {
+		unsigned long count = 0;
+		std::string word;
+
+		skipEmpty();
+		while (get(pattern, {&word})) {
+			results.push_back(word);
+			skipEmpty();
+			++count;
+		}
+
+		return count;
+	}
+
+	unsigned long BaseParser::get(const std::string &pattern, std::map<std::string, std::pair<unsigned long, unsigned long>> &results) {
+		unsigned long count = 0;
+		std::string word;
+
+		skipEmpty();
+		while (get(pattern, {&word})) {
+			results[word] = {position() - word.length(), position() - 1};
+			skipEmpty();
+			++count;
+		}
+
+		return count;
+	}
+
 	bool BaseParser::getWord(std::string &word) {
 		skipEmpty();
 		
@@ -75,6 +103,18 @@ namespace yaplc { namespace parser {
 		skipEmpty();
 		
 		return get("([a-z][a-z0-9]*)", {&word});
+	}
+
+	unsigned long BaseParser::getWords(std::vector<std::string> &words) {
+		unsigned long count = 0;
+
+		std::string word;
+		while (getWord(word)) {
+			words.push_back(word);
+			++count;
+		}
+
+		return count;
 	}
 	
 	bool BaseParser::getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {

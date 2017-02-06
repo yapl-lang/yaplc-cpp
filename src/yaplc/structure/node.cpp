@@ -37,6 +37,12 @@ namespace yaplc { namespace structure {
 	Node::~Node() {
 		
 	}
+
+	void Node::setName(const std::string &name) {
+		if ((this->name != name) && (childableParent != nullptr)) {
+			childableParent->add(name, this);
+		}
+	}
 	
 	void Node::show(std::stringstream &stream, unsigned long indent) const {
 		int status;

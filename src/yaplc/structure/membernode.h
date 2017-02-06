@@ -1,16 +1,10 @@
-//
-// Created by tarik02 on 06.02.17.
-//
+#pragma once
 
-#ifndef YAPLC_MEMBERNODE_H
-#define YAPLC_MEMBERNODE_H
+#include "childable.h"
 
-
-
-class membernode {
-
-};
-
-
-
-#endif //YAPLC_MEMBERNODE_H
+namespace yaplc { namespace structure {
+	class MemberNode : public Listable {
+	public:
+		//
+	};
+} }
