@@ -1,6 +1,7 @@
 #include "classparser.h"
 #include "memberparser.h"
 #include "yaplc/structure/classnode.h"
+#include "yaplc/structure/membernode.h"
 #include <algorithm>
 
 namespace yaplc { namespace parser {
@@ -92,8 +93,18 @@ namespace yaplc { namespace parser {
 		
 		skip();
 		skipEmpty();
-		
+
+
 		while (true) {
+			auto member = new structure::MemberNode();
+
+			if (!parse<MemberParser>(member)) {
+				break;
+			}
+
+			classNode->add(member);
+		}
+		/*while (true) {
 			structure::Node *member;
 
 			if (!parse<MemberParser>(&member)) {
@@ -101,7 +112,7 @@ namespace yaplc { namespace parser {
 			}
 
 			classNode->add(member);
-		}
+		}*/
 		
 		skipEmpty();
 		
