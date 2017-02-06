@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 function help {
 	echo "Help:"
 	echo "yad <action> [parameters...]"
@@ -7,7 +7,6 @@ function help {
 	echo "	make:struct <type(node/container/childable/listable)> <structure name> - Creates a new structure class with given name and type."
 	echo "	help - Shows this text."
 }
-
 
 if (( $# < 1 )); then
 	echo "Required at least 1 argument."
