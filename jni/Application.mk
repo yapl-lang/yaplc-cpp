@@ -1,2 +1,2 @@
-LOCAL_PATH := $(call my-dir)
-include $(LOCAL_PATH)/../project/yapl.mk
+LOCAL_PATH := $(call my-dir)/..
+include $(LOCAL_PATH)/project/yapl.mk
