@@ -5,25 +5,26 @@
 #include "methodmemberparser.h"
 
 namespace yaplc { namespace parser {
-	void MemberParser::handle(structure::MemberNode **node) {
+	void MemberParser::handle(structure::Childable *parentNode) {
 		skipEmpty();
 		push();
 		
 		if (end()) {
 			cancel();
 		}
-		
-		auto memberNode = new structure::MemberNode();
-		*node = memberNode;
-		if (!parse<MemberHeadParser>(memberNode)) {
-			delete *node;
-			*node = nullptr;
+
+		if (parse<TypeParser>(parentNode)) {
+			return;
+		}
+
+		structure::MemberNode *memberNode;
+		if (!parse<MemberHeadParser>(parentNode, &memberNode)) {
 			cancel();
 		}
 
-		/*parse<TypeParser>(node)
-		|| parse<VariableMemberParser>(node)
-		|| parse<MethodMemberParser>(node)
-		|| */cancel();
+
+		parse<MethodMemberParser>(memberNode)
+		//|| parse<VariableMemberParser>(node)
+		|| cancel();
 	}
 } }

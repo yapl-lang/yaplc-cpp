@@ -83,6 +83,8 @@ namespace yaplc { namespace parser {
 		bool error(const std::string &message);
 		bool error(const std::string &message, unsigned long position);
 		bool error(const std::string &message, unsigned long begin, unsigned long end);
+
+		void groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, const std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers, std::map<std::string, std::string> &outModifiers, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &otherModifiers);
 	};
 
 	template<class... Args> class Parser : public BaseParser {

@@ -5,7 +5,7 @@
 #include <algorithm>
 
 namespace yaplc { namespace parser {
-	void ClassParser::handle(structure::Node **node) {
+	void ClassParser::handle(structure::Childable *parentNode) {
 		skipEmpty();
 		push();
 		
@@ -24,7 +24,7 @@ namespace yaplc { namespace parser {
 		}
 		
 		auto classNode = new structure::ClassNode(className);
-		*node = classNode;
+		parentNode->add(classNode);
 		
 		{
 			std::string visibility = classModifiers["visibility"];
@@ -95,15 +95,7 @@ namespace yaplc { namespace parser {
 		skipEmpty();
 
 
-		while (true) {
-			structure::MemberNode *member;
-
-			if (!parse<MemberParser>(&member)) {
-				break;
-			}
-
-			classNode->add(member);
-		}
+		while (parse<MemberParser>(classNode));
 		
 		skipEmpty();
 		

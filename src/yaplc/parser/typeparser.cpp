@@ -2,10 +2,10 @@
 #include "classparser.h"
 
 namespace yaplc { namespace parser {
-	void TypeParser::handle(structure::Node **node) {
+	void TypeParser::handle(structure::Childable *parentNode) {
 		cancelIfEnd();
 		
-		parse<ClassParser>(node)
+		parse<ClassParser>(parentNode)
 		|| cancel();
 	}
 } }

@@ -1,23 +1,22 @@
 #include "methodmemberparser.h"
-#include "yaplc/structure/variablemembernode.h"
+#include "yaplc/structure/methodmembernode.h"
 
 namespace yaplc { namespace parser {
-	void MethodMemberParser::handle(structure::Node **node) {
-		/*std::map<std::string, std::string> modifiers;
-		
-		if (!getModifiers({
-			{"visibility", {"private", "public", "protected"}},
-			{"staticality", {"~dynamic", "static"}},
-			{"virtuality", {"virtual", "~static"}}
-		}, modifiers)) {
+	void MethodMemberParser::handle(structure::MemberNode *parentNode) {
+		skipEmpty();
+		push();
+
+		if (get() != '(') {
 			cancel();
 		}
-		
-		std::string type, name;
-		error("OK");
-		if ((!getWord(type)) || (!getWord(name))) {
-			cancel();
-		}
+		skip();
+
+		auto methodMemberNode = new structure::MethodMemberNode();
+		parentNode->set(methodMemberNode);
+
+
+
+		/*
 		
 		auto methodMemberNode = new structure::MemberNode(name);
 		*node = methodMemberNode
@@ -48,6 +47,5 @@ namespace yaplc { namespace parser {
 		
 		
 		skipEmpty();*/
-		cancel();
 	}
 } }

@@ -70,7 +70,7 @@ namespace yaplc { namespace parser {
 		std::string word;
 
 		skipEmpty();
-		while (get(pattern, {&word})) {
+		while (get("(" + pattern + ")", {&word})) {
 			results.push_back(word);
 			skipEmpty();
 			++count;
@@ -84,7 +84,7 @@ namespace yaplc { namespace parser {
 		std::string word;
 
 		skipEmpty();
-		while (get(pattern, {&word})) {
+		while (get("(" + pattern + ")", {&word})) {
 			results.push_back({word, {position() - word.length(), position() - 1}});
 			skipEmpty();
 			++count;
@@ -333,5 +333,34 @@ next:
 		parserManager->pushError(new SyntaxError(message, beginLine, beginColumn, endLine, endColumn));
 		
 		return true;
+	}
+
+	void BaseParser::groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, const std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers, std::map<std::string, std::string> &outModifiers, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &otherModifiers) {
+		for (auto word : modifiers) {
+			for (auto allowedModifierSet : allowedModifiers) {
+				for (auto allowedModifier : allowedModifierSet.second) {
+					if (word.first == allowedModifier) {
+						auto it = outModifiers.begin();
+						for (; it != outModifiers.end(); ++it) {
+							if ((*it).first == allowedModifierSet.first) {
+								break;
+							}
+						}
+
+						if (it != outModifiers.end()) {
+							error("'" + word.first + "' and '" + (*it).first + "' modifiers are incompatible.", word.second.first, word.second.second);
+						} else {
+							outModifiers[allowedModifierSet.first] = word.first;
+						}
+
+						goto next;
+					}
+				}
+			}
+
+			otherModifiers.push_back(word);
+
+next:;
+		}
 	}
 } }

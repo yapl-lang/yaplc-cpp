@@ -27,7 +27,8 @@ namespace yaplc { namespace parser {
 			if (!regex::match("^([a-zA-Z][a-zA-Z0-9]*\\.)*[a-zA-Z][a-zA-Z0-9]*$", packageName)) {
 				error("Invalid package name.", position() - packageName.size(), position() - 1);
 			}
-			
+
+			unsigned long packageNameEnding = position();
 			skipEmpty();
 			
 			auto packageNode = new structure::PackageNode();
@@ -37,35 +38,16 @@ namespace yaplc { namespace parser {
 			case ';': {
 				skip();
 
-				structure::Node *type = nullptr;
-
-				if (!parse<TypeParser>(&type)) {
-					if (type != nullptr) {
-						packageNode->add(type);
-					}
-					
+				if (!parse<TypeParser>(packageNode)) {
 					error("Type expected.");
 					cancel();
 				}
 
-				packageNode->add(type);
-				
 				goto done;
 			}
 			case '{': {
 				skip();
-				while (true) {
-					structure::Node *type = nullptr;
-
-					if (!parse<TypeParser>(&type)) {
-						if (type != nullptr) {
-							packageNode->add(type);
-						}
-						break;
-					}
-
-					packageNode->add(type);
-				}
+				while (parse<TypeParser>(packageNode));
 
 				if (get() != '}') {
 					error(std::string("Expected '}'. Got '") + get() + "'.");
@@ -76,7 +58,7 @@ namespace yaplc { namespace parser {
 				break;
 			}
 			default:
-				error(std::string("Expected ';' or '{'. Got '") + get() + "'.");
+				error(std::string("Expected ';' or '{'. Got '") + get() + "'.", packageNameEnding, position());
 				cancelFatal();
 			}
 			
