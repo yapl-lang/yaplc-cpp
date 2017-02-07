@@ -96,23 +96,14 @@ namespace yaplc { namespace parser {
 
 
 		while (true) {
-			auto member = new structure::MemberNode();
-
-			if (!parse<MemberParser>(member)) {
-				break;
-			}
-
-			classNode->add(member);
-		}
-		/*while (true) {
-			structure::Node *member;
+			structure::MemberNode *member;
 
 			if (!parse<MemberParser>(&member)) {
 				break;
 			}
 
 			classNode->add(member);
-		}*/
+		}
 		
 		skipEmpty();
 		

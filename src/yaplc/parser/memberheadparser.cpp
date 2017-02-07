@@ -1,16 +1,22 @@
 #include "memberheadparser.h"
 #include "regex/regex.h"
+#include "yaplc/util/map.h"
 
 namespace yaplc { namespace parser {
 	void MemberHeadParser::handle(structure::MemberNode *memberNode) {
-		std::map<std::string, std::pair<unsigned long, unsigned long>> modifiers;
+		std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers;
 
-		if (get("[A-Za-z0-9_]", modifiers) < 2) {
+		if (get("[A-Za-z0-9_]*", modifiers) < 2) {
 			cancel();
 		}
 
-		auto name = modifiers.pop_back();
-		auto type = modifiers.pop_back();
+		std::pair<std::string, std::pair<unsigned long, unsigned long>>
+			name, type;
+		
+		auto it = modifiers.end();
+		name = (*(--it));
+		type = (*(--it));
+		modifiers.resize(modifiers.size() - 2);
 
 		for (auto modifier : modifiers) {
 			if (!regex::match("[A-Za-z_][A-Za-z0-9_]*", modifier.first)) {
@@ -25,5 +31,13 @@ namespace yaplc { namespace parser {
 		if (!regex::match("[A-Za-z_][A-Za-z0-9_]*", name.first)) {
 			error("Invalid member name.", name.second.first, name.second.second);
 		}
+		
+		memberNode->setName(name.first);
+		memberNode->type = type.first;
+		util::map
+			<std::pair<std::string, std::pair<unsigned long, unsigned long>>, std::string>
+			(modifiers, memberNode->modifiers, [](std::pair<std::string, std::pair<unsigned long, unsigned long>> value, unsigned long) {
+			return value.first;
+		});
 	}
 } }

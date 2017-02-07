@@ -79,13 +79,13 @@ namespace yaplc { namespace parser {
 		return count;
 	}
 
-	unsigned long BaseParser::get(const std::string &pattern, std::map<std::string, std::pair<unsigned long, unsigned long>> &results) {
+	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &results) {
 		unsigned long count = 0;
 		std::string word;
 
 		skipEmpty();
 		while (get(pattern, {&word})) {
-			results[word] = {position() - word.length(), position() - 1};
+			results.push_back({word, {position() - word.length(), position() - 1}});
 			skipEmpty();
 			++count;
 		}

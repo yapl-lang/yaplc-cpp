@@ -37,9 +37,13 @@ namespace yaplc { namespace parser {
 			case ';': {
 				skip();
 
-				structure::Node *type;
+				structure::Node *type = nullptr;
 
 				if (!parse<TypeParser>(&type)) {
+					if (type != nullptr) {
+						packageNode->add(type);
+					}
+					
 					error("Type expected.");
 					cancel();
 				}
@@ -51,9 +55,12 @@ namespace yaplc { namespace parser {
 			case '{': {
 				skip();
 				while (true) {
-					structure::Node *type;
+					structure::Node *type = nullptr;
 
 					if (!parse<TypeParser>(&type)) {
+						if (type != nullptr) {
+							packageNode->add(type);
+						}
 						break;
 					}
 
