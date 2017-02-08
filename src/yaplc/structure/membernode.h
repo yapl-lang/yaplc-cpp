@@ -45,11 +45,11 @@ namespace yaplc { namespace structure {
 				auto end = modifiers.end();
 
 				if (it != end) {
-					stream << *it;
+					stream << (*it).first;
 					++it;
 
 					for (; it != end; ++it) {
-						stream << ", " << *it;
+						stream << ", " << (*it).first;
 					}
 				}
 			});
