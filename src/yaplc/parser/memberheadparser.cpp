@@ -1,42 +1,78 @@
 #include "memberheadparser.h"
 #include "regex/regex.h"
 #include "yaplc/util/map.h"
+#include "typereferenceparser.h"
+#include "yaplc/structure/typereferencenode.h"
+#include <tuple>
 
 namespace yaplc { namespace parser {
 	void MemberHeadParser::handle(structure::Childable *parentNode, structure::MemberNode **memberNode) {
-		std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers;
+		std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers;
 
-		if (get("[A-Za-z0-9_]*", modifiers) < 2) {
-			cancel();
-		}
+		// Hardcode
+		std::tuple<std::string, unsigned long, unsigned long> name;
+		structure::TypeReferenceNode *type;
 
-		auto it = modifiers.end();
-		auto name = (*(--it));
-		auto type = (*(--it));
-		modifiers.resize(modifiers.size() - 2);
+		{
+			std::vector<std::tuple<structure::TypeReferenceNode *, unsigned long, unsigned long>> entries;
 
-		for (auto modifier : modifiers) {
-			if (!regex::match("^[A-Za-z_][A-Za-z0-9_]*$", modifier.first)) {
-				error("Invalid modifier name.", modifier.second.first, modifier.second.second);
+			while (true) {
+				structure::TypeReferenceNode *typeReferenceNode;
+
+				skipEmpty();
+				unsigned long start = position();
+				if (!parse<TypeReferenceParser>(&typeReferenceNode)) {
+					break;
+				}
+
+				entries.push_back({typeReferenceNode, start, position() - 1});
+			}
+
+			if (entries.size() < 2) {
+				for (auto entry : entries) {
+					delete std::get<0>(entry);
+				}
+
+				cancel();
+			}
+
+			auto nameEntry = *(--entries.end());
+			entries.pop_back();
+			name = {std::get<0>(nameEntry)->type, std::get<1>(nameEntry), std::get<2>(nameEntry) - 1};
+			delete std::get<0>(nameEntry);
+
+			type = std::get<0>(*(--entries.end()));
+			entries.pop_back();
+
+			for (auto entry : entries) {
+				structure::TypeReferenceNode *typeNode;
+				unsigned long begin, end;
+
+				std::tie(typeNode, begin, end) = entry;
+
+				auto modifier = typeNode->type;
+				delete typeNode;
+
+				if (regex::match("^[A-Za-z_][A-Za-z0-9_]*$", modifier)) {
+					modifiers.push_back({modifier, begin, end - 1});
+				} else {
+					error("Invalid modifier name.", begin, end - 1);
+				}
 			}
 		}
 
-		if (!regex::match("^[A-Za-z_][A-Za-z0-9_]*$", type.first)) {
-			error("Invalid type name.", type.second.first, type.second.second);
-		}
-
-		if (!regex::match("^[A-Za-z_][A-Za-z0-9_]*$", name.first)) {
-			error("Invalid member name.", name.second.first, name.second.second);
+		if (!regex::match("^[A-Za-z_][A-Za-z0-9_]*$", std::get<0>(name))) {
+			error("Invalid member name.", std::get<1>(name), std::get<2>(name));
 		}
 
 		*memberNode = new structure::MemberNode();
 		parentNode->add(*memberNode);
-		(*memberNode)->setName(name.first);
-		(*memberNode)->type = type.first;
+		(*memberNode)->setName(std::get<0>(name));
+		(*memberNode)->type = type;
 
 		{
 			std::map<std::string, std::string> outModifiers;
-			std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> otherModifiers;
+			std::vector<std::tuple<std::string, unsigned long, unsigned long>> otherModifiers;
 			groupModifiers({
 				{"visibility", {"public", "protected", "private"}},
 				{"staticality", {"~dynamic", "static"}}

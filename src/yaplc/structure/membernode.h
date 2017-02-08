@@ -1,8 +1,10 @@
 #pragma once
 
 #include "container.h"
+#include "typereferencenode.h"
 #include <string>
 #include <vector>
+#include <tuple>
 
 namespace yaplc { namespace structure {
 	class MemberNode : public Container {
@@ -13,9 +15,14 @@ namespace yaplc { namespace structure {
 	public:
 		Visibility visibility;
 		Staticality staticality;
-		std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers;
+		std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers;
 
-		std::string type;
+		TypeReferenceNode *type;
+
+	public:
+		virtual ~MemberNode() {
+			delete type;
+		}
 
 
 		NODE_PROPS(
@@ -45,16 +52,16 @@ namespace yaplc { namespace structure {
 				auto end = modifiers.end();
 
 				if (it != end) {
-					stream << (*it).first;
+					stream << std::get<0>(*it);
 					++it;
 
 					for (; it != end; ++it) {
-						stream << ", " << (*it).first;
+						stream << ", " << std::get<0>(*it);
 					}
 				}
 			});
 
-			NODE_PROP(type, stream << type;)
+			NODE_PROP(type, type->show(stream, indent + 1);)
 		)
 	};
 } }

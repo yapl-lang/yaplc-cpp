@@ -16,6 +16,10 @@ namespace yaplc { namespace structure {
 		virtual ~Container();
 		
 		Node *get() const;
+		template<class T> inline T *get() const {
+			return dynamic_cast<T *>(get());
+		}
+
 		Node *set(Node *child);
 		
 		virtual void show(std::stringstream &stream, unsigned long indent = 0) const;

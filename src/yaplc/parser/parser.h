@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <tuple>
 
 namespace yaplc { namespace parser {
 	class BaseParser {
@@ -67,6 +68,8 @@ namespace yaplc { namespace parser {
 		bool getName(std::string &name, const std::string &prevWord);
 		bool getName(std::string &name, const std::string &prevWord, const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers);
 
+		void jump(unsigned long position);
+		void back(unsigned long count = 1);
 		void skip(unsigned long count = 1);
 		void skipSpaces();
 		void skipEmpty();
@@ -84,7 +87,10 @@ namespace yaplc { namespace parser {
 		bool error(const std::string &message, unsigned long position);
 		bool error(const std::string &message, unsigned long begin, unsigned long end);
 
-		void groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, const std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers, std::map<std::string, std::string> &outModifiers, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &otherModifiers);
+		void groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+		                    const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,
+		                    std::map<std::string, std::string> &outModifiers,
+		                    std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers);
 	};
 
 	template<class... Args> class Parser : public BaseParser {

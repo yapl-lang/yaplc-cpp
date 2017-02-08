@@ -234,7 +234,23 @@ next:
 		
 		return true;
 	}
-	
+
+	void BaseParser::jump(unsigned long position) {
+		if (position > configuration.position) {
+			cancel();
+		}
+
+		configuration.position = position;
+	}
+
+	void BaseParser::back(unsigned long count) {
+		if (count > configuration.position) {
+			cancel();
+		}
+
+		configuration.position -= count;
+	}
+
 	void BaseParser::skip(unsigned long count) {
 		if (configuration.position + count >= configuration.code->size()) {
 			cancel();
@@ -335,11 +351,14 @@ next:
 		return true;
 	}
 
-	void BaseParser::groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, const std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> modifiers, std::map<std::string, std::string> &outModifiers, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &otherModifiers) {
+	void BaseParser::groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+	                                const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,
+	                                std::map<std::string, std::string> &outModifiers,
+	                                std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
 		for (auto word : modifiers) {
 			for (auto allowedModifierSet : allowedModifiers) {
 				for (auto allowedModifier : allowedModifierSet.second) {
-					if (word.first == allowedModifier) {
+					if (std::get<0>(word) == allowedModifier) {
 						auto it = outModifiers.begin();
 						for (; it != outModifiers.end(); ++it) {
 							if ((*it).first == allowedModifierSet.first) {
@@ -348,9 +367,9 @@ next:
 						}
 
 						if (it != outModifiers.end()) {
-							error("'" + word.first + "' and '" + (*it).first + "' modifiers are incompatible.", word.second.first, word.second.second);
+							error("'" + std::get<0>(word) + "' and '" + (*it).first + "' modifiers are incompatible.", std::get<1>(word), std::get<2>(word));
 						} else {
-							outModifiers[allowedModifierSet.first] = word.first;
+							outModifiers[allowedModifierSet.first] = std::get<0>(word);
 						}
 
 						goto next;
