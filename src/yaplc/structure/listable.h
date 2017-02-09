@@ -26,6 +26,6 @@ namespace yaplc { namespace structure {
 			return children.end();
 		}
 		
-		virtual void show(std::stringstream &stream, unsigned long indent = 0) const;
+		virtual void show(std::ostream &stream, unsigned long indent = 0) const;
 	};
 } }

@@ -46,7 +46,7 @@ namespace yaplc { namespace structure {
 		}
 	}
 	
-	void Node::show(std::stringstream &stream, unsigned long indent) const {
+	void Node::show(std::ostream &stream, unsigned long indent) const {
 		int status;
 		char *fullName = abi::__cxa_demangle(typeid(*this).name(), 0, 0, &status);
 		

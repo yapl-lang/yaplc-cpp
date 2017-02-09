@@ -22,6 +22,6 @@ namespace yaplc { namespace structure {
 
 		Node *set(Node *child);
 		
-		virtual void show(std::stringstream &stream, unsigned long indent = 0) const;
+		virtual void show(std::ostream &stream, unsigned long indent = 0) const;
 	};
 } }

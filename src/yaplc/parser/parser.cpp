@@ -27,6 +27,12 @@ namespace yaplc { namespace parser {
 		
 		return configuration.code->operator[](configuration.position);
 	}
+
+	char BaseParser::getAndSkip() {
+		char c = get();
+		skip();
+		return c;
+	}
 	
 	std::string BaseParser::get(unsigned long count) {
 		if (configuration.position + count >= configuration.code->size()) {
@@ -349,6 +355,26 @@ next:
 		parserManager->pushError(new SyntaxError(message, beginLine, beginColumn, endLine, endColumn));
 		
 		return true;
+	}
+
+	bool BaseParser::expected(char expected, bool pCancel, bool pError, bool fatal) {
+		if (get() == expected) {
+			skip();
+
+			return false;
+		}
+
+		if (pError) {
+			error(std::string("Expected '") + expected + "'. Got '" + get() + "'.");
+		}
+
+		if (pCancel) {
+			if (fatal) {
+				cancelFatal();
+			} else {
+				cancel();
+			}
+		}
 	}
 
 	void BaseParser::groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,

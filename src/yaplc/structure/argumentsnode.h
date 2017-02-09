@@ -26,17 +26,32 @@ namespace yaplc { namespace structure {
 
 		NODE_PROPS(
 			NODE_PROP(arguments, {
-				// TODO:
+				stream << "[";
 
-				/*for (auto argument : arguments) {
+				bool first = true;
+
+				for (auto argument : arguments) {
 					TypeReferenceNode *type;
 					std::string name;
 					ValueNode *value;
 
 					std::tie(type, name, value) = argument;
 
+					if (!first) {
+						stream << ", ";
+					}
 
-				}*/
+					stream << name << " => ";
+					type->show(stream, indent + 2);
+
+					if (value != nullptr) {
+						stream << " = ";
+						value->show(stream, indent + 2);
+					}
+
+					first = false;
+				}
+				stream << "]";
 			})
 		)
 	};

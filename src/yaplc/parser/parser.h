@@ -56,6 +56,7 @@ namespace yaplc { namespace parser {
 		bool end();
 		
 		char get();
+		char getAndSkip();
 		std::string get(unsigned long count);
 		bool get(const std::string &pattern);
 		bool get(const std::string &pattern, const std::vector<std::string *> &caps);
@@ -86,6 +87,9 @@ namespace yaplc { namespace parser {
 		bool error(const std::string &message);
 		bool error(const std::string &message, unsigned long position);
 		bool error(const std::string &message, unsigned long begin, unsigned long end);
+
+
+		bool expected(char expected, bool cancel = true, bool error = true, bool fatal = true);
 
 		void groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,
 		                    const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,

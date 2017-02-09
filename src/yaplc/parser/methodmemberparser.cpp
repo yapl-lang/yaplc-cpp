@@ -1,8 +1,10 @@
 #include "methodmemberparser.h"
+#include "typereferenceparser.h"
 #include "yaplc/structure/methodmembernode.h"
+#include <memory>
 
 namespace yaplc { namespace parser {
-	void MethodMemberParser::handle(structure::MemberNode *parentNode) {
+	void MethodMemberParser::handle(structure::MemberNode *parentNode, bool withoutBody) {
 		skipEmpty();
 		push();
 
@@ -10,42 +12,70 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 		skip();
+		skipEmpty();
 
 		auto methodMemberNode = new structure::MethodMemberNode();
 		parentNode->set(methodMemberNode);
 
+		while (get() != ')') {
+			structure::TypeReferenceNode *argumentType;
+			std::string name;
+			structure::ValueNode *value = nullptr;
 
+			if (!parse<TypeReferenceParser>(&argumentType)) {
+				error("Type name expected.");
+				cancelFatal();
+			}
 
-		/*
-		
-		auto methodMemberNode = new structure::MemberNode(name);
-		*node = methodMemberNode
-		
-		methodMemberNode->type = type;
-		
-		{
-			std::string visibility = modifiers["visibility"];
-			
-			if (visibility == "public") {
-				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Public;
-			} else if (visibility == "protected") {
-				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Protected;
-			} else if (visibility == "private") {
-				methodMemberNode->visibility = structure::VariableMemberNode::Visibility::Private;
+			if (!getWord(name)) {
+				delete argumentType;
+
+				error("Argument name expected.");
+				cancelFatal();
+			}
+
+			skipEmpty();
+
+			switch (get()) {
+			case ')':
+				break;
+			case ',':
+				skip();
+				break;
+			case '=':
+				// TODO: Parse default value.
+				break;
+			default:
+				error(std::string("Excepted ')', ',' or '='. Got '") + get() + "'.");
+			}
+
+			methodMemberNode->arguments->arguments.push_back(std::make_tuple(argumentType, name, value));
+		}
+
+		skipEmpty();
+		expected(')');
+
+		skip();
+		skipEmpty();
+
+		if (withoutBody) {
+			expected(';', false);
+		} else {
+			switch (get()) {
+			case ';':
+				skip();
+				break;
+			case '{':
+				skip();
+
+				// TODO: Parse code
+
+				skipEmpty();
+				expected('}');
+				break;
+			default:
+				error(std::string("Expected ';' or '{'. Got '") + get() + "'.");
 			}
 		}
-		
-		{
-			std::string staticality = modifiers["staticality"];
-			
-			if (staticality == "dynamic") {
-				methodMemberNode->staticality = structure::VariableMemberNode::Staticality::Dynamic;
-			} else if (staticality == "static") {
-				methodMemberNode->staticality = structure::VariableMemberNode::Staticality::Static;
-			}
-		}
-		
-		
-		skipEmpty();*/
 	}
 } }

@@ -50,7 +50,7 @@ namespace yaplc { namespace structure {
 		}
 	}
 	
-	void Listable::show(std::stringstream &stream, unsigned long indent) const {
+	void Listable::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);
 		
 		stream << " [" << std::endl;

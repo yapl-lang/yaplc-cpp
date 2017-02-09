@@ -41,7 +41,7 @@ namespace yaplc { namespace structure {
 		return this->child = child;
 	}
 	
-	void Container::show(std::stringstream &stream, unsigned long indent) const {
+	void Container::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);
 		
 		stream << " <" << std::endl;

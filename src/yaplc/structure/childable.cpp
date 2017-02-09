@@ -62,7 +62,7 @@ namespace yaplc { namespace structure {
 		children.erase(name);
 	}
 	
-	void Childable::show(std::stringstream &stream, unsigned long indent) const {
+	void Childable::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);
 		
 		stream << " {" << std::endl;
