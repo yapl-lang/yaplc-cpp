@@ -358,6 +358,10 @@ next:
 	}
 
 	bool BaseParser::expected(char expected, bool pCancel, bool pError, bool fatal) {
+		if (end()) {
+			return false;
+		}
+
 		if (get() == expected) {
 			skip();
 
