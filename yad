@@ -1,0 +1,201 @@
+#!/bin/bash
+function yad_echo {
+	echo "[yad] $1"
+}
+
+function help {
+	yad_echo "Help:"
+	yad_echo "yad <action> [parameters...]"
+	yad_echo "Actions:"
+	yad_echo "	make:parser <parser name> - Creates a new parser with given name."
+	yad_echo "	make:struct <type(node/container/childable/listable)> <structure name> - Creates a new structure class with given name and type."
+	yad_echo "	build [target(auto/cmake/make/ndk)] - Compiles and builds yaplc."
+	yad_echo "	help - Shows this text."
+}
+
+function build_cmake {
+	yad_echo "Building yaplc using cmake..."
+
+	mkdir -p "cmake-build-debug"
+	cd "cmake-build-debug"
+
+	yad_echo "Running cmake..."
+	cmake ../
+	yad_echo "Running make..."
+	make
+
+	cd ..
+	mkdir -p bin
+	cp "cmake-build-debug/yaplc" "bin/yaplc"
+	chmod +x "bin/yaplc"
+
+	yad_echo "Compilation and building done!"
+}
+
+function build_make {
+	yad_echo "Building yaplc using make..."
+	yad_echo "Running make..."
+	make
+
+	chmod +x "bin/yaplc"
+
+	yad_echo "Compilation and building done!"
+}
+
+function command_exists {
+	if ! type "$1" > /dev/null 2>&1; then
+		echo 0
+	else
+		echo 1
+	fi
+}
+
+if (( $# < 1 )); then
+	yad_echo "Required at least 1 argument."
+	exit
+fi
+
+SUBCMD=$1
+shift
+
+case "$SUBCMD" in
+	"make:parser")
+		if (( $# < 1 )); then
+			yad_echo "Required a parser name."
+			exit
+		fi
+		
+		NAME=$1
+		shift
+
+		yad_echo "Creating parser with name [$NAME]..."
+		
+		echo "#pragma once
+
+#include \"parser.h\"
+
+namespace yaplc { namespace parser {
+	class $NAME : public Parser<> {
+	protected:
+		virtual void handle();
+	};
+} }" > "src/yaplc/parser/${NAME}.h"
+
+		echo "#include \"$NAME.h\"
+
+namespace yaplc { namespace parser {
+	void $NAME::handle() {
+		//
+	}
+} }" > "src/yaplc/parser/$NAME.cpp"
+
+		yad_echo "Parser with name [$NAME] successfully created."
+	;;
+	"make:struct")
+		if (( $# < 2 )); then
+			yad_echo "Required a structure type and name."
+			exit
+		fi
+		
+		TYPE=$1
+		shift
+		
+		NAME=$1
+		shift
+
+		yad_echo "Creating structure with type [$TYPE] and name [$NAME]..."
+		
+		case "$TYPE" in
+			"node")
+				CLASS="Node"
+			;;
+			"container")
+				CLASS="Container"
+			;;
+			"childable")
+				CLASS="Childable"
+			;;
+			"listable")
+				CLASS="Listable"
+			;;
+			*)
+				help "make:struct"
+				exit
+			;;
+		esac
+		
+		echo "#pragma once
+
+#include \"$CLASS.h\"
+
+namespace yaplc { namespace structure {
+	class $NAME : public $CLASS {
+	public:
+		//
+	};
+} }" > "src/yaplc/structure/$NAME.h"
+
+		yad_echo "Structure with type [$TYPE] and name [$NAME] successfully created."
+	;;
+	"build")
+		if (( $# < 1 )); then
+			TARGET="auto"
+		else
+			TARGET=$1
+			shift
+		fi
+
+		case "$TARGET" in
+			"auto")
+				yad_echo "Building yad for [PC]..."
+
+				if [ "$(command_exists cmake)" = "1" ]; then
+					build_cmake
+				elif [ "$(command_exists make)" = "1" ]; then
+					build_make
+				else
+					yad_echo "Install cmake or make to compile yad."
+					exit
+				fi
+			;;
+			"cmake")
+				yad_echo "Building yad for [PC] using cmake..."
+
+				if [ "$(command_exists cmake)" = "1" ]; then
+					build_cmake
+				else
+					yad_echo "CMake is not installed!"
+					exit
+				fi
+			;;
+			"make")
+				yad_echo "Building yad for [PC] using make..."
+
+				if [ "$(command_exists make)" = "1" ]; then
+					build_make
+				else
+					yad_echo "Make is not installed!"
+					exit
+				fi
+			;;
+			"ndk")
+				yad_echo "Building yad for [ANDROID] using NDK..."
+
+				if [ "$(command_exists ndk-build)" = "1" ]; then
+					build_ndk
+				else
+					yad_echo "NDK is not installed!"
+					exit
+				fi
+			;;
+			*)
+				help
+				exit
+			;;
+		esac
+	;;
+	*)
+		help
+		exit
+	;;
+esac
