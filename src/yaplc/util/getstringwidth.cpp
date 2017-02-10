@@ -13,6 +13,7 @@ namespace yaplc { namespace util {
 			case '\t':
 				width += 3;
 				break;
+			default:;
 			}
 		}
 		

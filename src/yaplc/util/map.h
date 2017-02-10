@@ -25,7 +25,7 @@ namespace yaplc { namespace util {
 		auto sit = source.begin();
 		
 		for (; sit != source.end(); ++sit) {
-			target.insert(callback((*sit).first, (*sit).second));
+			target.insert(callback({(*sit).first, (*sit).second}));
 		}
 	}
 } }

@@ -2,10 +2,10 @@
 #include <fstream>
 #include <vector>
 
-#include "yaplc/compilingerror.h"
-#include "yaplc/positionalerror.h"
+#include "yaplc/CompilingError.h"
+#include "yaplc/PositionalError.h"
 
-#include "yaplc/parser/parsermanager.h"
+#include "yaplc/parser/ParserManager.h"
 
 #include "yaplc/util/markline.h"
 

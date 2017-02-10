@@ -47,9 +47,9 @@ namespace regex {
 		try {
 			auto code = slre_match(regex.c_str(),
 				string.c_str(),
-				string.size(),
+				(int)string.size(),
 				capsArray,
-				capsCount,
+				(int)capsCount,
 				(ignoreCase) ? (SLRE_IGNORE_CASE) : (0));
 			
 			switch (code) {
@@ -81,6 +81,7 @@ namespace regex {
 			case SLRE_TOO_MANY_BRACKETS:
 				errorHandler(regex, string, "TOO_MANY_BRACKETS");
 				break;
+			default:;
 			}
 			
 			if (code > 0) {
@@ -90,7 +91,7 @@ namespace regex {
 					if (capsArray[i].len == 0) {
 						caps.push_back("");
 					} else {
-						caps.push_back(std::string(capsArray[i].ptr, capsArray[i].len));
+						caps.push_back(std::string(capsArray[i].ptr, (unsigned long)capsArray[i].len));
 					}
 				}
 			}
@@ -118,9 +119,9 @@ namespace regex {
 			try {
 				auto code = slre_match(regex.c_str(),
 					string.c_str() + scanned,
-					string.size() - scanned,
+					(int)(string.size() - scanned),
 					capsArray,
-					capsCount,
+					(int)capsCount,
 					(ignoreCase) ? (SLRE_IGNORE_CASE) : (0));
 				
 				switch (code) {
@@ -152,6 +153,7 @@ namespace regex {
 				case SLRE_TOO_MANY_BRACKETS:
 					errorHandler(regex, string, "TOO_MANY_BRACKETS");
 					break;
+				default:;
 				}
 				
 				if (code <= 0) {
@@ -166,7 +168,7 @@ namespace regex {
 					auto capsSet = new std::string[capsCount];
 					
 					for (unsigned long i = 0; i < capsCount; ++i) {
-						std::string cap(capsArray[i].ptr, capsArray[i].len);
+						std::string cap(capsArray[i].ptr, (unsigned long)capsArray[i].len);
 						
 						capsSet[i] = cap;
 					}
