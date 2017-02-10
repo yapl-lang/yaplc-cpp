@@ -1,12 +1,12 @@
 #pragma once
 
 #include "node.h"
-#include <map>
+#include <vector>
 
 namespace yaplc { namespace structure {
 	class Childable : public Node {
 	private:
-		std::map<std::string, Node *> children;
+		std::vector<std::pair<std::string, Node *>> children;
 
 	public:
 		Childable();
@@ -21,11 +21,11 @@ namespace yaplc { namespace structure {
 		void remove(Node *child);
 		void remove(const std::string &name);
 		
-		inline std::map<std::string, Node *>::const_iterator begin() const {
+		inline std::vector<std::pair<std::string, Node *>>::const_iterator begin() const {
 			return children.begin();
 		}
 		
-		inline std::map<std::string, Node *>::const_iterator end() const {
+		inline std::vector<std::pair<std::string, Node *>>::const_iterator end() const {
 			return children.end();
 		}
 		

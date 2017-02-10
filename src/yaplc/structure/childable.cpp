@@ -32,6 +32,8 @@ namespace yaplc { namespace structure {
 	}
 	
 	void Childable::add(Node *child) {
+		remove(name);
+
 		if (child->childableParent != nullptr) {
 			child->childableParent->remove(child);
 		} else if (child->listableParent != nullptr) {
@@ -40,7 +42,7 @@ namespace yaplc { namespace structure {
 		}
 		
 		child->childableParent = this;
-		children[child->name] = child;
+		children.push_back({child->name, child});
 	}
 	
 	void Childable::add(const std::string &name, Node *child) {
@@ -49,17 +51,23 @@ namespace yaplc { namespace structure {
 	}
 	
 	void Childable::remove(Node *child) {
-		for (auto pair : children) {
-			if (pair.second == child) {
-				children.erase(pair.first);
-				
+		for (auto it = begin(); it != end(); ++it) {
+			if (it->second == child) {
+				children.erase(it);
+
 				break;
 			}
 		}
 	}
 	
 	void Childable::remove(const std::string &name) {
-		children.erase(name);
+		for (auto it = begin(); it != end(); ++it) {
+			if (it->first == name) {
+				children.erase(it);
+
+				break;
+			}
+		}
 	}
 	
 	void Childable::show(std::ostream &stream, unsigned long indent) const {
