@@ -2,7 +2,7 @@
 #include "yaplc/structure/ariphmeticexpression.h"
 
 namespace yaplc { namespace parser {
-	void NumberExpressionParser::handle(structure::Node **node) {
+	void NumberExpressionParser::handle(structure::ValueNode *node) {
 		cancelIfEnd();
 		
 		std::string number;
@@ -13,6 +13,6 @@ namespace yaplc { namespace parser {
 		
 		auto ariphmeticNode = new structure::AriphmeticExpression();
 		ariphmeticNode->value = number;
-		*node = ariphmeticNode;
+		node->set(ariphmeticNode);
 	}
 } }

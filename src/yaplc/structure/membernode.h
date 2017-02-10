@@ -48,6 +48,7 @@ namespace yaplc { namespace structure {
 			})
 
 			NODE_PROP(modifiers, {
+				stream << "[";
 				auto it = modifiers.begin();
 				auto end = modifiers.end();
 
@@ -59,6 +60,7 @@ namespace yaplc { namespace structure {
 						stream << ", " << std::get<0>(*it);
 					}
 				}
+				stream << "]";
 			});
 
 			NODE_PROP(type, type->show(stream, indent + 1);)

@@ -1,49 +1,27 @@
 #pragma once
 
-#include "container.h"
+#include "node.h"
+#include "typereferencenode.h"
+#include "valuenode.h"
 
 namespace yaplc { namespace structure {
-	class VariableMemberNode : public Container {
+	class VariableMemberNode : public Node {
 	public:
-		enum class Visibility {Public, Protected, Private};
-		enum class Staticality {Dynamic, Static};
-		
+		ValueNode *defaultValue;
+
 	public:
-		Visibility visibility;
-		Staticality staticality;
-		std::string type;
-		std::string defaultValue;
+		inline VariableMemberNode() :
+			Node(),
+			defaultValue(new ValueNode()) {
+
+		}
+
+		virtual ~VariableMemberNode() {
+			delete defaultValue;
+		}
 		
 		NODE_PROPS(
-			NODE_PROP(visibility, switch (visibility) {
-			case Visibility::Private:
-				stream << "private";
-				break;
-			case Visibility::Protected:
-				stream << "protected";
-				break;
-			case Visibility::Public:
-				stream << "public";
-				break;
-			})
-			
-			NODE_PROP(staticality, switch (staticality) {
-			case Staticality::Dynamic:
-				stream << "dynamic";
-				break;
-			case Staticality::Static:
-				stream << "static";
-				break;
-			})
-			
-			NODE_PROP(type, stream << type;)
-			NODE_PROP(defaultValue, stream << defaultValue;);
+			NODE_PROP_AUTO(defaultValue);
 		)
-		
-	public:
-		inline VariableMemberNode(const std::string &name) :
-			Container(name),
-			visibility(Visibility::Public),
-			staticality(Staticality::Dynamic) {}
 	};
 } }
