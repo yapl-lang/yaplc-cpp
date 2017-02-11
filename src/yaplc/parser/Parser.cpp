@@ -297,6 +297,16 @@ next:
 		skip(string.size());
 	}
 	
+	void BaseParser::skipOrCancel(const std::string &string) {
+		skipEmpty();
+		
+		if (get(string.size()) != string) {
+			cancel();
+		}
+		
+		skip(string.size());
+	}
+	
 	void BaseParser::push() {
 		comingConfiguration = configuration;
 	}

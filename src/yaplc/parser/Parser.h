@@ -75,6 +75,7 @@ namespace yaplc { namespace parser {
 		void skipSpaces();
 		void skipEmpty();
 		void skipOrFail(const std::string &string, const std::string &error = "");
+		void skipOrCancel(const std::string &string);
 		
 		void push();
 		void save();
