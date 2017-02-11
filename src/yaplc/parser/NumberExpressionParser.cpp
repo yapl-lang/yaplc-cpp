@@ -5,7 +5,9 @@
 namespace yaplc { namespace parser {
 	void NumberExpressionParser::handle(structure::ExpressionNode *parentNode) {
 		cancelIfEnd();
+
 		parse<OperatorParser>(parentNode);
+		push();
 		
 		std::string number;
 		if (!get("([0-9]*(\\.[0-9]*)?)", {&number, nullptr})) {
