@@ -25,7 +25,7 @@ namespace yaplc { namespace parser {
 					break;
 				}
 
-				entries.push_back({typeNameNode, start, position() - 1});
+				entries.push_back(std::make_tuple(typeNameNode, start, position() - 1));
 			}
 
 			if (entries.size() < 2) {
@@ -38,7 +38,7 @@ namespace yaplc { namespace parser {
 
 			auto nameEntry = *(--entries.end());
 			entries.pop_back();
-			name = {std::get<0>(nameEntry)->type, std::get<1>(nameEntry), std::get<2>(nameEntry) - 1};
+			name = std::make_tuple(std::get<0>(nameEntry)->type, std::get<1>(nameEntry), std::get<2>(nameEntry) - 1);
 			delete std::get<0>(nameEntry);
 
 			type = std::get<0>(*(--entries.end()));
@@ -54,7 +54,7 @@ namespace yaplc { namespace parser {
 				delete typeNode;
 
 				if (regex::match("^[A-Za-z_][A-Za-z0-9_]*$", modifier)) {
-					modifiers.push_back({modifier, begin, end - 1});
+					modifiers.push_back(std::make_tuple(modifier, begin, end - 1));
 				} else {
 					error("Invalid modifier name.", begin, end - 1);
 				}

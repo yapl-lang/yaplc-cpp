@@ -3,7 +3,7 @@
 #include "Node.h"
 
 namespace yaplc { namespace structure {
-	class StringNode : public Node {
+	class CharNode : public Node {
 	public:
 		std::string value;
 		

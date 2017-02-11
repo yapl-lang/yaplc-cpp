@@ -12,6 +12,6 @@ public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
 
 	}
 
-	public object u;
+	public string stringValue = `Hello, ${15}. Hello, ${20}`;
 	public int k = -10.6;
 }
