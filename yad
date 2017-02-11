@@ -42,6 +42,15 @@ function build_make {
 	yad_echo "Compilation and building done!"
 }
 
+function build_ndk {
+	yad_echo "Building yaplc using ndk..."
+	yad_echo "Running ndk-build..."
+	
+	ndk-build
+	
+	yad_echo "Compilation and building done!"
+}
+
 function command_exists {
 	if ! type "$1" > /dev/null 2>&1; then
 		echo 0
