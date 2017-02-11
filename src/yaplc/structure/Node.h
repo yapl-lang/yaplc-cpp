@@ -57,7 +57,7 @@ namespace yaplc { namespace structure {
 			if (node == nullptr) {
 				stream << "null";
 			} else {
-				node->show(stream, indent + 2);
+				node->show(stream, indent + 1);
 			}
 		}
 	};

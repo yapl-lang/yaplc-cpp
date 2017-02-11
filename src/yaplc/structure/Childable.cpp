@@ -74,13 +74,25 @@ namespace yaplc { namespace structure {
 		Node::show(stream, indent);
 		
 		stream << " {" << std::endl;
-		
-		for (auto pair : children) {
+
+		auto it = children.begin();
+		auto end = children.end();
+
+		if (it != end) {
+			auto pair = *it;
 			util::leftpad(stream, indent + 1) << pair.first << " => ";
 			pair.second->show(stream, indent + 1);
-			stream << std::endl;
+			++it;
+
+			for (; it != end; ++it) {
+				auto pair = *it;
+
+				stream << ", " << pair.first << " => ";
+				pair.second->show(stream, indent + 1);
+			}
 		}
-		
+
+		stream << std::endl;
 		util::leftpad(stream, indent) << "}";
 	}
 } }
