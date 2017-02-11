@@ -1,5 +1,6 @@
 #include "MethodMemberParser.h"
 #include "TypeNameParser.h"
+#include "ExpressionParser.h"
 #include "yaplc/structure/MethodMemberNode.h"
 #include <memory>
 
@@ -36,6 +37,7 @@ namespace yaplc { namespace parser {
 
 			skipEmpty();
 
+parseEnding:
 			switch (get()) {
 			case ')':
 				break;
@@ -43,10 +45,25 @@ namespace yaplc { namespace parser {
 				skip();
 				break;
 			case '=':
-				// TODO: Parse default value.
-				break;
+				if (value != nullptr) {
+					error("Excepted ')', ','. Got '='.");
+					cancelFatal();
+				}
+
+				skip();
+
+				if (!parse<ExpressionParser>(value = new structure::ExpressionNode(), false)) {
+					delete argumentType;
+					delete value;
+
+					error("Expected value.");
+					cancelFatal();
+				}
+
+				goto parseEnding;
 			default:
 				error(std::string("Excepted ')', ',' or '='. Got '") + get() + "'.");
+				cancelFatal();
 			}
 
 			methodMemberNode->arguments->arguments.push_back(std::make_tuple(argumentType, name, value));
