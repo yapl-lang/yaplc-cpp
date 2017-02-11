@@ -1,6 +1,7 @@
 #include "ExpressionParser.h"
 #include "NumberExpressionParser.h"
 #include "StringExpressionParser.h"
+#include "NullExpressionParser.h"
 #include "OperatorParser.h"
 
 namespace yaplc { namespace parser {
@@ -11,7 +12,8 @@ namespace yaplc { namespace parser {
 
 		while (true) {
 			if ((!parse<NumberExpressionParser>(node)) &&
-				(!parse<StringExpressionParser>(node))) {
+				(!parse<StringExpressionParser>(node)) &&
+				(!parse<NullExpressionParser>(node))) {
 				break;
 			}
 
