@@ -4,8 +4,8 @@
 #include <string>
 #include <sstream>
 
-#define NODE_PROPS(PROPS) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0) const { stream << "(" << std::endl; PROPS util::leftpad(stream, indent) << ")"; }
-#define NODE_PROPS_PARENT(PROPS, PARENT) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0) const { PARENT::showProps(stream, indent); stream << "(" << std::endl; PROPS util::leftpad(stream, indent) << ")"; }
+#define NODE_PROPS(PROPS) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0, bool ending = true) const { stream << "(" << std::endl; PROPS; if (ending) { util::leftpad(stream, indent) << ")"; } }
+#define NODE_PROPS_PARENT(PROPS, PARENT) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0, bool ending = true) const { PARENT::showProps(stream, indent, false); PROPS; if (ending) { util::leftpad(stream, indent) << ")"; } }
 #define NODE_PROP(prop, code) util::leftpad(stream, indent + 1) << #prop << " => "; code; stream << std::endl;
 #define NODE_PROP_AUTO(prop) NODE_PROP(prop, showProp(stream, indent, prop));
 
@@ -51,7 +51,7 @@ namespace yaplc { namespace structure {
 		virtual void show(std::ostream &stream, unsigned long indent = 0) const;
 	
 	protected:
-		virtual void showProps(std::ostream &stream, unsigned long indent = 0) const {  }
+		virtual void showProps(std::ostream &stream, unsigned long indent = 0, bool ending = true) const {  }
 
 		inline void showProp(std::ostream &stream, unsigned long indent, Node *node) const {
 			if (node == nullptr) {

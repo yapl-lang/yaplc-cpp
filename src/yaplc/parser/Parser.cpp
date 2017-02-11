@@ -264,6 +264,18 @@ next:
 		
 		configuration.position += count;
 	}
+
+	bool BaseParser::skipChar(char c) {
+		skipEmpty();
+
+		if (get() == c) {
+			skip();
+
+			return true;
+		}
+
+		return false;
+	}
 	
 	void BaseParser::skipSpaces() {
 		get("\\s*");

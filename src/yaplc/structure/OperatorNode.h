@@ -32,6 +32,9 @@ namespace yaplc { namespace structure {
 
 			MoreEqual, // >=
 			LessEqual, // <=
+
+			// Other
+			Call, // ()
 		};
 
 	public:
@@ -99,6 +102,10 @@ namespace yaplc { namespace structure {
 					break;
 				case Type::LessEqual:
 					stream << "<=";
+					break;
+
+				case Type::Call:
+					stream << "()";
 					break;
 				}
 			})
