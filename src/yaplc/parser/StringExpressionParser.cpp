@@ -14,11 +14,14 @@ namespace yaplc { namespace parser {
 		case '\'':
 			parseChar(parentNode);
 			break;
-		case '`':
+		case '`': {
 			auto group = new structure::ExpressionNode();
 			parentNode->add(group);
 			parseTemplateString(group);
 			break;
+		}
+		default:
+			cancel();
 		}
 	}
 	
