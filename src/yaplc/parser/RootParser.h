@@ -10,7 +10,5 @@ namespace yaplc { namespace parser {
 		virtual void handle(structure::RootNode *rootNode);
 
 		void parsePackageBody(structure::PackageNode *packageNode);
-		bool parseImport(structure::PackageNode *packageNode);
-		void parseSubImport(structure::PackageNode *packageNode, const std::string &prefix, bool parentStatic);
 	};
 } }
