@@ -13,10 +13,13 @@ namespace yaplc { namespace parser {
 
 		node->type = type;
 
+		save();
 		skipEmpty();
 
 		// Check if we will parse a template
 		if (get() == '<') {
+			norestore();
+
 			skip();
 			skipEmpty();
 
@@ -46,10 +49,13 @@ end:
 			skipEmpty();
 			if (get() != '>') {
 				error(std::string("Expected '>'. Got '") + get() + "'.");
+				delete node;
 				cancelFatal();
 			}
 
 			skip();
+		} else {
+			restore();
 		}
 	}
 } }

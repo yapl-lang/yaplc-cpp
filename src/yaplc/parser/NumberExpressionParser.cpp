@@ -5,14 +5,12 @@
 namespace yaplc { namespace parser {
 	void NumberExpressionParser::handle(structure::ExpressionNode *parentNode) {
 		cancelIfEnd();
+		parse<OperatorParser>(parentNode);
 		
 		std::string number;
-		
 		if (!get("([0-9]*(\\.[0-9]*)?)", {&number, nullptr})) {
 			cancel();
 		}
-
-		parse<OperatorParser>(parentNode);
 
 		auto node = new structure::NumberNode();
 		node->value = number;

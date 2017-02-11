@@ -1,7 +1,5 @@
 #include "OperatorParser.h"
 #include "ExpressionParser.h"
-#include "yaplc/structure/OperatorNode.h"
-#include "yaplc/structure/CallOperatorNode.h"
 
 namespace yaplc { namespace parser {
 	void OperatorParser::handle(structure::Listable *parentNode) {
@@ -34,6 +32,7 @@ namespace yaplc { namespace parser {
 			{"(", structure::OperatorNode::Type::Call},
 		};
 
+		auto position1 = position();
 		save();
 		skipEmpty();
 		push();
@@ -44,28 +43,11 @@ namespace yaplc { namespace parser {
 
 				switch (op.second) {
 				case structure::OperatorNode::Type::Call: {
-					auto node = new structure::CallOperatorNode();
+					auto node = new structure::OperatorNode();
 					node->type = op.second;
-
-					while (true) {
-						if (!parse<ExpressionParser>(node->expression, true)) {
-							error("Expression expected.");
-							cancelFatal();
-						}
-
-						skipEmpty();
-
-						switch (get()) {
-						case ',':
-							skip();
-							break;
-						default:
-							goto done;
-						}
-					}
-
-done:
 					parentNode->add(node);
+
+					parseArguments(node);
 
 					expected(')');
 					break;
@@ -81,6 +63,37 @@ done:
 			}
 		}
 
+		auto position2 = position();
+
+		if (position1 != position2) {
+			auto node = new structure::OperatorNode();
+			node->type = structure::OperatorNode::Type::Whitespace;
+			parentNode->add(node);
+
+			parseArguments(node);
+		}
+
 		cancel();
+	}
+
+	void OperatorParser::parseArguments(structure::OperatorNode *node) {
+		while (true) {
+			if (!parse<ExpressionParser>(node->expression, true)) {
+				error("Expression expected.");
+				cancelFatal();
+			}
+
+			skipEmpty();
+
+			switch (get()) {
+			case ',':
+				skip();
+				break;
+			default:
+				goto done;
+			}
+		}
+
+done:;
 	}
 } }

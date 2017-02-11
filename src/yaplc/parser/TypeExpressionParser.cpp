@@ -16,11 +16,17 @@ namespace yaplc { namespace parser {
 		parentNode->add(node);
 
 		structure::TypeNameNode *typeNameNode2;
+
+		save();
 		while ((skipChar('.')) && (parse<TypeNameParser>(&typeNameNode2))) {
 			auto node2 = new structure::TypeExpressionNode();
 			node->child = node2;
 			node = node2;
 			node->type = typeNameNode2;
+
+			norestore();
+			save();
 		}
+		restore();
 	}
 } }

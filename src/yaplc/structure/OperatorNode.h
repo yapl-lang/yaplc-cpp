@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include "ExpressionNode.h"
 
 namespace yaplc { namespace structure {
 	class OperatorNode : public Node {
@@ -35,10 +36,19 @@ namespace yaplc { namespace structure {
 
 			// Other
 			Call, // ()
+			Whitespace, // expression1 expression2
 		};
 
 	public:
 		Type type;
+		ExpressionNode *expression;
+
+	public:
+		inline OperatorNode() :
+			expression(new ExpressionNode()) {}
+		virtual ~OperatorNode() {
+			delete expression;
+		}
 
 		NODE_PROPS(
 			NODE_PROP(type, {
@@ -107,8 +117,12 @@ namespace yaplc { namespace structure {
 				case Type::Call:
 					stream << "()";
 					break;
+				case Type::Whitespace:
+					stream << "WHITESPACE";
+					break;
 				}
 			})
+			NODE_PROP_AUTO(expression)
 		)
 	};
 } }
