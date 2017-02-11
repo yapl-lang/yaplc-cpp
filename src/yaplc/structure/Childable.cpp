@@ -51,7 +51,7 @@ namespace yaplc { namespace structure {
 	}
 	
 	void Childable::remove(Node *child) {
-		for (auto it = begin(); it != end(); ++it) {
+		for (auto it = children.begin(); it != children.end(); ++it) {
 			if (it->second == child) {
 				children.erase(it);
 
@@ -61,7 +61,7 @@ namespace yaplc { namespace structure {
 	}
 	
 	void Childable::remove(const std::string &name) {
-		for (auto it = begin(); it != end(); ++it) {
+		for (auto it = children.begin(); it != children.end(); ++it) {
 			if (it->first == name) {
 				children.erase(it);
 
