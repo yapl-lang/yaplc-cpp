@@ -4,15 +4,15 @@
 #include "NullExpressionParser.h"
 #include "TypeExpressionParser.h"
 #include "OperatorParser.h"
+#include "BracketExpressionParser.h"
 
 namespace yaplc { namespace parser {
 	void ExpressionParser::handle(structure::ExpressionNode *node, bool dynamic) {
 		cancelIfEnd();
 
-		parse<OperatorParser>(node);
-
 		while (true) {
-			if ((!parse<NumberExpressionParser>(node)) &&
+			if ((!parse<BracketExpressionParser>(node)) &&
+				(!parse<NumberExpressionParser>(node)) &&
 				(!parse<StringExpressionParser>(node)) &&
 				(!parse<NullExpressionParser>(node)) &&
 				(!parse<TypeExpressionParser>(node))) {
