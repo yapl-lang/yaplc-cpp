@@ -20,7 +20,7 @@ namespace yaplc { namespace parser {
 		while (get() != ')') {
 			structure::TypeNameNode *argumentType;
 			std::string name;
-			structure::ValueNode *value = nullptr;
+			structure::ExpressionNode *value = nullptr;
 
 			if (!parse<TypeNameParser>(&argumentType)) {
 				error("Type name expected.");

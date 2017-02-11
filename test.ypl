@@ -13,5 +13,5 @@ public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
 	}
 
 	public object u;
-	public int k = 10.6;
+	public int k = -10.6;
 }

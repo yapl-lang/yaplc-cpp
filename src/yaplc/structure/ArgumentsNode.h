@@ -2,20 +2,20 @@
 
 #include "Node.h"
 #include "TypeNameNode.h"
-#include "ValueNode.h"
+#include "ExpressionNode.h"
 #include <tuple>
 
 namespace yaplc { namespace structure {
 	class ArgumentsNode : public Node {
 	public:
-		std::vector<std::tuple<TypeNameNode *, std::string, ValueNode *>> arguments;
+		std::vector<std::tuple<TypeNameNode *, std::string, ExpressionNode *>> arguments;
 
 	public:
 		virtual ~ArgumentsNode() {
 			for (auto argument : arguments) {
 				TypeNameNode *type;
 				std::string name;
-				ValueNode *value;
+				ExpressionNode *value;
 
 				std::tie(type, name, value) = argument;
 
@@ -33,7 +33,7 @@ namespace yaplc { namespace structure {
 				for (auto argument : arguments) {
 					TypeNameNode *type;
 					std::string name;
-					ValueNode *value;
+					ExpressionNode *value;
 
 					std::tie(type, name, value) = argument;
 

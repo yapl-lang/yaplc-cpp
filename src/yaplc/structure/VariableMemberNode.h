@@ -2,17 +2,17 @@
 
 #include "Node.h"
 #include "TypeNameNode.h"
-#include "ValueNode.h"
+#include "ExpressionNode.h"
 
 namespace yaplc { namespace structure {
 	class VariableMemberNode : public Node {
 	public:
-		ValueNode *defaultValue;
+		ExpressionNode *defaultValue;
 
 	public:
 		inline VariableMemberNode() :
 			Node(),
-			defaultValue(new ValueNode()) {
+			defaultValue(new ExpressionNode()) {
 
 		}
 

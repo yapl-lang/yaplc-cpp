@@ -1,21 +1,23 @@
 #include "ExpressionParser.h"
 #include "NumberExpressionParser.h"
-/*#include "stringexpressionparser.h"
-#include "arrayexpressionparser.h"
-#include "objectexpressionparser.h"*/
+#include "OperatorParser.h"
 
 namespace yaplc { namespace parser {
-	void ExpressionParser::handle(structure::ValueNode *node, bool dynamic) {
+	void ExpressionParser::handle(structure::ExpressionNode *node, bool dynamic) {
 		cancelIfEnd();
-		
-		if (parse<NumberExpressionParser>(node)) {
-			return;
+
+		parse<OperatorParser>(node);
+
+		while (true) {
+			if ((!parse<NumberExpressionParser>(node))) {
+				break;
+			}
+
+			if (!parse<OperatorParser>(node)) {
+				break;
+			}
 		}
-		
-		if (dynamic) {
-			
-		}
-		
-		cancel();
+
+		// TODO: Check dynamic
 	}
 } }

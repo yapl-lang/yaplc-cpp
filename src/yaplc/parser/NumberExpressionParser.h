@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Parser.h"
-#include "yaplc/structure/ValueNode.h"
+#include "yaplc/structure/ExpressionNode.h"
 
 namespace yaplc { namespace parser {
-	class NumberExpressionParser : public Parser<structure::ValueNode *> {
+	class NumberExpressionParser : public Parser<structure::ExpressionNode *> {
 	protected:
-		virtual void handle(structure::ValueNode *node);
+		virtual void handle(structure::ExpressionNode *parentNode);
 	};
 } }
