@@ -72,7 +72,7 @@ case "$SUBCMD" in
 		
 		echo "#pragma once
 
-#include \"parser.h\"
+#include \"Parser.h\"
 
 namespace yaplc { namespace parser {
 	class $NAME : public Parser<> {
