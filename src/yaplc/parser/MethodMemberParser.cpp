@@ -85,7 +85,23 @@ parseEnding:
 			case '{':
 				skip();
 
-				// TODO: Parse code
+				while (get() != '}') {
+					auto codeOperator = new structure::ExpressionNode();
+
+					if (!parse<ExpressionParser>(codeOperator, true)) {
+						delete codeOperator;
+
+						break;
+					}
+
+					methodMemberNode->body->add(codeOperator);
+					skipEmpty();
+
+					if (get() == ';') {
+						skip();
+						skipEmpty();
+					}
+				}
 
 				skipEmpty();
 				expected('}');
