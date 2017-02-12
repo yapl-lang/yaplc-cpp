@@ -1,10 +1,16 @@
 #include "CodeOperatorParser.h"
 #include "CodeVariableParser.h"
 #include "ExpressionParser.h"
+#include "IfOperatorParser.h"
 
 namespace yaplc { namespace parser {
 	void CodeOperatorParser::handle(structure::ExpressionNode *parentNode) {
 		skipEmpty();
+
+		if (parse<IfOperatorParser>(parentNode)) {
+			return;
+		}
+		parentNode->clear();
 
 		if (parse<CodeVariableParser>(parentNode)) {
 			return;

@@ -1,5 +1,6 @@
 #include "OperatorParser.h"
 #include "ExpressionParser.h"
+#include "regex/regex.h"
 
 namespace yaplc { namespace parser {
 	void OperatorParser::handle(structure::Listable *parentNode) {
@@ -80,7 +81,7 @@ namespace yaplc { namespace parser {
 
 		auto position2 = position();
 
-		if (position1 != position2) {
+		if ((position1 != position2) && (regex::match("^[ \t]*$", configuration.code->substr(position1, position2 - position1)))) {
 			auto node = new structure::OperatorNode();
 			node->type = structure::OperatorNode::Type::Whitespace;
 			parentNode->add(node);
