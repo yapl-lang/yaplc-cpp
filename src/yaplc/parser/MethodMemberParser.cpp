@@ -3,6 +3,7 @@
 #include "CodeOperatorParser.h"
 #include "TypeNameParser.h"
 #include "yaplc/structure/MethodMemberNode.h"
+#include "CodeParser.h"
 
 namespace yaplc { namespace parser {
 	void MethodMemberParser::handle(structure::MemberNode *parentNode, bool withoutBody) {
@@ -85,23 +86,7 @@ parseEnding:
 			case '{':
 				skip();
 
-				while (get() != '}') {
-					auto codeOperator = new structure::ExpressionNode();
-
-					if (!parse<CodeOperatorParser>(codeOperator)) {
-						delete codeOperator;
-
-						break;
-					}
-
-					methodMemberNode->body->add(codeOperator);
-					skipEmpty();
-
-					if (get() == ';') {
-						skip();
-						skipEmpty();
-					}
-				}
+				parse<CodeParser>(methodMemberNode->body);
 
 				skipEmpty();
 				expected('}');
