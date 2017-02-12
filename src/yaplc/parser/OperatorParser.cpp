@@ -29,7 +29,12 @@ namespace yaplc { namespace parser {
 			{">", structure::OperatorNode::Type::More},
 			{"<", structure::OperatorNode::Type::Less},
 
+			{"!", structure::OperatorNode::Type::Not},
+			{"&&", structure::OperatorNode::Type::And},
+			{"||", structure::OperatorNode::Type::Or},
+
 			{"(", structure::OperatorNode::Type::Call},
+			{"[", structure::OperatorNode::Type::Array}
 		};
 
 		auto position1 = position();
@@ -50,6 +55,16 @@ namespace yaplc { namespace parser {
 					parseArguments(node);
 
 					expected(')');
+					break;
+				}
+				case structure::OperatorNode::Type::Array: {
+					auto node = new structure::OperatorNode();
+					node->type = op.second;
+					parentNode->add(node);
+
+					parseArguments(node);
+
+					expected(']');
 					break;
 				}
 				default: {

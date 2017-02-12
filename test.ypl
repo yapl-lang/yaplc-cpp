@@ -13,6 +13,8 @@ public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
 		var b = this.stringValue;
 
 		this.a(b);
+
+		b[10] && b[11];
 	}
 
 	public string stringValue = `Hello, ${Thread.getThreadsCount() + (10 / 5)}. Hello, ${20}`;

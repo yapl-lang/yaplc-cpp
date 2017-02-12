@@ -34,8 +34,14 @@ namespace yaplc { namespace structure {
 			MoreEqual, // >=
 			LessEqual, // <=
 
+			// Logical,
+			Not, // !
+			And, // &&
+			Or, // ||
+
 			// Other
 			Call, // ()
+			Array, // []
 			Whitespace, // expression1 expression2
 		};
 
@@ -114,8 +120,21 @@ namespace yaplc { namespace structure {
 					stream << "<=";
 					break;
 
+				case Type::Not:
+					stream << "!";
+					break;
+				case Type::And:
+					stream << "&&";
+					break;
+				case Type::Or:
+					stream << "||";
+					break;
+
 				case Type::Call:
 					stream << "()";
+					break;
+				case Type::Array:
+					stream << "[]";
 					break;
 				case Type::Whitespace:
 					stream << "WHITESPACE";
