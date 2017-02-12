@@ -14,6 +14,10 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 
+		if (number == ".") {
+			cancel();
+		}
+
 		auto node = new structure::NumberNode();
 		node->value = number;
 		parentNode->add(node);

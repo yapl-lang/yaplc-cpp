@@ -24,6 +24,7 @@ namespace yaplc { namespace parser {
 		if (skipChar('=')) {
 			if (!parse<ExpressionParser>(node->value = new structure::ExpressionNode(), true)) {
 				error("Value expected.");
+				cancelFatal();
 			}
 		}
 	}
