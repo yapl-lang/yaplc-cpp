@@ -44,6 +44,8 @@ namespace yaplc { namespace parser {
 				
 				return false;
 			} catch (const CancelFatalParseException &e) {
+				delete parser;
+
 				throw e;
 			}
 			

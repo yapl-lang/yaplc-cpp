@@ -284,7 +284,6 @@ next:
 	void BaseParser::skipEmpty() {
 		parse<CommentsParser>();
 		skipSpaces();
-		push();
 	}
 	
 	void BaseParser::skipOrFail(const std::string &string, const std::string &error) {
@@ -342,7 +341,7 @@ next:
 	
 	bool BaseParser::cancelIfEnd() {
 		skipEmpty();
-		push();
+		push(); // This function is used at parser start, so we can use this.
 		
 		if (end()) {
 			cancel();
