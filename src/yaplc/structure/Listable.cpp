@@ -49,7 +49,15 @@ namespace yaplc { namespace structure {
 			children.erase(std::remove(children.begin(), children.end(), child));
 		}
 	}
-	
+
+	void Listable::clear() {
+		for (auto child : children) {
+			delete child;
+		}
+
+		children.clear();
+	}
+
 	void Listable::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);
 		

@@ -20,7 +20,9 @@ namespace yaplc { namespace structure {
 		
 		void remove(Node *child);
 		void remove(const std::string &name);
-		
+
+		virtual void clear();
+
 		inline std::vector<std::pair<std::string, Node *>>::const_iterator begin() const {
 			return children.begin();
 		}

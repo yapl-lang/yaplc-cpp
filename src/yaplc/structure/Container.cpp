@@ -40,6 +40,11 @@ namespace yaplc { namespace structure {
 		
 		return this->child = child;
 	}
+
+	void Container::clear() {
+		delete child;
+		child = nullptr;
+	}
 	
 	void Container::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);

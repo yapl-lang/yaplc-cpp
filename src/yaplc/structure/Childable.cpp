@@ -69,6 +69,14 @@ namespace yaplc { namespace structure {
 			}
 		}
 	}
+
+	void Childable::clear() {
+		for (auto child : children) {
+			delete child.second;
+		}
+
+		children.clear();
+	}
 	
 	void Childable::show(std::ostream &stream, unsigned long indent) const {
 		Node::show(stream, indent);
