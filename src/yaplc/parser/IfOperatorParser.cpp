@@ -25,7 +25,7 @@ namespace yaplc { namespace parser {
 		if (skipChar('{')) {
 			parse<CodeParser>(node->trueExpression);
 			expected('}');
-		} else if (hasThen) {
+		} else if ((hasBrace) || (hasThen)) {
 			auto codeOperator = new structure::ExpressionNode();
 
 			if (!parse<CodeOperatorParser>(node->trueExpression)) {
