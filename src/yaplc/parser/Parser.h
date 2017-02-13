@@ -94,6 +94,7 @@ namespace yaplc { namespace parser {
 
 
 		bool expected(char expected, bool cancel = true, bool error = true, bool fatal = true);
+		bool expected(const std::string &expected, bool cancel = true, bool error = true, bool fatal = true);
 
 		void groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,
 		                    const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,

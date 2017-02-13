@@ -379,18 +379,36 @@ next:
 	}
 
 	bool BaseParser::expected(char expected, bool pCancel, bool pError, bool fatal) {
-		if (end()) {
-			return false;
-		}
-
-		if (get() == expected) {
+		if ((!end()) && (get() == expected)) {
 			skip();
 
-			return false;
+			return true;
 		}
 
 		if (pError) {
 			error(std::string("Expected '") + expected + "'. Got '" + get() + "'.");
+		}
+
+		if (pCancel) {
+			if (fatal) {
+				cancelFatal();
+			} else {
+				cancel();
+			}
+		}
+	}
+	
+	bool BaseParser::expected(const std::string &expected, bool pCancel, bool pError, bool fatal) {
+		skipEmpty();
+		
+		if ((!end()) && (get(expected.size()) == expected)) {
+			skip(expected.size());
+			
+			return false;
+		}
+		
+		if (pError) {
+			error(std::string("Expected '") + expected + "'.");
 		}
 
 		if (pCancel) {
