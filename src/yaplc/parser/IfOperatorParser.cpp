@@ -7,7 +7,10 @@
 namespace yaplc { namespace parser {
 	void IfOperatorParser::handle(structure::ExpressionNode *parentNode) {
 		skipOrCancel("if");
+		skipEmpty();
 
+		bool hasBrace = get() == '(';
+		
 		auto node = new structure::IfOperatorNode();
 		parentNode->add(node);
 
@@ -16,12 +19,13 @@ namespace yaplc { namespace parser {
 			cancelFatal();
 		}
 
+		bool hasThen = skip("then");
 		skipEmpty();
-
+		
 		if (skipChar('{')) {
 			parse<CodeParser>(node->trueExpression);
 			expected('}');
-		} else {
+		} else if (hasThen) {
 			auto codeOperator = new structure::ExpressionNode();
 
 			if (!parse<CodeOperatorParser>(node->trueExpression)) {
@@ -30,6 +34,9 @@ namespace yaplc { namespace parser {
 				error("Expected operator.");
 				cancelFatal();
 			}
+		} else {
+			error("Expected 'then'.");
+			cancelFatal();
 		}
 	}
 } }

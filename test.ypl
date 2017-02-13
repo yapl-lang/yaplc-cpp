@@ -16,7 +16,7 @@ public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
 
 		this.a 28;
 
-		if k == 15 {
+		if k == 15 then {
 			this.a(k);
 		}
 	}
