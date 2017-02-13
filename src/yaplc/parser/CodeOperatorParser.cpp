@@ -3,6 +3,7 @@
 #include "ExpressionParser.h"
 #include "IfOperatorParser.h"
 #include "WhileOperatorParser.h"
+#include "DoWhileOperatorParser.h"
 
 namespace yaplc { namespace parser {
 	void CodeOperatorParser::handle(structure::ExpressionNode *parentNode) {
@@ -14,6 +15,11 @@ namespace yaplc { namespace parser {
 		parentNode->clear();
 
 		if (parse<WhileOperatorParser>(parentNode)) {
+			return;
+		}
+		parentNode->clear();
+
+		if (parse<DoWhileOperatorParser>(parentNode)) {
 			return;
 		}
 		parentNode->clear();
