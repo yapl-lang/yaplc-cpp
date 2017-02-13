@@ -10,6 +10,8 @@ namespace yaplc { namespace parser {
 	void ExpressionParser::handle(structure::ExpressionNode *node, bool dynamic) {
 		cancelIfEnd();
 
+		bool anyParsed = false;
+
 		while (true) {
 			if ((!parse<BracketExpressionParser>(node)) &&
 				(!parse<NumberExpressionParser>(node)) &&
@@ -19,9 +21,15 @@ namespace yaplc { namespace parser {
 				break;
 			}
 
+			anyParsed = true;
+
 			if (!parse<OperatorParser>(node)) {
 				break;
 			}
+		}
+
+		if (!anyParsed) {
+			cancel();
 		}
 
 		// TODO: Check dynamic

@@ -95,8 +95,7 @@ namespace yaplc { namespace parser {
 	void OperatorParser::parseArguments(structure::OperatorNode *node) {
 		while (true) {
 			if (!parse<ExpressionParser>(node->expression, true)) {
-				error("Expression expected.");
-				cancelFatal();
+				break;
 			}
 
 			skipEmpty();
