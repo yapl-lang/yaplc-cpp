@@ -264,6 +264,19 @@ next:
 		
 		configuration.position += count;
 	}
+	
+	bool BaseParser::skip(const std::string &string) {
+		save();
+		skipEmpty();
+		
+		if (get(string.size()) == string) {
+			norestore();
+			return true;
+		}
+		
+		restore();
+		return false;
+	}
 
 	bool BaseParser::skipChar(char c) {
 		skipEmpty();

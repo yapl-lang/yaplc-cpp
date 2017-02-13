@@ -74,6 +74,7 @@ namespace yaplc { namespace parser {
 		void jump(unsigned long position);
 		void back(unsigned long count = 1);
 		void skip(unsigned long count = 1);
+		bool skip(const std::string &string);
 		bool skipChar(char c);
 		void skipSpaces();
 		void skipEmpty();
