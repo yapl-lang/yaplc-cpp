@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Childable.h"
+#include "TypeNameNode.h"
 
 namespace yaplc { namespace structure {
 	class ClassNode : public Childable {
@@ -9,16 +10,16 @@ namespace yaplc { namespace structure {
 		
 	public:
 		Visibility visibility;
-		std::string base;
-		std::vector<std::string> interfaces;
-		
+		TypeNameNode *base;
+		std::vector<TypeNameNode *> interfaces;
+
 	public:
 		inline ClassNode(const std::string &name) :
 			Childable(name),
 			visibility(Visibility::Public),
-			base("Object"),
+			base(new TypeNameNode()),
 			interfaces() {
-			
+			base->type = "Object";
 		}
 		
 		NODE_PROPS(
@@ -34,17 +35,18 @@ namespace yaplc { namespace structure {
 				break;
 			})
 			
-			NODE_PROP(base, stream << base;)
+			NODE_PROP_AUTO(base)
 			NODE_PROP(interfaces, {
 				auto i = interfaces.begin();
 				auto end = interfaces.end();
 				
 				stream << "[";
 				if (i != end) {
-					stream << *(i++);
+					(*i)->show(stream, indent + 1);
 					
-					for (; i < end; ++i) {
-						stream << ", " << *i;
+					for (++i; i < end; ++i) {
+						stream << ", ";
+						(*i)->show(stream, indent + 1);
 					}
 				}
 				stream << "]";

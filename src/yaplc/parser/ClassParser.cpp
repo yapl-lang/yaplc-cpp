@@ -2,6 +2,7 @@
 #include "MemberParser.h"
 #include "yaplc/structure/ClassNode.h"
 #include "yaplc/structure/MemberNode.h"
+#include "TypeNameParser.h"
 #include <algorithm>
 
 namespace yaplc { namespace parser {
@@ -40,47 +41,38 @@ namespace yaplc { namespace parser {
 		
 		skipEmpty();
 		
-		{
-			std::string base;
-			
-			if (getName(base, "extends")) {
-				classNode->base = base;
+		if (skip("extends")) {
+			if (!parse<TypeNameParser>(&classNode->base)) {
+				error("Type name expected.");
+				cancelFatal();
 			}
 		}
-		
-		{
-			std::string interface;
-			
-			if (getName(interface, "implements")) {
-				classNode->interfaces.push_back(interface);
-				
-				while (true) {
-					save();
-					
-					skipEmpty();
+
+		if (skip("implements")) {
+			bool first = true;
+
+			while (true) {
+				skipEmpty();
+				if (first) {
+					first = false;
+				} else {
 					if (get() != ',') {
 						norestore();
-						
+
 						break;
 					}
-					
+
 					skip();
-					skipEmpty();
-					
-					if (!getWord(interface)) {
-						restore();
-						
-						break;
-					}
-					
-					if (std::find(classNode->interfaces.begin(), classNode->interfaces.end(), interface) != classNode->interfaces.end()) {
-						error("Cannot implement a interface more than one time.", position() - interface.length(), position() - 1);
-					} else {
-						classNode->interfaces.push_back(interface);
-					}
-					
-					norestore();
 				}
+
+				skipEmpty();
+
+				structure::TypeNameNode *interface;
+				if (!parse<TypeNameParser>(&interface)) {
+					break;
+				}
+
+				classNode->interfaces.push_back(interface);
 			}
 		}
 		
