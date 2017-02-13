@@ -271,6 +271,7 @@ next:
 		
 		if (get(string.size()) == string) {
 			norestore();
+			skip(string.size());
 			return true;
 		}
 		
