@@ -393,6 +393,7 @@ next:
 	}
 
 	bool BaseParser::expected(char expected, bool pCancel, bool pError, bool fatal) {
+		skipEmpty();
 		if ((!end()) && (get() == expected)) {
 			skip();
 
