@@ -8,18 +8,29 @@ package com.package.name;
 import std.threading.Thread;
 
 public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
-	public object<SomeClass<int, int>> a(SomeClass<int, int> a, int b = 15, float d = 8) {
-		/*var k = 15;
+	public object a(/*SomeClass<int, int> a, int b = 15, float d = 8*/) {
+		var k = 15;
 		var b = this.stringValue;
 
 		this.a(b);
 
-		this.a 28;*/
+		this.a 28;
 
 		if k == 15 then
 			this.a(k);
 		else
 			this.a(k + 1);
+
+		if (true) {
+
+		}
+
+		while (true) {
+			this.a();
+		}
+
+		while true do
+			this.a();
 	}
 
 	public string stringValue = `Hello, ${Thread.getThreadsCount() + (10 / 5)}. Hello, ${20}`;
