@@ -12,20 +12,24 @@
 namespace yaplc { namespace structure {
 	class Childable;
 	class Listable;
+	class Container;
 	
 	class Node {
 		friend class Childable;
 		friend class Listable;
+		friend class Container;
 	private:
 		std::string name;
 		Childable *childableParent;
 		Listable *listableParent;
+		Container *containerParent;
 
 	public:
 		Node();
 		Node(const std::string &name);
 		Node(const std::string &name, Childable *parent);
 		Node(Listable *parent);
+		Node(Container *parent);
 		virtual ~Node();
 
 		inline std::string getName() const {
@@ -42,6 +46,10 @@ namespace yaplc { namespace structure {
 		
 		inline Listable *getListableParent() const {
 			return listableParent;
+		}
+		
+		inline Container *getContainerParent() const {
+			return containerParent;
 		}
 		
 		inline std::string show(unsigned long indent = 0) const {

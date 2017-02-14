@@ -1,6 +1,7 @@
 #include "Node.h"
 #include "Childable.h"
 #include "Listable.h"
+#include "Container.h"
 #include "regex/regex.h"
 #include <typeinfo>
 #include <cxxabi.h>
@@ -9,29 +10,41 @@ namespace yaplc { namespace structure {
 	Node::Node() :
 		name(""),
 		childableParent(nullptr),
-		listableParent(nullptr) {
+		listableParent(nullptr),
+		containerParent(nullptr) {
 		
 	}
 
 	Node::Node(const std::string &name) :
 		name(name),
 		childableParent(nullptr),
-		listableParent(nullptr) {
+		listableParent(nullptr),
+		containerParent(nullptr) {
 
 	}
 	
 	Node::Node(const std::string &name, Childable *parent) :
 		name(name),
 		childableParent(parent),
-		listableParent(nullptr) {
+		listableParent(nullptr),
+		containerParent(nullptr) {
 		parent->add(this);
 	}
 	
 	Node::Node(Listable *parent) :
 		name(""),
 		childableParent(nullptr),
-		listableParent(parent) {
+		listableParent(parent),
+		containerParent(nullptr) {
 		parent->add(this);
+	}
+	
+	Node::Node(Container *parent) :
+		name(""),
+		childableParent(nullptr),
+		listableParent(nullptr),
+		containerParent(parent) {
+		parent->set(this);
 	}
 	
 	Node::~Node() {

@@ -13,6 +13,7 @@ namespace yaplc { namespace structure {
 		Childable(const std::string &name);
 		Childable(const std::string &name, Childable *parent);
 		Childable(Listable *parent);
+		Childable(Container *parent);
 		virtual ~Childable();
 		
 		void add(Node *child);

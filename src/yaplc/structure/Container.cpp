@@ -1,4 +1,6 @@
 #include "Container.h"
+#include "Childable.h"
+#include "Listable.h"
 #include "yaplc/util/leftpad.h"
 #include <typeinfo>
 
@@ -27,6 +29,12 @@ namespace yaplc { namespace structure {
 
 	}
 	
+	Container::Container(Container *parent) :
+		Node(parent),
+		child(nullptr) {
+		parent->set(this);
+	}
+	
 	Container::~Container() {
 		delete child;
 	}
@@ -36,6 +44,15 @@ namespace yaplc { namespace structure {
 	}
 	
 	Node *Container::set(Node *child) {
+		if (child->childableParent != nullptr) {
+			child->childableParent->remove(child);
+			child->childableParent = nullptr;
+		} else if (child->listableParent != nullptr) {
+			child->listableParent->remove(child);
+		} else if (child->containerParent != nullptr) {
+			child->containerParent->set(nullptr);
+		}
+		
 		delete this->child;
 		
 		return this->child = child;
