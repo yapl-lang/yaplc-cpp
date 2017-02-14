@@ -8,7 +8,7 @@ package com.package.name;
 import std.threading.Thread;
 
 public class Main<T> extends SomeClass<int> implements SomeInterface<float>, SomeInterface2 {
-	public object a(SomeClass<int, int> a, int b = 15, float d = 8) {
+	/*public object a(SomeClass<int, int> a, int b = 15, float d = 8) {
 		var k = 15;
 		var b = this.stringValue;
 
@@ -38,5 +38,5 @@ public class Main<T> extends SomeClass<int> implements SomeInterface<float>, Som
 	}
 
 	public string stringValue = `Hello, ${Thread.getThreadsCount() + (10 / 5)}. Hello, ${20}`;
-	public int k = -10.6;
+	public int k = -10.6;*/
 }

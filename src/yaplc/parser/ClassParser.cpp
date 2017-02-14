@@ -13,10 +13,10 @@ namespace yaplc { namespace parser {
 		skipOrCancel("class");
 		
 		auto classNode = new structure::ClassNode();
+		parentNode->add(classNode);
 		if (!parse<TypeNameParser>(&classNode->name)) {
 			error("Type name expected.") && cancelFatal();
 		}
-		parentNode->add(classNode);
 		
 		skipEmpty();
 		

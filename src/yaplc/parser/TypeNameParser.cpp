@@ -10,7 +10,7 @@ namespace yaplc { namespace parser {
 
 		auto node = *typeNameNode;
 		if (node == nullptr) {
-			node = new structure::TypeNameNode();
+			auto node = new structure::TypeNameNode();
 			*typeNameNode = node;
 		}
 		
@@ -53,6 +53,7 @@ end:
 			if (get() != '>') {
 				error(std::string("Expected '>'. Got '") + get() + "'.");
 				delete node;
+				*typeNameNode = nullptr;
 				cancelFatal();
 			}
 

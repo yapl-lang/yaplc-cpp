@@ -20,11 +20,11 @@ namespace yaplc { namespace structure {
 		}
 		
 		virtual ~ClassNode() {
-			delete base;
-			delete name;
-			for (auto interface : interfaces) {
+			//delete base;
+			//delete name;
+			/*for (auto interface : interfaces) {
 				delete interface;
-			}
+			}*/
 		}
 		
 		NODE_PROPS(
