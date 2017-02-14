@@ -494,7 +494,14 @@ next:
 						}
 
 						if (it != outModifiers.end()) {
-							error("'" + std::get<0>(word) + "' and '" + (*it).first + "' modifiers are incompatible.", std::get<1>(word), std::get<2>(word));
+							auto word1 = std::get<0>(word);
+							auto word2 = (*it).second;
+
+							if (word1 == word2) {
+								error("Modifier '" + word1 + "' is declared twice.", std::get<1>(word), std::get<2>(word));
+							} else {
+								error("'" + word1 + "' and '" + word2 + "' modifiers are incompatible.", std::get<1>(word), std::get<2>(word));
+							}
 						} else {
 							outModifiers[allowedModifierSet.first] = std::get<0>(word);
 						}
