@@ -1,19 +1,17 @@
 #pragma once
 
-#include "Listable.h"
+#include "TypeNode.h"
 #include "TypeNameNode.h"
 
 namespace yaplc { namespace structure {
-	class ClassNode : public Listable {
+	class ClassNode : public TypeNode {
 	public:
-		TypeNameNode *name;
 		TypeNameNode *base;
 		std::vector<TypeNameNode *> interfaces;
 
 	public:
 		inline ClassNode() :
-			Listable(),
-			name(new TypeNameNode()),
+			TypeNode(),
 			base(new TypeNameNode()),
 			interfaces() {
 			base->type = "Object";
@@ -21,14 +19,12 @@ namespace yaplc { namespace structure {
 		
 		virtual ~ClassNode() {
 			delete base;
-			delete name;
 			for (auto interface : interfaces) {
 				delete interface;
 			}
 		}
 		
-		NODE_PROPS(
-			NODE_PROP_AUTO(name)
+		NODE_PROPS_PARENT(
 			NODE_PROP_AUTO(base)
 			NODE_PROP(interfaces, {
 				auto i = interfaces.begin();
@@ -45,6 +41,6 @@ namespace yaplc { namespace structure {
 				}
 				stream << "]";
 			})
-		)
+		, TypeNode)
 	};
 } }

@@ -6,20 +6,9 @@
 #include <algorithm>
 
 namespace yaplc { namespace parser {
-	void ClassParser::handle(structure::Listable *parentNode) {
+	void ClassParser::handle(structure::ClassNode *classNode) {
 		skipEmpty();
-		push();
-		
-		skipOrCancel("class");
-		
-		auto classNode = new structure::ClassNode();
-		parentNode->add(classNode);
-		if (!parse<TypeNameParser>(&classNode->name)) {
-			error("Type name expected.") && cancelFatal();
-		}
-		
-		skipEmpty();
-		
+
 		if (skip("extends")) {
 			if (!parse<TypeNameParser>(&classNode->base)) {
 				error("Type name expected.");

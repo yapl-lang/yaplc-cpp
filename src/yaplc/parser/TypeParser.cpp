@@ -1,5 +1,6 @@
 #include "TypeParser.h"
 #include "ClassParser.h"
+#include "TypeNameParser.h"
 
 namespace yaplc { namespace parser {
 	void TypeParser::handle(structure::Listable *parentNode) {
@@ -14,18 +15,44 @@ namespace yaplc { namespace parser {
 		std::string typeName;
 		std::map<std::string, std::string> modifiers;
 		std::vector<std::tuple<std::string, unsigned long, unsigned long>> otherModifiers;
-		getModifiers(typeNames, typeName, {
+		if (!getModifiers(typeNames, typeName, {
 			{"visibility", {"public", "protected", "private"}}
-		}, modifiers, otherModifiers);
-		
+		}, modifiers, otherModifiers)) {
+			cancel();
+		}
+
+		skip(typeName);
+
+		structure::TypeNode *typeNode;
+
 		if (typeName == "class") {
-			parse<ClassParser>(parentNode) || (error("Class expected.") && cancel());
+			auto classNode = new structure::ClassNode();
+			typeNode = classNode;
+			parentNode->add(typeNode);
+
+			if (!parse<TypeNameParser>(&typeNode->name)) {
+				error("Type name expected.") && cancelFatal();
+			}
+
+			parse<ClassParser>(classNode) || (error("Class expected.") && cancelFatal());
 		} else if (typeName == "interface") {
 			cancel(); // TODO: Implement
 		} else if (typeName == "struct") {
 			cancel(); // TODO: Implement
 		} else {
 			cancel();
+		}
+
+		{
+			auto visibility = modifiers["visibility"];
+
+			if (visibility == "public") {
+				typeNode->visibility = structure::TypeNode::Visibility::Public;
+			} else if (visibility == "protected") {
+				typeNode->visibility = structure::TypeNode::Visibility::Protected;
+			} else if (visibility == "private") {
+				typeNode->visibility = structure::TypeNode::Visibility::Private;
+			}
 		}
 	}
 } }
