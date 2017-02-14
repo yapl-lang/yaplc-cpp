@@ -11,13 +11,13 @@ namespace yaplc { namespace parser {
 
 		// Hardcode
 		std::tuple<std::string, unsigned long, unsigned long> name;
-		structure::TypeNameNode *type;
+		structure::TypeNameNode *type = nullptr;
 
 		{
 			std::vector<std::tuple<structure::TypeNameNode *, unsigned long, unsigned long>> entries;
 
 			while (true) {
-				structure::TypeNameNode *typeNameNode;
+				structure::TypeNameNode *typeNameNode = nullptr;
 
 				skipEmpty();
 				unsigned long start = position();

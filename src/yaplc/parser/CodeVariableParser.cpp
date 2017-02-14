@@ -5,7 +5,7 @@
 
 namespace yaplc { namespace parser {
 	void CodeVariableParser::handle(structure::ExpressionNode *parentNode) {
-		structure::TypeNameNode *typeNameNode;
+		structure::TypeNameNode *typeNameNode = nullptr;
 
 		if (!parse<TypeNameParser>(&typeNameNode)) {
 			cancel();

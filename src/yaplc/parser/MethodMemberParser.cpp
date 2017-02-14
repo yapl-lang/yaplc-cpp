@@ -20,7 +20,7 @@ namespace yaplc { namespace parser {
 		parentNode->set(methodMemberNode);
 
 		while (get() != ')') {
-			structure::TypeNameNode *argumentType;
+			structure::TypeNameNode *argumentType = nullptr;
 			std::string name;
 			structure::ExpressionNode *value = nullptr;
 

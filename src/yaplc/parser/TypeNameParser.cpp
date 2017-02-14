@@ -10,8 +10,7 @@ namespace yaplc { namespace parser {
 
 		auto node = *typeNameNode;
 		if (node == nullptr) {
-			auto node = new structure::TypeNameNode();
-			*typeNameNode = node;
+			*typeNameNode = node = new structure::TypeNameNode();
 		}
 		
 		node->type = type;
@@ -31,7 +30,7 @@ namespace yaplc { namespace parser {
 				case '>':
 					goto end;
 				default:
-					structure::TypeNameNode *templateArgument;
+					structure::TypeNameNode *templateArgument = nullptr;
 
 					if (!parse<TypeNameParser>(&templateArgument)) {
 						goto end;
