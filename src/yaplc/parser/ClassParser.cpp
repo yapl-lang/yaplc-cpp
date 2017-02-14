@@ -6,38 +6,17 @@
 #include <algorithm>
 
 namespace yaplc { namespace parser {
-	void ClassParser::handle(structure::Childable *parentNode) {
+	void ClassParser::handle(structure::Listable *parentNode) {
 		skipEmpty();
 		push();
 		
-		std::map<std::string, std::string> classModifiers;
+		skipOrCancel("class");
 		
-		std::vector<std::string> possibleVisibility;
-		(true) ?
-			(possibleVisibility = {"public", "private"}) :
-			(possibleVisibility = {"public", "protected", "private"});
-		
-		std::string className;
-		if (!getName(className, "class", {
-			{"visibility", possibleVisibility}
-		}, classModifiers)) {
-			cancel();
+		auto classNode = new structure::ClassNode();
+		if (!parse<TypeNameParser>(&classNode->name)) {
+			error("Type name expected.") && cancelFatal();
 		}
-		
-		auto classNode = new structure::ClassNode(className);
 		parentNode->add(classNode);
-		
-		{
-			std::string visibility = classModifiers["visibility"];
-			
-			if (visibility == "public") {
-				classNode->visibility = structure::ClassNode::Visibility::Public;
-			} else if (visibility == "protected") {
-				classNode->visibility = structure::ClassNode::Visibility::Protected;
-			} else if (visibility == "private") {
-				classNode->visibility = structure::ClassNode::Visibility::Private;
-			}
-		}
 		
 		skipEmpty();
 		
@@ -67,7 +46,7 @@ namespace yaplc { namespace parser {
 
 				skipEmpty();
 
-				structure::TypeNameNode *interface;
+				structure::TypeNameNode *interface = nullptr;
 				if (!parse<TypeNameParser>(&interface)) {
 					break;
 				}

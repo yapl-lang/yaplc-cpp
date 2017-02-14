@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Childable.h"
+#include "Listable.h"
 
 namespace yaplc { namespace structure {
-	class RootNode : public Childable {
+	class RootNode : public Listable {
 	public:
 		//
 	};

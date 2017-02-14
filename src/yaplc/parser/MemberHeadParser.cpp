@@ -6,7 +6,7 @@
 #include <tuple>
 
 namespace yaplc { namespace parser {
-	void MemberHeadParser::handle(structure::Childable *parentNode, structure::MemberNode **memberNode) {
+	void MemberHeadParser::handle(structure::Listable *parentNode, structure::MemberNode **memberNode) {
 		std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers;
 
 		// Hardcode

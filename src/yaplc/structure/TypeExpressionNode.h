@@ -10,8 +10,16 @@ namespace yaplc { namespace structure {
 		Node *child;
 
 	public:
+		inline TypeExpressionNode() :
+			Node(),
+			type(nullptr),
+			child(nullptr) {
+			
+		}
+		
 		virtual ~TypeExpressionNode() {
 			delete type;
+			delete child;
 		}
 
 		NODE_PROPS(

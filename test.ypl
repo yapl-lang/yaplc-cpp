@@ -7,7 +7,7 @@ package com.package.name;
 
 import std.threading.Thread;
 
-public class Main extends SomeClass implements SomeInterface, SomeInterface2 {
+public class Main<T> extends SomeClass<int> implements SomeInterface<float>, SomeInterface2 {
 	public object a(SomeClass<int, int> a, int b = 15, float d = 8) {
 		var k = 15;
 		var b = this.stringValue;

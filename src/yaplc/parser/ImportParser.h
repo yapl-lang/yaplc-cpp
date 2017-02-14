@@ -4,11 +4,11 @@
 #include "yaplc/structure/Childable.h"
 
 namespace yaplc { namespace parser {
-	class ImportParser : public Parser<structure::Childable *> {
+	class ImportParser : public Parser<structure::Listable *> {
 	protected:
-		virtual void handle(structure::Childable *parentNode);
+		virtual void handle(structure::Listable *parentNode);
 
-		bool parseImport(structure::Childable *parentNode);
-		void parseSubImport(structure::Childable *parentNode, const std::string &prefix, bool parentStatic);
+		bool parseImport(structure::Listable *parentNode);
+		void parseSubImport(structure::Listable *parentNode, const std::string &prefix, bool parentStatic);
 	};
 } }

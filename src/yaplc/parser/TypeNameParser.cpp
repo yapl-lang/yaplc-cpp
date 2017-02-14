@@ -8,9 +8,12 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 
-		auto node = new structure::TypeNameNode();
-		*typeNameNode = node;
-
+		auto node = *typeNameNode;
+		if (node == nullptr) {
+			node = new structure::TypeNameNode();
+			*typeNameNode = node;
+		}
+		
 		node->type = type;
 
 		save();

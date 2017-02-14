@@ -63,10 +63,20 @@ namespace yaplc { namespace parser {
 		bool get(const std::string &pattern);
 		bool get(const std::string &pattern, const std::vector<std::string *> &caps);
 		unsigned long get(const std::string &pattern, std::vector<std::string> &results);
-		unsigned long get(const std::string &pattern, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &results);
+		unsigned long get(const std::string &pattern, std::vector<std::tuple<std::string, unsigned long, unsigned long>> &results);
 		bool getWord(std::string &word);
 		bool getLowercaseWord(std::string &word);
 		unsigned long getWords(std::vector<std::string> &words);
+		
+		bool getModifiers(const std::string &beforeWord,
+		                  const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+		                  std::map<std::string, std::string> &outModifiers,
+		                  std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers);
+		bool getModifiers(const std::vector<std::string> &beforeWords,
+		                  std::string &beforeWord,
+		                  const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+		                  std::map<std::string, std::string> &outModifiers,
+		                  std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers);
 		bool getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers);
 		bool getName(std::string &name, const std::string &prevWord);
 		bool getName(std::string &name, const std::string &prevWord, const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers);

@@ -51,6 +51,7 @@ namespace yaplc { namespace structure {
 
 	public:
 		inline OperatorNode() :
+			type((Type)0),
 			expression(new ExpressionNode()) {}
 		virtual ~OperatorNode() {
 			delete expression;

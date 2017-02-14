@@ -1,40 +1,34 @@
 #pragma once
 
-#include "Childable.h"
+#include "Listable.h"
 #include "TypeNameNode.h"
 
 namespace yaplc { namespace structure {
-	class ClassNode : public Childable {
+	class ClassNode : public Listable {
 	public:
-		enum class Visibility { Private, Protected, Public };
-		
-	public:
-		Visibility visibility;
+		TypeNameNode *name;
 		TypeNameNode *base;
 		std::vector<TypeNameNode *> interfaces;
 
 	public:
-		inline ClassNode(const std::string &name) :
-			Childable(name),
-			visibility(Visibility::Public),
+		inline ClassNode() :
+			Listable(),
+			name(new TypeNameNode()),
 			base(new TypeNameNode()),
 			interfaces() {
 			base->type = "Object";
 		}
 		
+		virtual ~ClassNode() {
+			delete base;
+			delete name;
+			for (auto interface : interfaces) {
+				delete interface;
+			}
+		}
+		
 		NODE_PROPS(
-			NODE_PROP(visibility, switch (visibility) {
-			case Visibility::Private:
-				stream << "private";
-				break;
-			case Visibility::Protected:
-				stream << "protected";
-				break;
-			case Visibility::Public:
-				stream << "public";
-				break;
-			})
-			
+			NODE_PROP_AUTO(name)
 			NODE_PROP_AUTO(base)
 			NODE_PROP(interfaces, {
 				auto i = interfaces.begin();

@@ -85,13 +85,13 @@ namespace yaplc { namespace parser {
 		return count;
 	}
 
-	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::pair<std::string, std::pair<unsigned long, unsigned long>>> &results) {
+	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::tuple<std::string, unsigned long, unsigned long>> &results) {
 		unsigned long count = 0;
 		std::string word;
 
 		skipEmpty();
 		while (get("(" + pattern + ")", {&word})) {
-			results.push_back({word, {position() - word.length(), position() - 1}});
+			results.push_back(std::make_tuple(word, position() - word.length(), position() - 1));
 			skipEmpty();
 			++count;
 		}
@@ -121,6 +121,49 @@ namespace yaplc { namespace parser {
 		}
 
 		return count;
+	}
+	
+	bool BaseParser::getModifiers(const std::string &beforeWord,
+	                              const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+	                              std::map<std::string, std::string> &outModifiers,
+	                              std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
+		return getModifiers({beforeWord}, allowedModifiers, outModifiers, otherModifiers);
+	}
+	
+	bool BaseParser::getModifiers(const std::vector<std::string> &beforeWords,
+	                              std::string &beforeWord,
+	                              const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+	                              std::map<std::string, std::string> &outModifiers,
+	                              std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
+		save();
+		
+		std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers;
+		
+		while (true) {
+			std::string word;
+			
+			save();
+			skipEmpty();
+			auto pos1 = position();
+			if (!getWord(word)) {
+				restore();
+				restore();
+				return false;
+			}
+			auto pos2 = position();
+			
+			auto it = std::find(beforeWords.begin(), beforeWords.end(), word);
+			if (it != beforeWords.end()) {
+				restore();
+				norestore();
+				beforeWord = word;
+				
+				groupModifiers(allowedModifiers, modifiers, outModifiers, otherModifiers);
+				return true;
+			}
+			
+			modifiers.push_back(std::make_tuple(word, pos1, pos2 - 1));
+		}
 	}
 	
 	bool BaseParser::getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {

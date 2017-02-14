@@ -20,6 +20,14 @@ namespace yaplc { namespace structure {
 		TypeNameNode *type;
 
 	public:
+		inline MemberNode() :
+			visibility(Visibility::Public),
+			staticality(Staticality::Dynamic),
+			modifiers(),
+			type(nullptr) {
+			
+		}
+		
 		virtual ~MemberNode() {
 			delete type;
 		}

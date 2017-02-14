@@ -32,7 +32,7 @@ namespace yaplc { namespace parser {
 			skipEmpty();
 
 			auto packageNode = new structure::PackageNode();
-			rootNode->add(packageName, packageNode);
+			rootNode->add(packageNode);
 
 			switch (get()) {
 			case ';': {
@@ -73,6 +73,16 @@ done:
 	}
 
 	void RootParser::parsePackageBody(structure::PackageNode *packageNode) {
-		while ((parse<TypeParser>(packageNode)) || (parse<ImportParser>(packageNode)));
+		while (true) {
+			if (parse<ImportParser>(packageNode)) {
+				continue;
+			}
+			
+			if (parse<TypeParser>(packageNode)) {
+				continue;
+			}
+			
+			break;
+		}
 	}
 } }

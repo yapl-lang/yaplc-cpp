@@ -4,8 +4,8 @@
 #include "yaplc/structure/Childable.h"
 
 namespace yaplc { namespace parser {
-	class TypeParser : public Parser<structure::Childable *> {
+	class TypeParser : public Parser<structure::Listable *> {
 	protected:
-		virtual void handle(structure::Childable *parentNode);
+		virtual void handle(structure::Listable *parentNode);
 	};
 } }

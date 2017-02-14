@@ -3,13 +3,13 @@
 #include "regex/regex.h"
 
 namespace yaplc { namespace parser {
-	void ImportParser::handle(structure::Childable *parentNode) {
+	void ImportParser::handle(structure::Listable *parentNode) {
 		if (!parseImport(parentNode)) {
 			cancel();
 		}
 	}
 
-	bool ImportParser::parseImport(structure::Childable *parentNode) {
+	bool ImportParser::parseImport(structure::Listable *parentNode) {
 		try {
 			skipOrFail("import", "");
 		} catch (...) {
@@ -21,7 +21,7 @@ namespace yaplc { namespace parser {
 		return true;
 	}
 
-	void ImportParser::parseSubImport(structure::Childable *parentNode, const std::string &prefix, bool parentStatic) {
+	void ImportParser::parseSubImport(structure::Listable *parentNode, const std::string &prefix, bool parentStatic) {
 		bool importStatic = parentStatic;
 		std::string importName;
 
@@ -73,7 +73,8 @@ get_import:
 			if ((get() == ';') || (prefix != "")) {
 				auto importNode = new structure::ImportNode();
 				importNode->isStatic = importStatic;
-				parentNode->add(importName, importNode);
+				importNode->target = importName;
+				parentNode->add(importNode);
 
 				if (get() == ';') {
 					skip();

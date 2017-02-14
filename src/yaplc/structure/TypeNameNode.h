@@ -11,6 +11,13 @@ namespace yaplc { namespace structure {
 		std::vector<TypeNameNode *> templateArguments;
 
 	public:
+		inline TypeNameNode() :
+			Node(),
+			type(),
+			templateArguments() {
+			
+		}
+		
 		virtual ~TypeNameNode() {
 			for (auto templateArgument : templateArguments) {
 				delete templateArgument;

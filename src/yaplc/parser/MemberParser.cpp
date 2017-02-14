@@ -6,7 +6,7 @@
 #include "yaplc/structure/ClassNode.h"
 
 namespace yaplc { namespace parser {
-	void MemberParser::handle(structure::Childable *parentNode) {
+	void MemberParser::handle(structure::Listable *parentNode) {
 		skipEmpty();
 		push();
 
