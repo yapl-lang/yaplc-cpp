@@ -4,6 +4,7 @@
 #include "ParserManager.h"
 #include "CancelParseException.h"
 #include "CancelFatalParseException.h"
+#include "yaplc/structure/Node.h"
 #include <vector>
 #include <string>
 #include <map>
@@ -53,6 +54,14 @@ namespace yaplc { namespace parser {
 			
 			delete parser;
 			return true;
+		}
+		
+		inline void begin(structure::Node *node) {
+			node->setBegin(position());
+		}
+		
+		inline void end(structure::Node *node) {
+			node->setEnd(position() - 1);
 		}
 		
 		bool end();

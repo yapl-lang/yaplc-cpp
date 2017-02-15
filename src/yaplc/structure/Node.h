@@ -23,6 +23,8 @@ namespace yaplc { namespace structure {
 		Childable *childableParent;
 		Listable *listableParent;
 		Container *containerParent;
+		
+		unsigned long begin, end;
 
 	public:
 		Node();
@@ -51,6 +53,24 @@ namespace yaplc { namespace structure {
 		inline Container *getContainerParent() const {
 			return containerParent;
 		}
+		
+		
+		inline unsigned long getBegin() const {
+			return begin;
+		}
+		
+		inline void setBegin(unsigned long value) {
+			begin = value;
+		}
+		
+		inline unsigned long getEnd() const {
+			return end;
+		}
+		
+		inline void setEnd(unsigned long value) {
+			end = value;
+		}
+		
 		
 		inline std::string show(unsigned long indent = 0) const {
 			std::stringstream stream;
