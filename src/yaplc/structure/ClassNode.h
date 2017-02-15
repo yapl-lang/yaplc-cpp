@@ -14,7 +14,7 @@ namespace yaplc { namespace structure {
 			TypeNode(),
 			base(new TypeNameNode()),
 			interfaces() {
-			base->type = "Object";
+			base->type = "std.Object";
 		}
 		
 		virtual ~ClassNode() {
