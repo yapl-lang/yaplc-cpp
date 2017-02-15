@@ -1,4 +1,5 @@
 #include "Processor.h"
+#include "regex/regex.h"
 
 namespace yaplc { namespace process {
 	Processor::Processor() {
@@ -29,6 +30,13 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::ImportNode *importNode, Configuration &configuration) {
+		auto target = importNode->target;
 		
+		std::vector<std::string> caps;
+		regex::match("([^\\.]*)$", target, caps, 1);
+		
+		auto source = caps[0];
+		
+		configuration.imports[source] = target;
 	}
 } }
