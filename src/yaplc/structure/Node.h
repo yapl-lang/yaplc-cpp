@@ -40,6 +40,8 @@ namespace yaplc { namespace structure {
 
 		void setName(const std::string &name);
 
+		std::string getTypeName() const;
+
 		virtual void clear() {}
 
 		inline Childable *getChildableParent() const {
