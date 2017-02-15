@@ -6,12 +6,14 @@
 #include "yaplc/PositionalError.h"
 
 #include "yaplc/parser/ParserManager.h"
+#include "yaplc/process/Processor.h"
 
 #include "yaplc/util/markline.h"
 
 #include "yaplc/structure/Listable.h"
 #include "yaplc/structure/Childable.h"
 #include "yaplc/structure/Container.h"
+#include "yaplc/structure/RootNode.h"
 
 using std::cout;
 using std::endl;
@@ -28,6 +30,8 @@ using yaplc::structure::Node;
 using yaplc::structure::Listable;
 using yaplc::structure::Childable;
 using yaplc::structure::Container;
+using yaplc::structure::RootNode;
+using yaplc::process::Processor;
 using yaplc::util::markline;
 
 
@@ -96,6 +100,7 @@ void showError(const std::string &code,
 int main(int argc, char **argv) {
 	try {
 		ParserManager parser;
+		Processor processor;
 		
 #ifdef INPUT_FILE
 		ifstream ifs(INPUT_FILE);
@@ -103,11 +108,12 @@ int main(int argc, char **argv) {
 		ifstream ifs(argv[1]);
 #endif
 		string content((istreambuf_iterator<char>(ifs)),
-						(istreambuf_iterator<char>()));
+		               (istreambuf_iterator<char>()));
 		
 		vector<CompilingError *> errors;
 		
 		Node *node = parser.parse(content, errors);
+		processor.process((RootNode *)node);
 		cout << node->show() << endl;
 		delete node;
 	} catch (const exception &e) {
