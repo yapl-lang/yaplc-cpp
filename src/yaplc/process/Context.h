@@ -4,17 +4,17 @@
 #include <map>
 
 namespace yaplc { namespace process {
-	class Configuration {
+	class Context {
 	public:
 		std::string package;
 		std::map<std::string, std::string> imports;
 	
 	public:
-		Configuration() {
+		Context() {
 			
 		}
 		
-		Configuration clone() {
+		Context clone() {
 			return *this;
 		}
 	};

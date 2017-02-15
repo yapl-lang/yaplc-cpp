@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Configuration.h"
+#include "Context.h"
 #include "yaplc/structure/RootNode.h"
 #include "yaplc/structure/PackageNode.h"
 #include "yaplc/structure/ImportNode.h"
@@ -14,9 +14,9 @@ namespace yaplc { namespace process {
 		~Processor();
 		
 		void process(structure::RootNode *rootNode);
-		void process(structure::PackageNode *packageNode, Configuration &configuration);
-		void process(structure::ImportNode *importNode, Configuration &configuration);
-		void process(structure::ClassNode *classNode, Configuration &configuration);
-		void process(structure::TypeNameNode *classNode, Configuration &configuration);
+		void process(structure::PackageNode *packageNode, Context &context);
+		void process(structure::ImportNode *importNode, Context &context);
+		void process(structure::ClassNode *classNode, Context &context);
+		void process(structure::TypeNameNode *classNode, Context &context);
 	};
 } }

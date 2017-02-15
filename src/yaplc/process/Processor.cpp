@@ -13,25 +13,25 @@ namespace yaplc { namespace process {
 	void Processor::process(structure::RootNode *rootNode) {
 		for (auto node : *rootNode) {
 			if (auto packageNode = dynamic_cast<structure::PackageNode *>(node)) {
-				Configuration packageConfiguration;
-				process(packageNode, packageConfiguration);
+				Context packageContext;
+				process(packageNode, packageContext);
 			}
 		}
 	}
 	
-	void Processor::process(structure::PackageNode *packageNode, Configuration &configuration) {
-		configuration.package = packageNode->name;
+	void Processor::process(structure::PackageNode *packageNode, Context &context) {
+		context.package = packageNode->name;
 		
 		for (auto node : *packageNode) {
 			if (auto importNode = dynamic_cast<structure::ImportNode *>(node)) {
-				process(importNode, configuration);
+				process(importNode, context);
 			} else if (auto classNode = dynamic_cast<structure::ClassNode *>(node)) {
-				process(classNode, configuration);
+				process(classNode, context);
 			}
 		}
 	}
 	
-	void Processor::process(structure::ImportNode *importNode, Configuration &configuration) {
+	void Processor::process(structure::ImportNode *importNode, Context &context) {
 		auto target = importNode->target;
 		
 		std::vector<std::string> caps;
@@ -39,17 +39,17 @@ namespace yaplc { namespace process {
 		
 		auto source = caps[0];
 		
-		configuration.imports[source] = target;
+		context.imports[source] = target;
 	}
 	
-	void Processor::process(structure::ClassNode *classNode, Configuration &configuration) {
-		process(classNode->base, configuration);
+	void Processor::process(structure::ClassNode *classNode, Context &context) {
+		process(classNode->base, context);
 		for (auto interface : classNode->interfaces) {
-			process(interface, configuration);
+			process(interface, context);
 		}
 	}
 	
-	void Processor::process(structure::TypeNameNode *classNode, Configuration &configuration) {
+	void Processor::process(structure::TypeNameNode *classNode, Context &context) {
 		
 	}
 } }
