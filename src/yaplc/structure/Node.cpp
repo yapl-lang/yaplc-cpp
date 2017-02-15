@@ -11,7 +11,8 @@ namespace yaplc { namespace structure {
 		name(""),
 		childableParent(nullptr),
 		listableParent(nullptr),
-		containerParent(nullptr) {
+		containerParent(nullptr),
+		begin(0), end(0) {
 		
 	}
 
@@ -19,7 +20,8 @@ namespace yaplc { namespace structure {
 		name(name),
 		childableParent(nullptr),
 		listableParent(nullptr),
-		containerParent(nullptr) {
+		containerParent(nullptr),
+		begin(0), end(0)  {
 
 	}
 	
@@ -27,7 +29,8 @@ namespace yaplc { namespace structure {
 		name(name),
 		childableParent(parent),
 		listableParent(nullptr),
-		containerParent(nullptr) {
+		containerParent(nullptr),
+		begin(0), end(0)  {
 		parent->add(this);
 	}
 	
@@ -35,7 +38,8 @@ namespace yaplc { namespace structure {
 		name(""),
 		childableParent(nullptr),
 		listableParent(parent),
-		containerParent(nullptr) {
+		containerParent(nullptr),
+		begin(0), end(0)  {
 		parent->add(this);
 	}
 	
@@ -43,7 +47,8 @@ namespace yaplc { namespace structure {
 		name(""),
 		childableParent(nullptr),
 		listableParent(nullptr),
-		containerParent(parent) {
+		containerParent(parent),
+		begin(0), end(0)  {
 		parent->set(this);
 	}
 	
