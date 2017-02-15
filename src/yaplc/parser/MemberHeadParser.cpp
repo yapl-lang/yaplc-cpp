@@ -7,6 +7,9 @@
 
 namespace yaplc { namespace parser {
 	void MemberHeadParser::handle(structure::Listable *parentNode, structure::MemberNode **memberNode) {
+		skipEmpty();
+		begin();
+
 		std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers;
 
 		// Hardcode
@@ -102,5 +105,7 @@ namespace yaplc { namespace parser {
 
 			(*memberNode)->modifiers = otherModifiers;
 		}
+
+		end(*memberNode);
 	}
 } }

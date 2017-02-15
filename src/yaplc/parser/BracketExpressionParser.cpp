@@ -13,6 +13,7 @@ namespace yaplc { namespace parser {
 			if (auto operatorNode = dynamic_cast<structure::OperatorNode *>(*it)) {
 				if (operatorNode->type == structure::OperatorNode::Type::Call) {
 					parentNode->remove(operatorNode);
+					delete operatorNode;
 					restore();
 				} else {
 					norestore();
@@ -27,15 +28,19 @@ namespace yaplc { namespace parser {
 		push();
 
 		skipEmpty();
+		auto begin = position();
 		expected('(', true, false, false);
 
 		auto group = new structure::ExpressionNode();
+		group->setBegin(begin);
 		if (!parse<ExpressionParser>(group, true)) {
+			delete group;
 			error("Expression expected.");
 			cancelFatal();
 		}
 		parentNode->add(group);
 
 		expected(')');
+		end(group);
 	}
 } }

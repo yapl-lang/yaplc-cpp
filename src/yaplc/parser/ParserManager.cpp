@@ -30,6 +30,7 @@ namespace yaplc { namespace parser {
 			rootNode->setBegin(0);
 			parser = getParser<RootParser>();
 			parser->handleParsing(configuration, rootNode);
+			configuration = parser->configuration;
 			rootNode->setEnd(configuration.position - 1);
 		} catch (const CancelFatalParseException &e) {
 			errors.push_back(new FatalError("Compilation cancelled."));

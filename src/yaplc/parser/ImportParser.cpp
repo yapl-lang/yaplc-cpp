@@ -1,11 +1,17 @@
 #include "ImportParser.h"
-#include "yaplc/structure/ImportNode.h"
 #include "regex/regex.h"
 
 namespace yaplc { namespace parser {
 	void ImportParser::handle(structure::Listable *parentNode) {
+		skipEmpty();
+
+		begin();
 		if (!parseImport(parentNode)) {
 			cancel();
+		}
+
+		for (auto node : parsedNodes) {
+			end(node);
 		}
 	}
 
@@ -75,6 +81,7 @@ get_import:
 				importNode->isStatic = importStatic;
 				importNode->target = importName;
 				parentNode->add(importNode);
+				parsedNodes.push_back(importNode);
 
 				if (get() == ';') {
 					skip();

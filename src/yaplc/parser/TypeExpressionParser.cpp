@@ -7,6 +7,7 @@ namespace yaplc { namespace parser {
 	void TypeExpressionParser::handle(structure::ExpressionNode *parentNode) {
 		structure::TypeNameNode *typeNameNode = nullptr;
 
+		begin();
 		if (!parse<TypeNameParser>(&typeNameNode)) {
 			cancel();
 		}
@@ -14,6 +15,7 @@ namespace yaplc { namespace parser {
 		auto node = new structure::TypeExpressionNode();
 		node->type = typeNameNode;
 		parentNode->add(node);
+		end(node);
 
 		structure::TypeNameNode *typeNameNode2 = nullptr;
 

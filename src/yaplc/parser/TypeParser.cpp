@@ -15,6 +15,9 @@ namespace yaplc { namespace parser {
 		std::string typeName;
 		std::map<std::string, std::string> modifiers;
 		std::vector<std::tuple<std::string, unsigned long, unsigned long>> otherModifiers;
+
+		skipEmpty();
+		begin();
 		if (!getModifiers(typeNames, typeName, {
 			{"visibility", {"public", "protected", "private"}}
 		}, modifiers, otherModifiers)) {
@@ -42,6 +45,8 @@ namespace yaplc { namespace parser {
 		} else {
 			cancel();
 		}
+
+		end(typeNode);
 
 		{
 			auto visibility = modifiers["visibility"];

@@ -41,6 +41,7 @@ namespace yaplc { namespace parser {
 		auto position1 = position();
 		save();
 		skipEmpty();
+		begin();
 		push();
 
 		for (auto op : operators) {
@@ -56,6 +57,7 @@ namespace yaplc { namespace parser {
 					parseArguments(node);
 
 					expected(')');
+					end(node);
 					break;
 				}
 				case structure::OperatorNode::Type::Array: {
@@ -66,12 +68,14 @@ namespace yaplc { namespace parser {
 					parseArguments(node);
 
 					expected(']');
+					end(node);
 					break;
 				}
 				default: {
 					auto node = new structure::OperatorNode();
 					node->type = op.second;
 					parentNode->add(node);
+					end(node);
 				}
 				}
 
@@ -80,11 +84,13 @@ namespace yaplc { namespace parser {
 		}
 
 		auto position2 = position();
+		begin(position1);
 
 		if ((position1 != position2) && (regex::match("^[ \t]*$", configuration.code->substr(position1, position2 - position1)))) {
 			auto node = new structure::OperatorNode();
 			node->type = structure::OperatorNode::Type::Whitespace;
 			parentNode->add(node);
+			end(node);
 
 			parseArguments(node);
 		}

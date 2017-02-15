@@ -3,6 +3,8 @@
 #include "yaplc/util/leftpad.h"
 #include <string>
 #include <sstream>
+#include <vector>
+#include <algorithm>
 
 #define NODE_PROPS(PROPS) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0, bool ending = true) const { stream << "(" << std::endl; PROPS; if (ending) { util::leftpad(stream, indent) << ")"; } }
 #define NODE_PROPS_PARENT(PROPS, PARENT) protected: virtual void showProps(std::ostream &stream, unsigned long indent = 0, bool ending = true) const { PARENT::showProps(stream, indent, false); PROPS; if (ending) { util::leftpad(stream, indent) << ")"; } }
@@ -15,6 +17,7 @@ namespace yaplc { namespace structure {
 	class Container;
 	
 	class Node {
+	public:
 		friend class Childable;
 		friend class Listable;
 		friend class Container;

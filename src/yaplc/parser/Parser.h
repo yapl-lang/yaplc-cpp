@@ -55,13 +55,27 @@ namespace yaplc { namespace parser {
 			delete parser;
 			return true;
 		}
-		
-		inline void begin(structure::Node *node) {
-			node->setBegin(position());
+
+	private:
+		unsigned long nodeBegin;
+
+	protected:
+		inline void begin() {
+			nodeBegin = position();
 		}
-		
+
+		inline void begin(unsigned long position) {
+			nodeBegin = position;
+		}
+
 		inline void end(structure::Node *node) {
+			node->setBegin(nodeBegin);
 			node->setEnd(position() - 1);
+		}
+
+		inline void end(structure::Node *node, unsigned long position) {
+			node->setBegin(nodeBegin);
+			node->setEnd(position);
 		}
 		
 		bool end();

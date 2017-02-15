@@ -13,7 +13,7 @@ namespace yaplc { namespace structure {
 		listableParent(nullptr),
 		containerParent(nullptr),
 		begin(0), end(0) {
-		
+
 	}
 
 	Node::Node(const std::string &name) :
@@ -53,7 +53,7 @@ namespace yaplc { namespace structure {
 	}
 	
 	Node::~Node() {
-		
+
 	}
 
 	void Node::setName(const std::string &name) {

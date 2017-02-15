@@ -9,6 +9,10 @@
 
 #include "yaplc/util/markline.h"
 
+#include "yaplc/structure/Listable.h"
+#include "yaplc/structure/Childable.h"
+#include "yaplc/structure/Container.h"
+
 using std::cout;
 using std::endl;
 using std::ifstream;
@@ -21,6 +25,9 @@ using yaplc::CompilingError;
 using yaplc::PositionalError;
 using yaplc::parser::ParserManager;
 using yaplc::structure::Node;
+using yaplc::structure::Listable;
+using yaplc::structure::Childable;
+using yaplc::structure::Container;
 using yaplc::util::markline;
 
 
@@ -103,11 +110,6 @@ int main(int argc, char **argv) {
 		Node *node = parser.parse(content, errors);
 		cout << node->show() << endl;
 		delete node;
-		
-		for (auto error : errors) {
-			showError(content, error, cout);
-			delete error;
-		}
 	} catch (const exception &e) {
 		cout << e.what() << endl;
 	}

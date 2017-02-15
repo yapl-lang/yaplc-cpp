@@ -2,8 +2,10 @@
 
 namespace yaplc { namespace parser {
 	void TypeNameParser::handle(structure::TypeNameNode **typeNameNode) {
-		std::string type;
+		skipEmpty();
+		begin();
 
+		std::string type;
 		if (!getWord(type)) {
 			cancel();
 		}
@@ -60,5 +62,7 @@ end:
 		} else {
 			restore();
 		}
+
+		end(node);
 	}
 } }

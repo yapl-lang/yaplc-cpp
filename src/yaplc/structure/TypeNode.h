@@ -16,7 +16,7 @@ namespace yaplc { namespace structure {
 		inline TypeNode() :
 			Listable(),
 			visibility(Visibility::Public),
-			name(new TypeNameNode()) {
+			name(nullptr) {
 
 		}
 

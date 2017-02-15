@@ -5,6 +5,7 @@
 namespace yaplc { namespace parser {
 	void VariableMemberParser::handle(structure::MemberNode *parentNode) {
 		skipEmpty();
+		begin();
 
 		switch (get()) {
 		case ';': {
@@ -33,5 +34,7 @@ namespace yaplc { namespace parser {
 		default:
 			cancel();
 		}
+
+		end(parentNode);
 	}
 } }

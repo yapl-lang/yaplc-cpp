@@ -26,6 +26,7 @@ namespace yaplc { namespace parser {
 	}
 	
 	void StringExpressionParser::parseString(structure::ExpressionNode *parentNode) {
+		begin();
 		skip();
 		
 		std::string result;
@@ -56,9 +57,11 @@ done:
 		auto node = new structure::StringNode();
 		node->value = result;
 		parentNode->add(node);
+		end(node);
 	}
 	
 	void StringExpressionParser::parseChar(structure::ExpressionNode *parentNode) {
+		begin();
 		skip();
 		
 		std::string result;
@@ -93,9 +96,11 @@ done:
 		auto node = new structure::CharNode();
 		node->value = result;
 		parentNode->add(node);
+		end(node);
 	}
 	
 	void StringExpressionParser::parseTemplateString(structure::ExpressionNode *parentNode) {
+		begin();
 		skip();
 		
 		std::string result;
@@ -129,6 +134,7 @@ done:
 						auto node = new structure::StringNode();
 						node->value = result;
 						parentNode->add(node);
+						end(node, position() - 2); // TODO: Check
 						
 						result = "";
 					}
@@ -141,6 +147,8 @@ done:
 					parse<ExpressionParser>(group, true);
 					
 					expected('}');
+
+					begin();
 				}
 				break;
 			default:
@@ -154,6 +162,7 @@ done:
 			auto node = new structure::StringNode();
 			node->value = result;
 			parentNode->add(node);
+			end(node);
 		}
 	}
 } }

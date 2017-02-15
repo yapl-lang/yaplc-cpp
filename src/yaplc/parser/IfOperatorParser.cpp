@@ -28,12 +28,14 @@ namespace yaplc { namespace parser {
 		} else if ((hasBrace) || (hasThen)) {
 			auto codeOperator = new structure::ExpressionNode();
 
-			if (!parse<CodeOperatorParser>(node->trueExpression)) {
+			if (!parse<CodeOperatorParser>(codeOperator)) {
 				delete codeOperator;
 
 				error("Expected operator.");
 				cancelFatal();
 			}
+
+			node->trueExpression->add(codeOperator);
 
 			expected(';');
 		} else {
@@ -48,12 +50,14 @@ namespace yaplc { namespace parser {
 			} else {
 				auto codeOperator = new structure::ExpressionNode();
 
-				if (!parse<CodeOperatorParser>(node->falseExpression)) {
+				if (!parse<CodeOperatorParser>(codeOperator)) {
 					delete codeOperator;
 
 					error("Expected operator.");
 					cancelFatal();
 				}
+
+				node->falseExpression->add(codeOperator);
 			}
 		}
 	}

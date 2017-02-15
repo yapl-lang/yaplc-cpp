@@ -20,12 +20,14 @@ namespace yaplc { namespace parser {
 		} else {
 			auto codeOperator = new structure::ExpressionNode();
 
-			if (!parse<CodeOperatorParser>(node->expression)) {
+			if (!parse<CodeOperatorParser>(codeOperator)) {
 				delete codeOperator;
 
 				error("Expected operator.");
 				cancelFatal();
 			}
+
+			node->expression->add(codeOperator);
 
 			expected(';');
 		}

@@ -9,6 +9,7 @@ namespace yaplc { namespace parser {
 	void MemberParser::handle(structure::Listable *parentNode) {
 		skipEmpty();
 		push();
+		begin();
 
 		bool isClass = dynamic_cast<structure::ClassNode *>(parentNode) != nullptr;
 		bool isInterface = false;
@@ -32,5 +33,7 @@ namespace yaplc { namespace parser {
 		parse<MethodMemberParser>(memberNode, isInterface || isStruct)
 		|| ((isClass || isStruct) && parse<VariableMemberParser>(memberNode))
 		|| cancel();
+
+		end(memberNode);
 	}
 } }
