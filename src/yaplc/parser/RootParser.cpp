@@ -33,6 +33,7 @@ namespace yaplc { namespace parser {
 			skipEmpty();
 
 			auto packageNode = new structure::PackageNode();
+			packageNode->name = packageName;
 			rootNode->add(packageNode);
 
 			switch (get()) {
