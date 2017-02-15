@@ -17,6 +17,6 @@ namespace yaplc { namespace process {
 		void process(structure::PackageNode *packageNode, Context &context);
 		void process(structure::ImportNode *importNode, Context &context);
 		void process(structure::ClassNode *classNode, Context &context);
-		void process(structure::TypeNameNode *classNode, Context &context);
+		void process(structure::TypeNameNode *typeNameNode, Context &context);
 	};
 } }

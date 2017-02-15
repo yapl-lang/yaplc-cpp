@@ -49,7 +49,7 @@ namespace yaplc { namespace process {
 		}
 	}
 	
-	void Processor::process(structure::TypeNameNode *classNode, Context &context) {
+	void Processor::process(structure::TypeNameNode *typeNameNode, Context &context) {
 		
 	}
 } }
