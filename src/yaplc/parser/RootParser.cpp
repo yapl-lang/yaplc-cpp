@@ -14,6 +14,7 @@ namespace yaplc { namespace parser {
 				break;
 			}
 
+			auto packageStart = position();
 			skipOrFail("package", "Expected 'package'.");
 
 			skipEmpty();
@@ -33,12 +34,14 @@ namespace yaplc { namespace parser {
 
 			auto packageNode = new structure::PackageNode();
 			rootNode->add(packageNode);
+			packageNode->setBegin(packageStart);
 
 			switch (get()) {
 			case ';': {
 				skip();
 
 				parsePackageBody(packageNode);
+				end(packageNode);
 
 				goto done;
 			}
@@ -51,6 +54,8 @@ namespace yaplc { namespace parser {
 					error(std::string("Expected '}'. Got '") + get() + "'.");
 					cancelFatal();
 				}
+				
+				end(packageNode);
 
 				skip();
 				break;
