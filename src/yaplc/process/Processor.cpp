@@ -25,6 +25,8 @@ namespace yaplc { namespace process {
 		for (auto node : *packageNode) {
 			if (auto importNode = dynamic_cast<structure::ImportNode *>(node)) {
 				process(importNode, configuration);
+			} else if (auto classNode = dynamic_cast<structure::ClassNode *>(node)) {
+				process(classNode, configuration);
 			}
 		}
 	}
@@ -38,5 +40,16 @@ namespace yaplc { namespace process {
 		auto source = caps[0];
 		
 		configuration.imports[source] = target;
+	}
+	
+	void Processor::process(structure::ClassNode *classNode, Configuration &configuration) {
+		process(classNode->base, configuration);
+		for (auto interface : classNode->interfaces) {
+			process(interface, configuration);
+		}
+	}
+	
+	void Processor::process(structure::TypeNameNode *classNode, Configuration &configuration) {
+		
 	}
 } }
