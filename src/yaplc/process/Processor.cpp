@@ -20,7 +20,7 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::PackageNode *packageNode, Context &context) {
-		context.package = packageNode->name;
+		context.path = context.package = packageNode->name;
 		
 		for (auto node : *packageNode) {
 			if (auto importNode = dynamic_cast<structure::ImportNode *>(node)) {
@@ -43,13 +43,19 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::ClassNode *classNode, Context &context) {
+		context.addName(classNode->name->type);
+		
 		process(classNode->base, context);
 		for (auto interface : classNode->interfaces) {
 			process(interface, context);
 		}
+		
+		auto context2 = context.clone();
+		
+		
 	}
 	
 	void Processor::process(structure::TypeNameNode *typeNameNode, Context &context) {
-		
+		contexty.fullName(typeNameNode->type);
 	}
 } }
