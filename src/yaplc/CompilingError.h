@@ -5,7 +5,7 @@
 namespace yaplc {
 	class CompilingError {
 	public:
-		enum class Type { Syntax, Fatal };
+		enum class Type { Syntax, Logical, Fatal };
 	
 	public:
 		Type type;
