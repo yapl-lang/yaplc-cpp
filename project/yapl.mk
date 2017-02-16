@@ -5,7 +5,7 @@ LOCAL_SRC_FILES_RAW := $(shell find $(SRC_PATH) -name '*.c') $(shell find $(SRC_
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES_RAW)
 LOCAL_SRC_FILES := $(filter-out $(SRC_PATH)/regex/slre/unit_test.c, $(LOCAL_SRC_FILES))
 
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/src $(LOCAL_PATH)/lib/filesystem
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/src
 LOCAL_LDLIBS := -lstdc++
 
 LOCAL_MODULE := yaplc
