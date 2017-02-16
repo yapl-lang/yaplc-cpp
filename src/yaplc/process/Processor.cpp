@@ -58,4 +58,15 @@ namespace yaplc { namespace process {
 	void Processor::process(structure::TypeNameNode *typeNameNode, Context &context) {
 		context.fullName(typeNameNode->type);
 	}
+
+	void Processor::error(const std::string &message) {
+		error(message, nullptr);
+	}
+
+	void Processor::error(const std::string &message, structure::Node *node) {
+		auto begin = node->getBegin();
+		auto end = node->getEnd();
+
+
+	}
 } }
