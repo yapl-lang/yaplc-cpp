@@ -24,28 +24,28 @@ namespace yaplc { namespace process {
 			
 		}
 		
-		bool fullName(std::string &name) {
+		void fullName(std::string &name) {
 			std::map<std::string, std::string>::const_iterator it;
 			
-			for (it = context.names.begin(); it != context.names.end(); ++it) {
-				if (strcmp(it->first.c_str(), name.c_str()) == 0) { // Normal equals operator not works, wtf?
+			for (it = names.begin(); it != names.end(); ++it) {
+				if (it->first == name) {
 					break;
 				}
 			}
 			
-			if (it == context.names.end()) {
-				for (it = context.imports.begin(); it != context.imports.end(); ++it) {
-					if (strcmp(it->first.c_str(), name.c_str()) == 0) { // Normal equals operator not works, wtf?
+			if (it == names.end()) {
+				for (it = imports.begin(); it != imports.end(); ++it) {
+					if (it->first == name) {
 						break;
 					}
 				}
 			}
 			
-			if (it == context.imports.end()) {
+			if (it == imports.end()) {
 				return;
 			}
 			
-			name = *it;
+			name = it->second;
 		}
 		
 		Context clone(const std::string &appender = "") {
