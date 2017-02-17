@@ -4,13 +4,13 @@
 #include <sys/stat.h>
 
 namespace fs {
-	char Item::PathDelim = '/';
+	char path::PathDelim = '/';
 
-	Item::Item() {
+	path::path() {
 
 	}
 
-	Item::Item(const std::string &path) {
+	path::path(const std::string &path) {
 		if (path.size() == 0) {
 			throw "Path cannot be empty.";
 		}
@@ -32,11 +32,11 @@ namespace fs {
 		}
 	}
 
-	Item::~Item() {
+	path::~path() {
 
 	}
 
-	bool Item::create() {
+	bool path::create() {
 		auto handle = fopen(full_name().c_str(), "wb");
 
 		if (handle != NULL) {
@@ -48,11 +48,11 @@ namespace fs {
 		return false;
 	}
 
-	bool Item::mkdir() {
+	bool path::mkdir() {
 		return ::mkdir(full_name().c_str(), 0755) == 0;
 	}
 
-	bool Item::mkdirs() {
+	bool path::mkdirs() {
 		if (exists()) {
 			return true;
 		}
@@ -60,12 +60,12 @@ namespace fs {
 		return parent().mkdirs() && mkdir();
 	}
 
-	bool Item::exists() const {
+	bool path::exists() const {
 		struct stat st;
 		return stat(full_name().c_str(), &st) == 0;
 	}
 
-	bool Item::is_file() const {
+	bool path::is_file() const {
 		struct stat st;
 
 		if (stat(full_name().c_str(), &st) != 0) {
@@ -75,7 +75,7 @@ namespace fs {
 		return S_ISREG(st.st_mode);
 	}
 
-	bool Item::is_directory() const {
+	bool path::is_directory() const {
 		struct stat st;
 
 		if (stat(full_name().c_str(), &st) != 0) {
@@ -85,11 +85,11 @@ namespace fs {
 		return S_ISDIR(st.st_mode);
 	}
 
-	Item Item::parent() const {
-		return Item{path()};
+	path path::parent() const {
+		return path{path()};
 	}
 
-	void Item::parent(const Item &target) {
+	void path::parent(const path &target) {
 		if (is_directory()) {
 			if (target.is_directory()) {
 				rename(full_name().c_str(), (target.full_name() + PathDelim + name()).c_str());
@@ -106,18 +106,18 @@ namespace fs {
 	}
 
 	// Folder functions
-	Item Item::add(const std::string &name) {
-		Item{name}.parent(*this);
+	path path::add(const std::string &name) {
+		path{name}.parent(*this);
 	}
 
-	std::vector<Item> Item::list() {
+	std::vector<path> path::list() const {
 		auto handle = opendir(full_name().c_str());
 
 		if (handle == NULL) {
 			return {};
 		}
 
-		std::vector<Item> files;
+		std::vector<path> files;
 
 		while (auto child = readdir(handle)) {
 			if ((strcmp(child->d_name, ".") == 0) || (strcmp(child->d_name, "..")) == 0) {
@@ -133,7 +133,7 @@ namespace fs {
 	}
 
 	// File functions
-	std::string Item::content() {
+	std::string path::content() const {
 		auto handle = fopen(full_name().c_str(), "rb");
 
 		if (handle == NULL) {
@@ -153,7 +153,7 @@ namespace fs {
 		return buffer;
 	}
 
-	bool Item::content(const std::string &newContent) {
+	bool path::content(const std::string &newContent) {
 		auto handle = fopen(full_name().c_str(), "wb");
 
 		if (handle != NULL) {
@@ -167,16 +167,11 @@ namespace fs {
 	}
 
 	// Operators
-	Item Item::operator /(const std::string &path) {
+	path path::operator /(const std::string &sub) const {
 		if (!is_directory()) {
 			throw "Cannot get path on not a directory.";
 		}
 
-		return Item{itemPath + PathDelim + itemName + PathDelim + path};
-	}
-
-
-	Item path(const std::string &path) {
-		return Item{path};
+		return path{itemPath + PathDelim + itemName + PathDelim + sub};
 	}
 }

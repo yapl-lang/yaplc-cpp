@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace fs {
-	class Item {
+	class path {
 	public:
 		static char PathDelim;
 
@@ -13,19 +13,19 @@ namespace fs {
 		std::string itemName;
 
 	public:
-		Item();
-		Item(const std::string &path);
-		~Item();
+		path();
+		path(const std::string &path);
+		~path();
 
 		// Common functions
-		inline std::string path() const {
+		inline std::string dir() const {
 			return itemPath;
 		}
 		inline std::string name() const {
 			return itemName;
 		}
 		inline std::string full_name() const {
-			return path() + PathDelim + name();
+			return dir() + PathDelim + name();
 		}
 
 		bool create();
@@ -36,21 +36,19 @@ namespace fs {
 		bool is_file() const;
 		bool is_directory() const;
 
-		Item parent() const;
-		void parent(const Item &target);
+		path parent() const;
+		void parent(const path &target);
 
 		// Folder functions
-		Item add(const std::string &name);
+		path add(const std::string &name);
 
-		std::vector<Item> list();
+		std::vector<path> list() const;
 
 		// File functions
-		std::string content();
+		std::string content() const;
 		bool content(const std::string &newContent);
 
 		// Operators
-		Item operator /(const std::string &path);
+		path operator /(const std::string &sub) const;
 	};
-
-	Item path(const std::string &path);
 }
