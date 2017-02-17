@@ -1,6 +1,7 @@
 #include "Item.h"
 #include <dirent.h>
 #include <cstring>
+#include <sys/stat.h>
 
 namespace fs {
 	char Item::PathDelim = '/';
@@ -13,9 +14,6 @@ namespace fs {
 		if (path.size() == 0) {
 			throw "Path cannot be empty.";
 		}
-
-		//this->itemPath = ;
-		//this->itemName = ;
 
 		auto newPath = path;
 
@@ -32,52 +30,59 @@ namespace fs {
 			itemPath = newPath.substr(0, delim);
 			itemName = newPath.substr(delim + 1);
 		}
-
-		auto handle = opendir(full_name().c_str());
-
-		if (handle == NULL) {
-			auto handle2 = fopen(full_name().c_str(), "r");
-
-			if (handle2 == NULL) {
-			} else {
-				type = Type::File;
-				fclose(handle2);
-			}
-		} else {
-			type = Type::Directory;
-			closedir(handle);
-		}
 	}
 
 	Item::~Item() {
 
 	}
 
-	bool Item::exists() const {
-		switch (type) {
-		case Type::Directory: {
-			auto handle = opendir(full_name().c_str());
+	bool Item::create() {
+		auto handle = fopen(full_name().c_str(), "wb");
 
-			if (handle == NULL) {
-				return false;
-			}
-
-			closedir(handle);
-			return true;
-		}
-		case Type::File: {
-			auto handle = fopen(full_name().c_str(), "r");
-
-			if (handle == NULL) {
-				return false;
-			}
-
+		if (handle != NULL) {
 			fclose(handle);
+
 			return true;
-		}
 		}
 
 		return false;
+	}
+
+	bool Item::mkdir() {
+		return ::mkdir(full_name().c_str(), 0755) == 0;
+	}
+
+	bool Item::mkdirs() {
+		if (exists()) {
+			return true;
+		}
+
+		return parent().mkdirs() && mkdir();
+	}
+
+	bool Item::exists() const {
+		struct stat st;
+		return stat(full_name().c_str(), &st) == 0;
+	}
+
+	bool Item::is_file() const {
+		struct stat st;
+
+		if (stat(full_name().c_str(), &st) != 0) {
+			return false;
+		}
+
+		return S_ISREG(st.st_mode);
+	}
+
+	bool Item::is_directory() const {
+		struct stat st;
+
+		if (stat(full_name().c_str(), &st) != 0) {
+			return false;
+		}
+
+		return S_ISDIR(st.st_mode);
 	}
 
 	Item Item::parent() const {
@@ -85,27 +90,18 @@ namespace fs {
 	}
 
 	void Item::parent(const Item &target) {
-		switch (type) {
-		case Type::Directory:
-			switch (target.type) {
-			case Type::Directory:
+		if (is_directory()) {
+			if (target.is_directory()) {
 				rename(full_name().c_str(), (target.full_name() + PathDelim + name()).c_str());
-				break;
-			case Type::File:
+			} else if (target.is_file()) {
 				rename(full_name().c_str(), target.full_name().c_str());
-				break;
 			}
-			break;
-		case Type::File:
-			switch (target.type) {
-			case Type::Directory:
+		} else if (is_file()) {
+			if (target.is_directory()) {
 				rename(full_name().c_str(), (target.full_name() + PathDelim + name().c_str()).c_str());
-				break;
-			case Type::File:
+			} else if (target.is_file()) {
 				rename(full_name().c_str(), target.full_name().c_str());
-				break;
 			}
-			break;
 		}
 	}
 
@@ -121,26 +117,53 @@ namespace fs {
 			return {};
 		}
 
+		std::vector<Item> files;
+
 		while (auto child = readdir(handle)) {
 			if ((strcmp(child->d_name, ".") == 0) || (strcmp(child->d_name, "..")) == 0) {
 				continue;
 			}
 
-			printf("%s\n", child->d_name);
+			files.push_back((*this)/child->d_name);
 		}
 
 		closedir(handle);
 
-		return {};
+		return files;
 	}
 
 	// File functions
 	std::string Item::content() {
+		auto handle = fopen(full_name().c_str(), "rb");
 
+		if (handle == NULL) {
+			return {};
+		}
+
+		fseek(handle, 0, SEEK_END);
+		auto size = (unsigned long)ftell(handle);
+		fseek(handle, 0, SEEK_SET);
+
+		std::string buffer;
+		buffer.resize(size);
+
+		fread(&buffer[0], sizeof(buffer[0]), size, handle);
+		fclose(handle);
+
+		return buffer;
 	}
 
-	void Item::content(const std::string &newContent) {
+	bool Item::content(const std::string &newContent) {
+		auto handle = fopen(full_name().c_str(), "wb");
 
+		if (handle != NULL) {
+			fwrite(newContent.data(), sizeof(newContent[0]), newContent.size(), handle);
+			fclose(handle);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// Operators

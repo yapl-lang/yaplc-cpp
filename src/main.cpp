@@ -100,9 +100,6 @@ void showError(const std::string &code,
 #include "fs/Item.h"
 
 int main(int argc, char **argv) {
-	fs::path("/home/tarik02").list();
-	return 0;
-
 	try {
 		ParserManager parser;
 		Processor processor;

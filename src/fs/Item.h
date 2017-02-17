@@ -5,15 +5,10 @@
 
 namespace fs {
 	class Item {
-	private:
-		enum class Type {File, Directory};
-
 	public:
 		static char PathDelim;
 
 	private:
-		Type type;
-
 		std::string itemPath;
 		std::string itemName;
 
@@ -33,13 +28,13 @@ namespace fs {
 			return path() + PathDelim + name();
 		}
 
+		bool create();
+		bool mkdir();
+		bool mkdirs();
+
 		bool exists() const;
-		inline bool is_file() const {
-			return type == Type::File;
-		}
-		inline bool is_directory() const {
-			return type == Type::Directory;
-		}
+		bool is_file() const;
+		bool is_directory() const;
 
 		Item parent() const;
 		void parent(const Item &target);
@@ -51,7 +46,7 @@ namespace fs {
 
 		// File functions
 		std::string content();
-		void content(const std::string &newContent);
+		bool content(const std::string &newContent);
 
 		// Operators
 		Item operator /(const std::string &path);
