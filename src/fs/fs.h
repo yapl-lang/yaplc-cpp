@@ -51,4 +51,6 @@ namespace fs {
 		// Operators
 		path operator /(const std::string &sub) const;
 	};
+
+	path temp();
 }

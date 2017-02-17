@@ -2,6 +2,7 @@
 #include <dirent.h>
 #include <cstring>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 namespace fs {
 	char path::PathDelim = '/';
@@ -173,5 +174,36 @@ namespace fs {
 		}
 
 		return path{itemPath + PathDelim + itemName + PathDelim + sub};
+	}
+
+	path temp() {
+		std::string templ;
+
+		{
+			auto temp = getenv("TMPDIR");
+
+			if (temp == NULL) {
+				templ = "/tmp";
+			} else {
+				templ = temp;
+			}
+		}
+
+		templ += "/yaplc.";
+
+
+		path temp;
+		auto t = (unsigned long)time(NULL);
+
+		do {
+			char buf[64];
+			int c = snprintf(buf, 64, "%lu", t);
+
+			temp = templ + buf;
+		} while (temp.exists());
+
+		temp.mkdirs();
+
+		return temp;
 	}
 }
