@@ -15,7 +15,7 @@ APP_CPPFLAGS += \
 	-std=c++11 \
 	-frtti \
 	-fexceptions \
-	-D'INPUT_FILE="$(shell realpath $(LOCAL_PATH)/test.ypl)"'
+	-D'INPUT_FILE="$(shell realpath $(LOCAL_PATH)/test)"'
 
 APP_STL := gnustl_static
 
