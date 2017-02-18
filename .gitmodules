@@ -4,3 +4,6 @@
 [submodule "src/fs"]
 	path = src/fs
 	url = git@github.com:Tarik02/fs.git
+[submodule "src/binstream"]
+	path = src/binstream
+	url = git@github.com:Tarik02/binstream.git
