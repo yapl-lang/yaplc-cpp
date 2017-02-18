@@ -1,3 +1,6 @@
 [submodule "src/regex/slre"]
 	path = src/regex/slre
 	url = git@github.com:cesanta/slre.git
+[submodule "src/fs"]
+	path = src/fs
+	url = git@github.com:Tarik02/fs.git
