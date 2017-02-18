@@ -72,18 +72,36 @@ namespace yaplc { namespace structure {
 		regex::match("([A-Za-z0-9]*)$", fullName, caps, 1);
 		auto name = caps[0];
 
+		delete[] fullName;
+
+		return name;
+	}
+
+	std::string Node::getShortName() const {
+		auto name = getTypeName();
+
 		if (name.substr(name.length() - 4) == "Node") {
 			name = name.substr(0, name.length() - 4);
 		}
-
-		delete[] fullName;
 
 		return name;
 	}
 	
 	void Node::show(std::ostream &stream, unsigned long indent) const {
-		stream << getTypeName();
+		stream << getShortName();
 		
 		showProps(stream, indent);
+	}
+
+	void Node::load(const binstream::stream &stream) {
+		stream.getString(name);
+		stream.get(begin);
+		stream.get(end);
+	}
+
+	void Node::save(binstream::stream &stream) const {
+		stream.putString(name);
+		stream.put(begin);
+		stream.put(end);
 	}
 } }

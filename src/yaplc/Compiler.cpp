@@ -4,6 +4,7 @@
 #include "NotReadyException.h"
 #include "util/markline.h"
 #include "yaplc/parser/ParserManager.h"
+#include "yaplc/structure/NodeFactory.h"
 
 namespace yaplc {
 	void showError(const std::string &code,
@@ -155,7 +156,9 @@ namespace yaplc {
 			objectFile.parent().mkdirs();
 
 			if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
-				// TODO: Try to load object file and continue if success.
+				auto node = structure::NodeFactory::loadNode(binstream::stream{objectFile.content()});
+				std::cout << node->show() << std::endl;
+				delete node;
 			}
 
 			objectFile.create();
@@ -167,7 +170,9 @@ namespace yaplc {
 				this->errors.push_back({&file, error});
 			}
 
-			// TODO: Save to object file
+			binstream::stream stream;
+			structure::NodeFactory::saveNode(stream, file.root);
+			objectFile.content(stream.buffer());
 		}
 	}
 

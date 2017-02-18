@@ -71,7 +71,7 @@ namespace yaplc { namespace structure {
 				stream << "]";
 			});
 
-			NODE_PROP(type, type->show(stream, indent + 1);)
+			NODE_PROP_AUTO(type)
 		)
 	};
 } }

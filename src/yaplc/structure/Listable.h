@@ -29,5 +29,9 @@ namespace yaplc { namespace structure {
 		}
 		
 		virtual void show(std::ostream &stream, unsigned long indent = 0) const;
+
+	public:
+		virtual void load(const binstream::stream &stream);
+		virtual void save(binstream::stream &stream) const;
 	};
 } }

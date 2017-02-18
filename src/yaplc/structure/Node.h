@@ -1,6 +1,7 @@
 #pragma once
 
 #include "yaplc/util/leftpad.h"
+#include "binstream/stream.h"
 #include <string>
 #include <sstream>
 #include <vector>
@@ -44,6 +45,7 @@ namespace yaplc { namespace structure {
 		void setName(const std::string &name);
 
 		std::string getTypeName() const;
+		std::string getShortName() const;
 
 		virtual void clear() {}
 
@@ -95,5 +97,9 @@ namespace yaplc { namespace structure {
 				node->show(stream, indent + 1);
 			}
 		}
+
+	public:
+		virtual void load(const binstream::stream &stream);
+		virtual void save(binstream::stream &stream) const;
 	};
 } }
