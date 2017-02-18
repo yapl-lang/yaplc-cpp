@@ -9,5 +9,6 @@ include_directories("src")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp" "src/*.c")
 
 list(REMOVE_ITEM SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/regex/slre/unit_test.c)
+list(REMOVE_ITEM SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/binstream/test.cpp)
 
 add_executable(yaplc ${SOURCE_FILES})
