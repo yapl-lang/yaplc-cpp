@@ -1,42 +1,9 @@
-
-/* Comment */
-# Comment
-// Comment
-//
 package com.package.name;
 
-import std.threading.Thread;
+import std.Out;
 
-public class Main<T> extends Thread implements SomeInterface<float>, SomeInterface2 {
-	public object a(SomeClass<int, int> a, int b = 15, float d = 8) {
-		var k = 15;
-		var b = this.stringValue;
-
-		this.a(b);
-
-		this.a 28;
-
-		if k == 15 then
-			this.a(k);
-		else
-			this.a(k + 1);
-
-		if (true) {
-
-		}
-
-		while (true) {
-			this.a();
-		}
-
-		while true do
-			this.a();
-
-		do
-			this.a();
-		while true;
+public class Main {
+	public static void main() {
+		Out.println("Hello world");
 	}
-
-	public string stringValue = `Hello, ${Thread.getThreadsCount() + (10 / 5)}. Hello, ${20}`;
-	public int k = -10.6;
 }
