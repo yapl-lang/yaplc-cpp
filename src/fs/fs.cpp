@@ -3,9 +3,62 @@
 #include <cstring>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <cstdlib>
+#include <stdio.h>
+#include <linux/limits.h>
+#include <zconf.h>
+#include <sstream>
+#include <algorithm>
 
 namespace fs {
 	char path::PathDelim = '/';
+
+	std::string simplify(const std::string &path) {
+		std::vector<std::string> pathItems;
+		std::vector<std::string> result;
+		std::stringstream ss;
+
+		{
+			std::string item;
+			ss.str(path);
+			while (std::getline(ss, item, path::PathDelim)) {
+				pathItems.push_back(item);
+			}
+		}
+
+		std::reverse(pathItems.begin(), pathItems.end());
+		for (auto it = pathItems.begin(); it != pathItems.end(); ++it) {
+			auto item = *it;
+
+			if ((item == "") || (item == ".")) {
+				continue;
+			}
+
+			if (item == "..") {
+				++it;
+				continue;
+			}
+
+			result.push_back(item);
+		}
+		std::reverse(result.begin(), result.end());
+
+		std::stringstream resultPath;
+
+		if (path[0] == '/') {
+			resultPath << '/';
+		}
+
+		auto it = result.begin();
+		resultPath << *it;
+		++it;
+		for (; it != result.end(); ++it) {
+			resultPath << '/' << *it;
+		}
+
+		return resultPath.str();
+	}
+
 
 	path::path() {
 
@@ -61,6 +114,10 @@ namespace fs {
 		return parent().mkdirs() && mkdir();
 	}
 
+	bool path::remove() {
+		::remove(full_name().c_str());
+	}
+
 	bool path::exists() const {
 		struct stat st;
 		return stat(full_name().c_str(), &st) == 0;
@@ -86,8 +143,24 @@ namespace fs {
 		return S_ISDIR(st.st_mode);
 	}
 
+	bool path::is_temponary() const {
+		std::string templ;
+
+		{
+			auto temp = getenv("TMPDIR");
+
+			if (temp == NULL) {
+				templ = "/tmp";
+			} else {
+				templ = temp;
+			}
+		}
+
+		return (full_name().size() > templ.size()) && (full_name().substr(0, templ.size()) == templ);
+	}
+
 	path path::parent() const {
-		return path{path()};
+		return path{dir()};
 	}
 
 	void path::parent(const path &target) {
@@ -104,6 +177,27 @@ namespace fs {
 				rename(full_name().c_str(), target.full_name().c_str());
 			}
 		}
+	}
+
+	// Stat functions
+	unsigned long path::createdAt() {
+		struct stat st;
+
+		if (stat(full_name().c_str(), &st) != 0) {
+			return 0;
+		}
+
+		return (unsigned long)st.st_ctime;
+	}
+
+	unsigned long path::modifiedAt() {
+		struct stat st;
+
+		if (stat(full_name().c_str(), &st) != 0) {
+			return 0;
+		}
+
+		return (unsigned long)st.st_mtime;
 	}
 
 	// Folder functions
@@ -205,5 +299,16 @@ namespace fs {
 		temp.mkdirs();
 
 		return temp;
+	}
+
+	path relative(const std::string &relative) {
+		if (relative[0] == '/') {
+			return path{simplify(relative)};
+		}
+
+		char working_dir[PATH_MAX];
+		getcwd(working_dir, PATH_MAX);
+
+		return path{simplify(std::string(working_dir) + "/" + relative)};
 	}
 }

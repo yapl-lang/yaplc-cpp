@@ -31,13 +31,19 @@ namespace fs {
 		bool create();
 		bool mkdir();
 		bool mkdirs();
+		bool remove();
 
 		bool exists() const;
 		bool is_file() const;
 		bool is_directory() const;
+		bool is_temponary() const;
 
 		path parent() const;
 		void parent(const path &target);
+
+		// Stat functions
+		unsigned long createdAt();
+		unsigned long modifiedAt();
 
 		// Folder functions
 		path add(const std::string &name);
@@ -53,4 +59,5 @@ namespace fs {
 	};
 
 	path temp();
+	path relative(const std::string &relative);
 }
