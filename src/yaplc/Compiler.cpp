@@ -79,14 +79,19 @@ namespace yaplc {
 		for (auto error : errors) {
 			delete error.error;
 		}
+
+		if (root.is_temponary()) {
+			root.remove();
+		}
 	}
 
 	void Compiler::file(const std::string &file, const std::string &package) {
-		code(fs::path(file).content(), package);
+		auto path = fs::path(file);
+		files.push_back({path, package, path.content(), nullptr});
 	}
 
 	void Compiler::code(const std::string &code, const std::string &package) {
-		files.push_back({package, code});
+		files.push_back({fs::path(), package, code, nullptr});
 	}
 
 	void Compiler::project(const std::string &root) {
@@ -138,15 +143,31 @@ namespace yaplc {
 			root = fs::temp();
 		}
 
+		auto buildPath = root/"build";
+		buildPath.mkdirs();
+
 		parser::ParserManager parser;
 
 		for (auto &file : files) {
+			auto objectFileName = file.package;
+			std::replace(objectFileName.begin(), objectFileName.end(), '.', '/');
+			auto objectFile = buildPath/objectFileName;
+			objectFile.parent().mkdirs();
+
+			if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
+				// TODO: Try to load object file and continue if success.
+			}
+
+			objectFile.create();
+
 			std::vector<CompilingError *> errors;
 
 			file.root = parser.parse(file.code, errors);
 			for (auto error : errors) {
 				this->errors.push_back({&file, error});
 			}
+
+			// TODO: Save to object file
 		}
 	}
 

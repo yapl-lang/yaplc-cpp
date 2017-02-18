@@ -12,6 +12,7 @@ namespace yaplc {
 	class Compiler {
 	private:
 		struct CodeFile {
+			fs::path sourceFile;
 			std::string package, code;
 			structure::RootNode *root;
 		};

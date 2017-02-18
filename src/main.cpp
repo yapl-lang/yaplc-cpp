@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
 #endif
 
 		try {
-			compiler.project(root);
+			compiler.project(fs::relative(root).full_name());
 			compiler.compile();
 		} catch (const yaplc::NotReadyException &) {
 			compiler.reportErrors(std::cout);
