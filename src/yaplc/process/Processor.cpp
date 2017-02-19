@@ -97,11 +97,30 @@ namespace yaplc { namespace process {
 	}
 
 	void Processor::process(structure::ExpressionNode *expressionNode, Context &context) {
-
+		for (auto expression : *expressionNode) {
+			if (auto expressionNode = dynamic_cast<structure::ExpressionNode *>(expression)) {
+				process(expressionNode, context);
+			} else if (auto typeExpressionNode = dynamic_cast<structure::TypeExpressionNode *>(expression)) {
+				process(typeExpressionNode, context);
+			}
+		}
 	}
 
 	void Processor::process(structure::ArgumentsNode *argumentsNode, Context &context) {
+		for (auto argument : argumentsNode->arguments) {
+			structure::TypeNameNode *type;
+			std::string name;
+			structure::ExpressionNode *value;
 
+			std::tie(type, name, value) = argument;
+
+			process(type, context);
+			process(value, context);
+		}
+	}
+
+	void Processor::process(structure::TypeExpressionNode *typeExpressionNode, Context &context) {
+		process(typeExpressionNode->type, context);
 	}
 
 

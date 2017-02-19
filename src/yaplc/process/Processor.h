@@ -9,6 +9,7 @@
 #include "yaplc/structure/MemberNode.h"
 #include "yaplc/structure/VariableMemberNode.h"
 #include "yaplc/structure/MethodMemberNode.h"
+#include "yaplc/structure/TypeExpressionNode.h"
 #include "yaplc/CompilingError.h"
 
 namespace yaplc { namespace process {
@@ -32,6 +33,7 @@ namespace yaplc { namespace process {
 		void process(structure::MethodMemberNode *methodMemberNode, Context &context);
 		void process(structure::ExpressionNode *expressionNode, Context &context);
 		void process(structure::ArgumentsNode *argumentsNode, Context &context);
+		void process(structure::TypeExpressionNode *typeExpressionNode, Context &context);
 
 		void error(const std::string &message);
 		void error(const std::string &message, structure::Node *node);
