@@ -42,5 +42,38 @@ namespace yaplc { namespace structure {
 				stream << "]";
 			})
 		, TypeNode)
+
+	public:
+		virtual void load(const binstream::stream &stream) {
+			TypeNode::load(stream);
+
+			NodeFactory::loadNode(stream, base);
+
+			for (auto interface : interfaces) {
+				delete interface;
+			}
+			interfaces.clear();
+
+			unsigned long count;
+			stream.get(count);
+			interfaces.reserve(count);
+
+			while (count-- != 0) {
+				auto interface = new TypeNameNode();
+				NodeFactory::loadNode(stream, interface);
+				interfaces.push_back(interface);
+			}
+		}
+
+		virtual void save(binstream::stream &stream) const {
+			TypeNode::save(stream);
+
+			NodeFactory::saveNode(stream, base);
+
+			stream.put((unsigned long)interfaces.size());
+			for (auto interface : interfaces) {
+				NodeFactory::saveNode(stream, interface);
+			}
+		}
 	};
 } }

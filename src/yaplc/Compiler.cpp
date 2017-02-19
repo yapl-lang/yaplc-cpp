@@ -152,13 +152,17 @@ namespace yaplc {
 		for (auto &file : files) {
 			auto objectFileName = file.package;
 			std::replace(objectFileName.begin(), objectFileName.end(), '.', '/');
+			objectFileName += ".yo0";
 			auto objectFile = buildPath/objectFileName;
 			objectFile.parent().mkdirs();
 
 			if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
-				auto node = structure::NodeFactory::loadNode(binstream::stream{objectFile.content()});
-				std::cout << node->show() << std::endl;
-				delete node;
+				try {
+					file.root = (structure::RootNode *)structure::NodeFactory::loadNode(binstream::stream{objectFile.content()});
+					continue;
+				} catch (...) {
+
+				}
 			}
 
 			objectFile.create();

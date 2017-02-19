@@ -26,5 +26,20 @@ namespace yaplc { namespace structure {
 			NODE_PROP_AUTO(type)
 			NODE_PROP_AUTO(child)
 		)
+
+	public:
+		virtual void load(const binstream::stream &stream) {
+			Node::load(stream);
+
+			type = (TypeNameNode *)NodeFactory::loadNode(stream);
+			child = NodeFactory::loadNode(stream);
+		}
+
+		virtual void save(binstream::stream &stream) const {
+			Node::save(stream);
+
+			NodeFactory::saveNode(stream, type);
+			NodeFactory::saveNode(stream, child);
+		}
 	};
 } }

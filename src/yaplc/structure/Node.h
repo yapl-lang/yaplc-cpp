@@ -1,5 +1,6 @@
 #pragma once
 
+#include "NodeFactory.h"
 #include "yaplc/util/leftpad.h"
 #include "binstream/stream.h"
 #include <string>

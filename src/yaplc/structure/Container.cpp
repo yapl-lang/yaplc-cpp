@@ -2,6 +2,7 @@
 #include "Childable.h"
 #include "Listable.h"
 #include "yaplc/util/leftpad.h"
+#include "NodeFactory.h"
 #include <typeinfo>
 
 namespace yaplc { namespace structure {
@@ -79,5 +80,18 @@ namespace yaplc { namespace structure {
 		stream << std::endl;
 		
 		util::leftpad(stream, indent) << ">";
+	}
+
+	void Container::load(const binstream::stream &stream) {
+		Node::load(stream);
+
+		delete child;
+		child = NodeFactory::loadNode(stream);
+	}
+
+	void Container::save(binstream::stream &stream) const {
+		Node::save(stream);
+
+		NodeFactory::saveNode(stream, child);
 	}
 } }

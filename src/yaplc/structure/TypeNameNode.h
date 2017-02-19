@@ -50,5 +50,38 @@ namespace yaplc { namespace structure {
 				stream << ">";
 			})
 		)
+
+	public:
+		virtual void load(const binstream::stream &stream) {
+			Node::load(stream);
+
+			stream.getString(type);
+
+			for (auto argument : templateArguments) {
+				delete argument;
+			}
+			templateArguments.clear();
+
+			unsigned long count;
+			stream.get(count);
+			templateArguments.reserve(count);
+
+			while (count-- != 0) {
+				auto node = new TypeNameNode();
+				NodeFactory::loadNode(stream, node);
+				templateArguments.push_back(node);
+			}
+		}
+
+		virtual void save(binstream::stream &stream) const {
+			Node::save(stream);
+
+			stream.putString(type);
+
+			stream.put((unsigned long)templateArguments.size());
+			for (auto argument : templateArguments) {
+				NodeFactory::saveNode(stream, argument);
+			}
+		}
 	};
 } }

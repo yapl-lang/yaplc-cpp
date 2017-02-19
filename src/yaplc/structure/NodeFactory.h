@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Node.h"
-#include <map>
+#include "binstream/stream.h"
 #include <string>
-#include <functional>
 
 namespace yaplc { namespace structure {
+	class Node;
+
 	class NodeFactory {
 	public:
 		static Node *create(const std::string &name);

@@ -140,7 +140,15 @@ namespace yaplc { namespace parser {
 namespace yaplc { namespace structure {
 	class $NAME : public $CLASS {
 	public:
-		//
+
+	public:
+		virtual void load(const binstream::stream &stream) {
+			$CLASS::load(stream);
+		}
+
+		virtual void save(binstream::stream &stream) const {
+			$CLASS::save(stream);
+		}
 	};
 } }" > "src/yaplc/structure/$NAME.h"
 

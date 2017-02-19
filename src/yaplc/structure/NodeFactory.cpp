@@ -1,4 +1,5 @@
 #include "NodeFactory.h"
+#include "Node.h"
 #include "ArgumentsNode.h"
 #include "CharNode.h"
 #include "Childable.h"
@@ -24,6 +25,8 @@
 #include "TypeNode.h"
 #include "VariableMemberNode.h"
 #include "WhileOperatorNode.h"
+#include <map>
+#include <functional>
 
 namespace yaplc { namespace structure {
 	std::map<std::string, std::function<Node *()>> nodes;
@@ -39,32 +42,52 @@ namespace yaplc { namespace structure {
 	}
 
 	Node *NodeFactory::loadNode(const binstream::stream &stream) {
-		std::string className;
-		stream.getString(className);
+		bool hasNode;
+		stream.get(hasNode);
 
-		auto node = create(className);
-		if (node == nullptr) {
-			return nullptr;
+		if (hasNode) {
+			std::string className;
+			stream.getString(className);
+
+			auto node = create(className);
+			if (node == nullptr) {
+				return nullptr;
+			}
+
+			node->load(stream);
+			return node;
 		}
 
-		node->load(stream);
-		return node;
+		return nullptr;
 	}
 
 	void NodeFactory::loadNode(const binstream::stream &stream, Node *node) {
-		std::string className;
-		stream.getString(className);
+		bool hasNode;
+		stream.get(hasNode);
 
-		if (node->getTypeName() != className) {
-			throw std::runtime_error("Type name mismatch.");
+		if (hasNode) {
+			std::string className;
+			stream.getString(className);
+
+			// Class can be extended...
+			/*if (node->getTypeName() != className) {
+				throw std::runtime_error("Type name mismatch.");
+			}*/
+
+			node->load(stream);
+		} else {
+			throw std::runtime_error("Node are not found.");
 		}
-
-		node->load(stream);
 	}
 
 	void NodeFactory::saveNode(binstream::stream &stream, const Node *node) {
-		stream.putString(node->getTypeName());
-		node->save(stream);
+		if (node == nullptr) {
+			stream.put(false);
+		} else {
+			stream.put(true);
+			stream.putString(node->getTypeName());
+			node->save(stream);
+		}
 	}
 
 	void *add(const std::string &name, const std::function<Node *()> &creator) {

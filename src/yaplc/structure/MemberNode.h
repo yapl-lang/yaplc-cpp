@@ -73,5 +73,46 @@ namespace yaplc { namespace structure {
 
 			NODE_PROP_AUTO(type)
 		)
+
+	public:
+		virtual void load(const binstream::stream &stream) {
+			Container::load(stream);
+
+			stream.get((unsigned char &)visibility);
+			stream.get((unsigned char &)staticality);
+
+			unsigned long count;
+			stream.get(count);
+			modifiers.clear();
+			modifiers.reserve(count);
+			while (count-- != 0) {
+				std::string modifier;
+				unsigned long begin, end;
+				stream.getString(modifier);
+				stream.get(begin);
+				stream.get(end);
+
+				modifiers.push_back(std::make_tuple(modifier, begin, end));
+			}
+
+			delete type;
+			type = (TypeNameNode *)NodeFactory::loadNode(stream);
+		}
+
+		virtual void save(binstream::stream &stream) const {
+			Container::save(stream);
+
+			stream.put((unsigned char)visibility);
+			stream.put((unsigned char)staticality);
+
+			stream.put((unsigned long)modifiers.size());
+			for (auto modifier : modifiers) {
+				stream.putString(std::get<0>(modifier));
+				stream.put(std::get<1>(modifier));
+				stream.put(std::get<2>(modifier));
+			}
+
+			NodeFactory::saveNode(stream, type);
+		}
 	};
 } }
