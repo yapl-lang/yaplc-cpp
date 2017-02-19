@@ -18,7 +18,17 @@ int main(int argc, char **argv) {
 
 		try {
 			compiler.project(fs::relative(root).full_name());
+
+			std::cout << "Compiling..." << std::endl;
 			compiler.compile();
+
+			std::cout << "Processing..." << std::endl;
+			compiler.process();
+
+			std::cout << "Emitting..." << std::endl;
+			compiler.emit();
+
+			std::cout << "Building..." << std::endl;
 			compiler.build();
 		} catch (const yaplc::NotReadyException &) {
 			compiler.reportErrors(std::cout);

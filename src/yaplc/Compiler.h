@@ -40,6 +40,9 @@ namespace yaplc {
 
 	public:
 		void compile();
+		void process();
+		void emit();
+		void build();
 
 	public:
 		bool ready();

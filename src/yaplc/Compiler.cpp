@@ -1,3 +1,4 @@
+#include <yaplc/process/Processor.h>
 #include "Compiler.h"
 #include "FatalError.h"
 #include "PositionalError.h"
@@ -178,6 +179,36 @@ namespace yaplc {
 			structure::NodeFactory::saveNode(stream, file.root);
 			objectFile.content(stream.buffer());
 		}
+	}
+
+	void Compiler::process() {
+		if (!ready()) {
+			throw NotReadyException();
+		}
+
+		process::Processor processor;
+		for (auto &file : files) {
+			processor.process(file.root);
+
+			file.root->show(std::cout);
+			std::cout << std::endl;
+		}
+	}
+
+	void Compiler::emit() {
+		if (!ready()) {
+			throw NotReadyException();
+		}
+
+
+	}
+
+	void Compiler::build() {
+		if (!ready()) {
+			throw NotReadyException();
+		}
+
+
 	}
 
 	bool Compiler::ready() {
