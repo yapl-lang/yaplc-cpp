@@ -27,6 +27,7 @@
 #include "WhileOperatorNode.h"
 #include <map>
 #include <functional>
+#include <stdexcept>
 
 namespace yaplc { namespace structure {
 	std::map<std::string, std::function<Node *()>> nodes;

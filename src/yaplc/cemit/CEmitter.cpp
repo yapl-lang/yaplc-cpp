@@ -50,7 +50,7 @@ namespace yaplc { namespace cemit {
 			<< "#ifndef YAPLC_MODULE_" << moduleHash << std::endl
 			<< "#define YAPLC_MODULE_" << moduleHash << std::endl;
 
-		if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
+		if (auto classNode = dynamic_cast<const structure::ClassNode *>(typeNode)) {
 			emit(classNode);
 		}
 

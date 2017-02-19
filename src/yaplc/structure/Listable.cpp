@@ -110,7 +110,7 @@ namespace yaplc { namespace structure {
 	void Listable::save(binstream::stream &stream) const {
 		Node::save(stream);
 
-		stream.put(children.size());
+		stream.put((unsigned long)children.size());
 		for (auto child : children) {
 			NodeFactory::saveNode(stream, child);
 		}
