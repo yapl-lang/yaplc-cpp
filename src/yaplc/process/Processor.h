@@ -6,18 +6,32 @@
 #include "yaplc/structure/ImportNode.h"
 #include "yaplc/structure/ClassNode.h"
 #include "yaplc/structure/TypeNameNode.h"
+#include "yaplc/structure/MemberNode.h"
+#include "yaplc/structure/VariableMemberNode.h"
+#include "yaplc/structure/MethodMemberNode.h"
+#include "yaplc/CompilingError.h"
 
 namespace yaplc { namespace process {
 	class Processor {
+	private:
+		std::string const *code;
+		std::vector<CompilingError *> *errors;
+
 	public:
 		Processor();
 		~Processor();
-		
-		void process(structure::RootNode *rootNode);
+
+		void process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors);
 		void process(structure::PackageNode *packageNode, Context &context);
 		void process(structure::ImportNode *importNode, Context &context);
+		void process(structure::TypeNode *typeNode, Context &context);
 		void process(structure::ClassNode *classNode, Context &context);
 		void process(structure::TypeNameNode *typeNameNode, Context &context);
+		void process(structure::MemberNode *memberNode, Context &context);
+		void process(structure::VariableMemberNode *variableMemberNode, Context &context);
+		void process(structure::MethodMemberNode *methodMemberNode, Context &context);
+		void process(structure::ExpressionNode *expressionNode, Context &context);
+		void process(structure::ArgumentsNode *argumentsNode, Context &context);
 
 		void error(const std::string &message);
 		void error(const std::string &message, structure::Node *node);

@@ -1,4 +1,3 @@
-#include <yaplc/process/Processor.h>
 #include "Compiler.h"
 #include "FatalError.h"
 #include "PositionalError.h"
@@ -6,6 +5,7 @@
 #include "util/markline.h"
 #include "yaplc/parser/ParserManager.h"
 #include "yaplc/structure/NodeFactory.h"
+#include "yaplc/process/Processor.h"
 
 namespace yaplc {
 	void showError(const std::string &code,
@@ -188,7 +188,11 @@ namespace yaplc {
 
 		process::Processor processor;
 		for (auto &file : files) {
-			processor.process(file.root);
+			std::vector<CompilingError *> errors;
+			processor.process(file.root, file.code, errors);
+			for (auto error : errors) {
+				this->errors.push_back({&file, error});
+			}
 
 			file.root->show(std::cout);
 			std::cout << std::endl;
