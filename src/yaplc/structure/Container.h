@@ -18,7 +18,7 @@ namespace yaplc { namespace structure {
 		
 		Node *get() const;
 		template<class T> inline T *get() const {
-			return dynamic_cast<T>(get());
+			return dynamic_cast<T *>(get());
 		}
 
 		Node *set(Node *child);
