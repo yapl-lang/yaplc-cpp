@@ -2,7 +2,8 @@
 #include "FatalError.h"
 #include "PositionalError.h"
 #include "NotReadyException.h"
-#include "util/markline.h"
+#include "yaplc/util/markline.h"
+#include "yaplc/cemit/CEmitter.h"
 #include "yaplc/parser/ParserManager.h"
 #include "yaplc/structure/NodeFactory.h"
 #include "yaplc/process/Processor.h"
@@ -73,11 +74,14 @@ namespace yaplc {
 		}
 	}
 
-	Compiler::Compiler() {
+	Compiler::Compiler() :
+		emitter(new cemit::CEmitter()) {
 
 	}
 
 	Compiler::~Compiler() {
+		delete emitter;
+
 		for (auto error : errors) {
 			delete error.error;
 		}
@@ -130,7 +134,7 @@ namespace yaplc {
 
 					auto appender = name.substr(0, name.length() - 4);
 
-					code(sub.content(), (subPath == "") ? (appender) : (subPath + "." + appender));
+					file(sub.full_name(), (subPath == "") ? (appender) : (subPath + "." + appender));
 				}
 			}
 		}
@@ -194,8 +198,8 @@ namespace yaplc {
 				this->errors.push_back({&file, error});
 			}
 
-			file.root->show(std::cout);
-			std::cout << std::endl;
+			//file.root->show(std::cout);
+			//std::cout << std::endl;
 		}
 	}
 
@@ -204,7 +208,11 @@ namespace yaplc {
 			throw NotReadyException();
 		}
 
-
+		auto outRootPath = root/"emit";
+		outRootPath.mkdir();
+		for (auto file : files) {
+			emitter->emit(file.root, outRootPath);
+		}
 	}
 
 	void Compiler::build() {

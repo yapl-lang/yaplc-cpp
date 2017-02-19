@@ -1,4 +1,4 @@
-package com.package.name;
+package net.yapl.test;
 
 import std.Out;
 

@@ -2,6 +2,7 @@
 
 #include "CompilingError.h"
 #include "yaplc/structure/RootNode.h"
+#include "yaplc/emit/Emitter.h"
 #include "fs/fs.h"
 #include <iostream>
 #include <string>
@@ -26,6 +27,8 @@ namespace yaplc {
 		std::vector<CodeFile> files;
 
 		fs::path root;
+
+		emit::Emitter *emitter;
 
 	public:
 		Compiler();
