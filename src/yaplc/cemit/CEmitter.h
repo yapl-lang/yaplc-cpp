@@ -4,6 +4,9 @@
 #include "yaplc/structure/PackageNode.h"
 #include "yaplc/structure/TypeNode.h"
 #include "yaplc/structure/ClassNode.h"
+#include "yaplc/structure/MemberNode.h"
+#include "yaplc/structure/MethodMemberNode.h"
+#include "yaplc/structure/SpecialNode.h"
 #include <fstream>
 
 namespace yaplc { namespace cemit {
@@ -21,6 +24,11 @@ namespace yaplc { namespace cemit {
 	public:
 		CEmitter(const fs::path &emitPath);
 		virtual ~CEmitter();
+
+		virtual void addObject(structure::RootNode *rootNode);
+
+	private:
+		void generateMain();
 
 	protected:
 		virtual void emit(const structure::RootNode *rootNode);
