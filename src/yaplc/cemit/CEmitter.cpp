@@ -49,6 +49,8 @@ namespace yaplc { namespace cemit {
 		outh << std::endl
 			<< "#ifndef YAPLC_MODULE_" << moduleHash << std::endl
 			<< "#define YAPLC_MODULE_" << moduleHash << std::endl;
+		outc << std::endl
+			<< "#include \"" << outPath.relative(typeFile) << ".h\"" << std::endl;
 
 		if (auto classNode = dynamic_cast<const structure::ClassNode *>(typeNode)) {
 			emit(classNode);
