@@ -10,15 +10,16 @@ namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
 	private:
 		std::ofstream outh, outc;
+		fs::path outPath;
 
 	public:
-		CEmitter();
+		CEmitter(const fs::path &outPath);
 		virtual ~CEmitter();
 
 	protected:
-		virtual void emit(const fs::path &outPath, const structure::RootNode *rootNode);
-		void emit(const fs::path &outPath, const structure::PackageNode *packageNode);
-		void emit(const fs::path &outPath, const structure::TypeNode *typeNode);
+		virtual void emit(const structure::RootNode *rootNode);
+		void emit(const structure::PackageNode *packageNode);
+		void emit(const structure::TypeNode *typeNode);
 		void emit(const structure::ClassNode *classNode);
 	};
 } }

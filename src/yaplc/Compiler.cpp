@@ -75,7 +75,7 @@ namespace yaplc {
 	}
 
 	Compiler::Compiler() :
-		emitter(new cemit::CEmitter()) {
+		emitter(nullptr) {
 
 	}
 
@@ -210,8 +210,12 @@ namespace yaplc {
 
 		auto outRootPath = root/"emit";
 		outRootPath.mkdir();
+
+		delete emitter;
+		emitter = new cemit::CEmitter(outRootPath);
+
 		for (auto file : files) {
-			emitter->emit(file.root, outRootPath);
+			emitter->startEmit(file.root);
 		}
 	}
 

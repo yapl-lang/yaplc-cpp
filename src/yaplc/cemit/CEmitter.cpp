@@ -5,7 +5,7 @@ namespace yaplc { namespace cemit {
 	static std::string HEADER_H = "/* THIS FILE IS CREATED USING YAPLC */";
 	static std::string HEADER_C = "/* THIS FILE IS CREATED USING YAPLC */";
 
-	CEmitter::CEmitter() {
+	CEmitter::CEmitter(const fs::path &outPath) : outPath(outPath) {
 
 	}
 
@@ -13,23 +13,23 @@ namespace yaplc { namespace cemit {
 
 	}
 
-	void CEmitter::emit(const fs::path &outPath, const structure::RootNode *rootNode) {
+	void CEmitter::emit(const structure::RootNode *rootNode) {
 		for (auto node : *rootNode) {
 			if (auto packageNode = dynamic_cast<structure::PackageNode *>(node)) {
-				emit(outPath, packageNode);
+				emit(packageNode);
 			}
 		}
 	}
 
-	void CEmitter::emit(const fs::path &outPath, const structure::PackageNode *packageNode) {
+	void CEmitter::emit(const structure::PackageNode *packageNode) {
 		for (auto node : *packageNode) {
 			if (auto typeNode = dynamic_cast<structure::TypeNode *>(node)) {
-				emit(outPath, typeNode);
+				emit(typeNode);
 			}
 		}
 	}
 
-	void CEmitter::emit(const fs::path &outPath, const structure::TypeNode *typeNode) {
+	void CEmitter::emit(const structure::TypeNode *typeNode) {
 		auto packagePath = ((structure::PackageNode *)typeNode->getListableParent())->name;
 		std::replace(packagePath.begin(), packagePath.end(), '.', fs::path::PathDelim);
 		auto packageFolder = outPath/packagePath;

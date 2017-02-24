@@ -9,7 +9,7 @@ namespace yaplc { namespace emit {
 
 	}
 
-	void Emitter::emit(const structure::RootNode *rootNode, const fs::path &outPath) {
-		emit(outPath, rootNode);
+	void Emitter::startEmit(const structure::RootNode *rootNode) {
+		emit(rootNode);
 	}
 } }
