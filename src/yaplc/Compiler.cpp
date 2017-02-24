@@ -224,7 +224,7 @@ namespace yaplc {
 			throw NotReadyException();
 		}
 
-
+		emitter->build();
 	}
 
 	bool Compiler::ready() {

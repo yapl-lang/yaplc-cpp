@@ -14,5 +14,8 @@ namespace yaplc { namespace emit {
 
 	protected:
 		virtual void emit(const structure::RootNode *rootNode) = 0;
+
+	public:
+		virtual void build() = 0;
 	};
 } }

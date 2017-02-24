@@ -9,11 +9,17 @@
 namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
 	private:
+		fs::path emitPath, includePath, sourcePath, objectPath, binPath;
+
 		std::ofstream outh, outc;
-		fs::path outPath;
+
+		struct FileEntry {
+			fs::path header, source, object;
+		};
+		std::vector<FileEntry> files;
 
 	public:
-		CEmitter(const fs::path &outPath);
+		CEmitter(const fs::path &emitPath);
 		virtual ~CEmitter();
 
 	protected:
@@ -21,5 +27,8 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::PackageNode *packageNode);
 		void emit(const structure::TypeNode *typeNode);
 		void emit(const structure::ClassNode *classNode);
+
+	public:
+		virtual void build();
 	};
 } }
