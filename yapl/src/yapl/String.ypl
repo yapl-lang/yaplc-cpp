@@ -1,0 +1,7 @@
+package yapl;
+
+public class String {
+	public size getLength() {
+		#special "yapl.String.getLength"
+	}
+}

@@ -5,7 +5,7 @@ namespace yaplc { namespace parser {
 		while (true) {
 			save();
 			skipSpaces();
-			
+
 			if (end()) {
 				restore();
 				
@@ -15,8 +15,13 @@ namespace yaplc { namespace parser {
 			switch (get()) {
 			case '#':
 				skip();
+				if (skip("special")) {
+					restore();
+					return;
+				}
+
 				parseLineComment();
-				
+
 				push();
 				break;
 			case '/':

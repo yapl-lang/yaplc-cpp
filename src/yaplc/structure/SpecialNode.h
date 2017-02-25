@@ -19,5 +19,9 @@ namespace yaplc { namespace structure {
 
 			stream.putString(data);
 		}
+
+		NODE_PROPS(
+			NODE_PROP(data, stream << data)
+		)
 	};
 } }

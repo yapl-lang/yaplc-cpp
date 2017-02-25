@@ -18,38 +18,7 @@ namespace yaplc { namespace cemit {
 		objectPath.mkdir();
 		binPath.mkdir();
 
-
 		generateMain();
-
-		{
-			auto rootNode = new structure::RootNode();
-
-			auto packageNode = new structure::PackageNode();
-			packageNode->name = "yapl";
-			rootNode->add(packageNode);
-
-			auto classNode = new structure::ClassNode();
-			packageNode->add(classNode);
-
-			classNode->name = new structure::TypeNameNode();
-			classNode->name->type = "Object";
-
-			auto memberNode = new structure::MemberNode();
-			memberNode->setName("getType");
-			classNode->add(memberNode);
-			memberNode->type = new structure::TypeNameNode();
-			memberNode->type->type = "yapl.Type";
-
-			auto methodMemberNode = new structure::MethodMemberNode();
-			memberNode->set(methodMemberNode);
-
-			auto specialNode = new structure::SpecialNode();
-			methodMemberNode->body->add(specialNode);
-			specialNode->data = "yapl$class$getType";
-
-			addObject(rootNode);
-			emit(packageNode);
-		}
 	}
 
 	CEmitter::~CEmitter() {
@@ -112,6 +81,8 @@ namespace yaplc { namespace cemit {
 			outh << std::endl
 				<< "#ifndef YAPL_YAPL" << std::endl
 				<< "#define YAPL_YAPL" << std::endl
+				<< "#include <stdlib.h>" << std::endl
+				<< std::endl
 				<< "#include \"yapl/class.h\"" << std::endl;
 			outc << std::endl
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
@@ -158,6 +129,67 @@ namespace yaplc { namespace cemit {
 				<< "\tchar *name;" << std::endl
 				<< "\tvoid **vtable;" << std::endl
 				<< "};" << std::endl;
+
+			outh << std::endl
+				<< "#endif";
+
+			files.push_back({
+				packageHeader,
+				packageSource,
+				packageObject
+			});
+			outh.close();
+			outc.close();
+		}{
+			auto packageHeader = includePath/"yapl/objectref.h";
+			auto packageSource = sourcePath/"yapl/objectref.c";
+			auto packageObject = objectPath/"yapl/objectref.o";
+			packageHeader.parent().mkdirs();
+			packageSource.parent().mkdirs();
+			packageObject.parent().mkdirs();
+			outh.open(packageHeader.full_name());
+			outc.open(packageSource.full_name());
+
+			outh << HEADER_H << std::endl;
+			outc << HEADER_C << std::endl;
+
+			outh << std::endl
+				<< "#ifndef YAPL_OBJECTREF" << std::endl
+				<< "#define YAPL_OBJECTREF" << std::endl
+				<< "#include \"Object.h\"" << std::endl;
+			outc << std::endl
+				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+
+			outh << std::endl
+				<< "struct yapl$objectref {" << std::endl
+				<< "\tstruct Object *target;" << std::endl
+				<< "\tunsigned long count;" << std::endl
+				<< "};" << std::endl;
+
+			outh << std::endl
+				<< "void yapl$objectref$init(struct yapl$objectref *ref, struct Object *object);" << std::endl
+				<< "void yapl$objectref$push(struct yapl$objectref *ref);" << std::endl
+				<< "void yapl$objectref$pop(struct yapl$objectref *ref);" << std::endl;
+
+			outc << std::endl
+				<< "void yapl$objectref$init(struct yapl$objectref *ref, struct Object *object) {" << std::endl
+				<< "\tref->count = 1;" << std::endl
+				<< "\tref->target = object;" << std::endl
+				<< "}" << std::endl
+				<< std::endl
+				<< "void yapl$objectref$push(struct yapl$objectref *ref) {" << std::endl
+				<< "\t++ref->count;" << std::endl
+				<< "}" << std::endl
+				<< std::endl
+				<< "void yapl$objectref$pop(struct yapl$objectref *ref) {" << std::endl
+				<< "\tif (ref->count == 1) {" << std::endl
+				<< "\t\tfree(ref->target);" << std::endl
+				<< "\t\tref->target = NULL;" << std::endl
+				<< "\t\tfree(ref);" << std::endl
+				<< "\t} else {" << std::endl
+				<< "\t\t--ref->count;" << std::endl
+				<< "\t}" << std::endl
+				<< "}" << std::endl;
 
 			outh << std::endl
 				<< "#endif";
@@ -234,9 +266,23 @@ namespace yaplc { namespace cemit {
 
 	void CEmitter::emit(const structure::ClassNode *classNode) {
 		outh << std::endl
+			<< "struct yapl$class$" << classNode->name->type << " {" << std::endl
+			<< "\tstruct yapl$class $parent;" << std::endl;
+
+		outh << "};" << std::endl;
+
+		outh << std::endl
 			<< "struct " << classNode->name->type << " {" << std::endl
-			<< "\tstruct yapl$class *$class;" << std::endl
+			<< "\tstruct yapl$class$" << classNode->name->type << " *$class;" << std::endl
 			<< "};" << std::endl;
+
+		outh << std::endl
+			<< "struct " << classNode->name->type << " *(*" << classNode->name->type << "$create)();" << std::endl
+			<< std::endl;
+	}
+
+	void CEmitter::emit(const structure::MemberNode *memberNode) {
+
 	}
 
 	void CEmitter::build() {

@@ -35,6 +35,7 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::PackageNode *packageNode);
 		void emit(const structure::TypeNode *typeNode);
 		void emit(const structure::ClassNode *classNode);
+		void emit(const structure::MemberNode *memberNode);
 
 	public:
 		virtual void build();

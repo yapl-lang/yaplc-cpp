@@ -29,7 +29,7 @@ namespace yaplc { namespace parser {
 
 	public:
 		BaseParser();
-		
+
 	private:
 		void setup(ParserManager *parserManager);
 		

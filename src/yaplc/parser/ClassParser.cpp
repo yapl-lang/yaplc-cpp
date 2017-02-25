@@ -54,7 +54,6 @@ namespace yaplc { namespace parser {
 		skip();
 		skipEmpty();
 
-
 		while (parse<MemberParser>(classNode));
 		
 		skipEmpty();

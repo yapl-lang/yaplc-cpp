@@ -1,0 +1,7 @@
+package yapl;
+
+public class Type extends Object {
+	public String getName() {
+		#special "yapl.Type.getName"
+	}
+}

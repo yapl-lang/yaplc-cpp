@@ -17,7 +17,8 @@ int main(int argc, char **argv) {
 #endif
 
 		try {
-			compiler.project(fs::relative(root).full_name());
+			//compiler.project(fs::relative(root).full_name());
+			compiler.project(fs::relative(root + "/../yapl").full_name());
 
 			std::cout << "Compiling..." << std::endl;
 			compiler.compile();

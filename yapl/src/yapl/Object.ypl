@@ -1,0 +1,7 @@
+package yapl;
+
+public class Object {
+	public Type getType() {
+		#special "yapl.Object.getType"
+	}
+}

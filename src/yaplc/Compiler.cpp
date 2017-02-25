@@ -161,14 +161,14 @@ namespace yaplc {
 			auto objectFile = buildPath/objectFileName;
 			objectFile.parent().mkdirs();
 
-			if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
+			/*if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
 				try {
 					file.root = (structure::RootNode *)structure::NodeFactory::loadNode(binstream::stream{objectFile.content()});
 					continue;
 				} catch (...) {
 
 				}
-			}
+			}*/
 
 			objectFile.create();
 
@@ -198,8 +198,8 @@ namespace yaplc {
 				this->errors.push_back({&file, error});
 			}
 
-			//file.root->show(std::cout);
-			//std::cout << std::endl;
+			file.root->show(std::cout);
+			std::cout << std::endl;
 		}
 	}
 
