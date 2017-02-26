@@ -48,6 +48,8 @@ namespace yaplc { namespace process {
 	}
 
 	void Processor::process(structure::TypeNode *typeNode, Context &context) {
+		typeNode->name->type = context.path + "." + typeNode->name->type;
+
 		if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
 			auto context2 = context.clone();
 			process(classNode, context2);

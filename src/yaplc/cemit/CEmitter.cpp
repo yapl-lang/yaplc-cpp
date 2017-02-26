@@ -1,6 +1,7 @@
 #include "CEmitter.h"
 #include <algorithm>
 #include <stdlib.h>
+#include <yaplc/structure/VariableMemberNode.h>
 
 namespace yaplc { namespace cemit {
 	static std::string HEADER_H = "/* THIS FILE IS CREATED USING YAPLC */";
@@ -273,8 +274,20 @@ namespace yaplc { namespace cemit {
 
 		outh << std::endl
 			<< "struct " << classNode->name->type << " {" << std::endl
-			<< "\tstruct yapl$class$" << classNode->name->type << " *$class;" << std::endl
-			<< "};" << std::endl;
+			<< "\tstruct yapl$class$" << classNode->name->type << " *$class;" << std::endl;
+		for (auto node : *classNode) {
+			auto memberNode = (structure::MemberNode *)node;
+			auto child = memberNode->get();
+
+			if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
+
+			} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
+				if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
+					outh << "\t" << requestType(memberNode->type) << std::endl;
+				}
+			}
+		}
+		outh << "};" << std::endl;
 
 		outh << std::endl
 			<< "struct " << classNode->name->type << " *(*" << classNode->name->type << "$create)();" << std::endl
@@ -282,6 +295,36 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::emit(const structure::MemberNode *memberNode) {
+		auto child = memberNode->get();
+
+		if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
+
+		} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
+
+		}
+	}
+
+	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode) {
+		static std::map<std::string, std::string> typeNameMapping {
+			{"bool", "unsigned char"},
+			{"char", "char"},
+
+			{"byte", "unsigned char"},
+			{"sbyte", "signed char"},
+			{"short", "signed short"},
+			{"ushort", "unsigend short"},
+			{"int", "signed long"},
+			{"uint", "unsigned long"},
+			{"long", "signed long long"},
+			{"ulong", "unsigned long long"},
+
+			{"float", "float"},
+			{"double", "double"},
+
+			{"string", "yapl$String"}
+		};
+
+		auto typeName = typeNameNode->type;
 
 	}
 
