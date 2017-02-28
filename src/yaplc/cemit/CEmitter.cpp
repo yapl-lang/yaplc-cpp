@@ -312,7 +312,7 @@ namespace yaplc { namespace cemit {
 			{"byte", "unsigned char"},
 			{"sbyte", "signed char"},
 			{"short", "signed short"},
-			{"ushort", "unsigend short"},
+			{"ushort", "unsigned short"},
 			{"int", "signed long"},
 			{"uint", "unsigned long"},
 			{"long", "signed long long"},
