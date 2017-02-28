@@ -44,16 +44,7 @@ namespace yaplc { namespace process {
 					break;
 				}
 			}
-			
 			if (it == names.end()) {
-				for (it = imports.begin(); it != imports.end(); ++it) {
-					if (it->first == name) {
-						break;
-					}
-				}
-			}
-			
-			if (it == imports.end()) {
 				return;
 			}
 			

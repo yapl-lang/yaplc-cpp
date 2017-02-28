@@ -77,12 +77,11 @@ get_import:
 			break;
 		default:
 			if ((get() == ';') || (prefix != "")) {
-				auto importNode = new structure::ImportNode();
-				importNode->isStatic = importStatic;
-				
 				std::vector<std::string> caps;
 				regex::match("([A-Za-z0-9]*)$", importName, caps, 1);
-				
+
+				auto importNode = new structure::ImportNode();
+				importNode->isStatic = importStatic;
 				importNode->name = caps[0];
 				importNode->target = importName;
 				parentNode->add(importNode);
@@ -98,6 +97,17 @@ get_import:
 				if (!getWord(name)) {
 					error("Expected name after 'as'.");
 					cancelFatal();
+				}
+
+				auto importNode = new structure::ImportNode();
+				importNode->isStatic = importStatic;
+				importNode->name = name;
+				importNode->target = importName;
+				parentNode->add(importNode);
+				parsedNodes.push_back(importNode);
+
+				if (prefix == "") {
+					expected(';');
 				}
 				
 				break;
