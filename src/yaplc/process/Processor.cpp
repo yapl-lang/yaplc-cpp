@@ -37,14 +37,7 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::ImportNode *importNode, Context &context) {
-		auto target = importNode->target;
-		
-		std::vector<std::string> caps;
-		regex::match("([A-Za-z0-9]*)$", target, caps, 1);
-		
-		auto source = caps[0];
-		
-		context.imports[source] = target;
+		context.name(importNode->name, importNode->target);
 	}
 
 	void Processor::process(structure::TypeNode *typeNode, Context &context) {

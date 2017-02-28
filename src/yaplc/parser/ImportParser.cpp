@@ -79,6 +79,11 @@ get_import:
 			if ((get() == ';') || (prefix != "")) {
 				auto importNode = new structure::ImportNode();
 				importNode->isStatic = importStatic;
+				
+				std::vector<std::string> caps;
+				regex::match("([A-Za-z0-9]*)$", importName, caps, 1);
+				
+				importNode->name = caps[0];
 				importNode->target = importName;
 				parentNode->add(importNode);
 				parsedNodes.push_back(importNode);
@@ -87,9 +92,18 @@ get_import:
 					skip();
 				}
 				break;
+			} else if (skip("as")) {
+				std::string name;
+				
+				if (!getWord(name)) {
+					error("Expected name after 'as'.");
+					cancelFatal();
+				}
+				
+				break;
 			}
 
-			error(std::string("Expected ';' or '{'. Got '") + get() + "'.");
+			error(std::string("Expected 'as' or ';' or '{'. Got '") + get() + "'.");
 			cancelFatal();
 		}
 	}

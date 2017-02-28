@@ -6,10 +6,12 @@ namespace yaplc { namespace structure {
 	class ImportNode : public Node {
 	public:
 		bool isStatic;
+		std::string name;
 		std::string target;
 
 		NODE_PROPS(
 			NODE_PROP(isStatic, stream << ((isStatic) ? ("true") : ("false")))
+			NODE_PROP(name, stream << name)
 			NODE_PROP(target, stream << target)
 		)
 
@@ -18,6 +20,7 @@ namespace yaplc { namespace structure {
 			Node::load(stream);
 
 			stream.get(isStatic);
+			stream.getString(name);
 			stream.getString(target);
 		}
 
@@ -25,6 +28,7 @@ namespace yaplc { namespace structure {
 			Node::save(stream);
 
 			stream.put(isStatic);
+			stream.putString(name);
 			stream.putString(target);
 		}
 	};
