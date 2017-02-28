@@ -51,7 +51,7 @@ namespace yaplc { namespace process {
 	
 	void Processor::process(structure::ClassNode *classNode, Context &context) {
 		context.pushPath(classNode->name->type);
-		
+
 		process(classNode->base, context);
 		for (auto interface : classNode->interfaces) {
 			process(interface, context);

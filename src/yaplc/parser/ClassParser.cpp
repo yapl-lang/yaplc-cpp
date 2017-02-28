@@ -3,6 +3,7 @@
 #include "yaplc/structure/ClassNode.h"
 #include "yaplc/structure/MemberNode.h"
 #include "TypeNameParser.h"
+#include "SpecialParser.h"
 #include <algorithm>
 
 namespace yaplc { namespace parser {
@@ -54,7 +55,7 @@ namespace yaplc { namespace parser {
 		skip();
 		skipEmpty();
 
-		while (parse<MemberParser>(classNode));
+		while ((parse<SpecialParser>(classNode)) || (parse<MemberParser>(classNode)));
 		
 		skipEmpty();
 		

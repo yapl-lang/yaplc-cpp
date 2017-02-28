@@ -24,6 +24,16 @@ namespace yaplc { namespace structure {
 			}
 		}
 
+		inline std::string shortType() const {
+			auto pos = type.find_last_of('.');
+
+			if (pos == std::string::npos) {
+				return type;
+			}
+
+			return type.substr(pos + 1);
+		}
+
 		NODE_PROPS(
 			NODE_PROP(type, stream << type;)
 

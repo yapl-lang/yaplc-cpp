@@ -84,7 +84,8 @@ namespace yaplc { namespace cemit {
 				<< "#define YAPL_YAPL" << std::endl
 				<< "#include <stdlib.h>" << std::endl
 				<< std::endl
-				<< "#include \"yapl/class.h\"" << std::endl;
+				<< "#include \"yapl/class.h\"" << std::endl
+				<< "#include \"yapl/objectref.h\"" << std::endl;
 			outc << std::endl
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
 
@@ -225,9 +226,9 @@ namespace yaplc { namespace cemit {
 		auto packagePath = ((structure::PackageNode *)typeNode->getListableParent())->name;
 		std::replace(packagePath.begin(), packagePath.end(), '.', fs::path::PathDelim);
 
-		auto packageHeader = includePath/packagePath/(typeNode->name->type + ".h");
-		auto packageSource = sourcePath/packagePath/(typeNode->name->type + ".c");
-		auto packageObject = objectPath/packagePath/(typeNode->name->type + ".o");
+		auto packageHeader = includePath/packagePath/(typeNode->name->shortType() + ".h");
+		auto packageSource = sourcePath/packagePath/(typeNode->name->shortType() + ".c");
+		auto packageObject = objectPath/packagePath/(typeNode->name->shortType() + ".o");
 		packageHeader.parent().mkdirs();
 		packageSource.parent().mkdirs();
 		packageObject.parent().mkdirs();
@@ -237,7 +238,7 @@ namespace yaplc { namespace cemit {
 		outh << HEADER_H << std::endl;
 		outc << HEADER_C << std::endl;
 
-		auto moduleHash = ((structure::PackageNode *)typeNode->getListableParent())->name + "." + typeNode->name->type;
+		auto moduleHash = typeNode->name->type;
 		std::replace(moduleHash.begin(), moduleHash.end(), '.', '$');
 		std::transform(moduleHash.begin(), moduleHash.end(), moduleHash.begin(), ::toupper);
 
@@ -266,31 +267,44 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::emit(const structure::ClassNode *classNode) {
+		auto classSymbolName = convertName(classNode->name->type);
+
 		outh << std::endl
-			<< "struct yapl$class$" << classNode->name->type << " {" << std::endl
-			<< "\tstruct yapl$class $parent;" << std::endl;
+			<< "struct " << classSymbolName << "$class {" << std::endl
+			<< "\tstruct yapl$class $common;" << std::endl;
 
 		outh << "};" << std::endl;
 
 		outh << std::endl
-			<< "struct " << classNode->name->type << " {" << std::endl
-			<< "\tstruct yapl$class$" << classNode->name->type << " *$class;" << std::endl;
+			<< "struct " << classSymbolName << " {" << std::endl
+			<< "\tstruct " << classSymbolName << "$class *$class;" << std::endl;
 		for (auto node : *classNode) {
-			auto memberNode = (structure::MemberNode *)node;
-			auto child = memberNode->get();
+			if (auto memberNode = dynamic_cast<structure::MemberNode* >(node)) {
+				auto child = memberNode->get();
 
-			if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
+				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
 
-			} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
-				if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
-					outh << "\t" << requestType(memberNode->type) << std::endl;
+				} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
+					if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
+						outh << "\t" << requestType(memberNode->type) << std::endl;
+					}
 				}
+			} else if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
+				emitInStruct(specialNode);
 			}
 		}
 		outh << "};" << std::endl;
 
 		outh << std::endl
-			<< "struct " << classNode->name->type << " *(*" << classNode->name->type << "$create)();" << std::endl
+			<< "struct yapl$objectref " << classSymbolName << "$create();" << std::endl
+			<< std::endl;
+
+		outc << std::endl
+			<< "struct yapl$objectref " << classSymbolName << "$create() {" << std::endl
+			<< "\tstruct yapl$objectref result;" << std::endl
+			<< "\tyapl$objectref$init(&result, malloc(sizeof(struct " << classSymbolName << ")));" << std::endl
+			<< "\treturn result;" << std::endl
+			<< "}" << std::endl
 			<< std::endl;
 	}
 
@@ -302,6 +316,10 @@ namespace yaplc { namespace cemit {
 		} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
 
 		}
+	}
+
+	void CEmitter::placeVTable(const structure::ClassNode *classNode) {
+
 	}
 
 	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode) {
@@ -328,6 +346,17 @@ namespace yaplc { namespace cemit {
 
 	}
 
+	void CEmitter::emitInStruct(const structure::SpecialNode *specialNode) {
+		auto data = specialNode->data;
+
+		if (data == "yapl.String") {
+			outh << "\tchar *buffer;" << std::endl;
+			outh << "\tunsigned long size;" << std::endl;
+		} else {
+			// TODO: error
+		}
+	}
+
 	void CEmitter::build() {
 		for (auto file : files) {
 			system(("gcc -I\"" + fs::escape(includePath) + "\" -c \"" + fs::escape(file.source) + "\" -o \"" + fs::escape(file.object) + "\"").c_str());
@@ -341,5 +370,11 @@ namespace yaplc { namespace cemit {
 		ss << "-o \"" << fs::escape(binPath/"exe") << "\"";
 
 		system(ss.str().c_str());
+	}
+
+	std::string CEmitter::convertName(const std::string &original) {
+		auto copy = original;
+		std::replace(copy.begin(), copy.end(), '.', '$');
+		return "yapl$name$" + copy;
 	}
 } }
