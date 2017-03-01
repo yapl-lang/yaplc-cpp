@@ -37,10 +37,19 @@ namespace yaplc { namespace process {
 		}
 		
 		void fullName(std::string &name) {
+			std::string beginning;
+			
+			auto pos = name.find(".");
+			if (pos == std::string::npos) {
+				beginning = name;
+			} else {
+				beginning = name.substr(0, pos);
+			}
+			
 			std::map<std::string, std::string>::const_iterator it;
 			
 			for (it = names.begin(); it != names.end(); ++it) {
-				if (it->first == name) {
+				if (it->first == beginning) {
 					break;
 				}
 			}
