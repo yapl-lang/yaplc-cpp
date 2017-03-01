@@ -34,7 +34,7 @@ namespace yaplc { namespace parser {
 get_import:
 		skipEmpty();
 
-		if (!get("([A-Za-z0-9\\.]*)", {&importName})) {
+		if (!get("([A-Za-z0-9\\.\\$_]*)", {&importName})) {
 			error("Expected import name.");
 			cancelFatal();
 		}
@@ -45,7 +45,7 @@ get_import:
 			goto get_import;
 		}
 
-		if (!regex::match("^([a-zA-Z][a-zA-Z0-9]*\\.)*[a-zA-Z][a-zA-Z0-9]*$", importName)) {
+		if (!regex::match("^([a-zA-Z\\$_][a-zA-Z0-9\\$_]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$", importName)) {
 			error("Invalid import name.", position() - importName.size(), position() - 1);
 		}
 

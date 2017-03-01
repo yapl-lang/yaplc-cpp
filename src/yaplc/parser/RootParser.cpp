@@ -20,12 +20,12 @@ namespace yaplc { namespace parser {
 			skipEmpty();
 
 			std::string packageName;
-			if (!get("([A-Za-z0-9\\.]*)", {&packageName})) {
+			if (!get("([A-Za-z0-9\\.\\$_]*)", {&packageName})) {
 				error("Expected package name.");
 				cancelFatal();
 			}
 
-			if (!regex::match("^([a-zA-Z][a-zA-Z0-9]*\\.)*[a-zA-Z][a-zA-Z0-9]*$", packageName)) {
+			if (!regex::match("^([a-zA-Z\\$_][a-zA-Z\\$_0-9]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$", packageName)) {
 				error("Invalid package name.", position() - packageName.size(), position() - 1);
 			}
 
