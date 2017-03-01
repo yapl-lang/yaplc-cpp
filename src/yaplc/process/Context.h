@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <map>
 
 namespace yaplc { namespace process {
@@ -9,9 +10,10 @@ namespace yaplc { namespace process {
 		std::string package;
 		std::string path;
 		std::map<std::string, std::string> names;
+		std::vector<std::string> const &types;
 	
 	public:
-		Context() {
+		Context(const std::vector<std::string> &types) : types(types) {
 			name("Object", "yapl.Object");
 			name("String", "yapl.String");
 			name("object", "yapl.Object");
@@ -28,7 +30,19 @@ namespace yaplc { namespace process {
 			if (delim == std::string::npos) {
 				this->name(name, name);
 			} else {
-				this->name(name.substr(delim + 1), name);
+				auto ending = name.substr(delim + 1);
+
+				if (ending == "*") {
+					auto beginning = name.substr(0, delim);
+
+					for (auto type : types) {
+						if ((type.size() > beginning.size()) && (type.substr(0, beginning.size()) == beginning)) {
+							this->name(type);
+						}
+					}
+				} else {
+					this->name(ending, name);
+				}
 			}
 		}
 		
@@ -53,15 +67,22 @@ namespace yaplc { namespace process {
 					break;
 				}
 			}
-			if (it == names.end()) {
+
+			if (it != names.end()) {
+				name = it->second;
+
 				return;
 			}
-			
-			name = it->second;
+
+			for (auto type : types) {
+				if ((type.size() > package.size()) && (type.substr(0, package.size()) == package) && (type.substr(package.size() + 1) == name)) {
+					name = type;
+				}
+			}
 		}
 		
 		Context clone(const std::string &appender = "") {
-			Context clone;
+			Context clone(types);
 			
 			clone.package = package;
 			

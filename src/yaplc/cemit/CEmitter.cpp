@@ -26,10 +26,6 @@ namespace yaplc { namespace cemit {
 
 	}
 
-	void CEmitter::addObject(structure::RootNode *rootNode) {
-
-	}
-
 	void CEmitter::generateMain() {
 		{
 			auto packageHeader = includePath/"yapl/main.h";
@@ -272,7 +268,7 @@ namespace yaplc { namespace cemit {
 		outh << std::endl
 			<< "struct " << classSymbolName << "$class {" << std::endl
 			<< "\tstruct yapl$class $common;" << std::endl;
-
+		placeVTable(classNode);
 		outh << "};" << std::endl;
 
 		outh << std::endl
@@ -319,7 +315,27 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::placeVTable(const structure::ClassNode *classNode) {
+		if (auto parentClass = dynamic_cast<structure::ClassNode *>(getType(classNode->base->type))) {
+			if (classNode == parentClass) {
+				if (classNode->name->type != "yapl.Object") {
+					// TODO: Error, recursive extend
+				}
+			} else {
+				placeVTable(parentClass);
+			}
+		}
 
+		for (auto node : *classNode) {
+			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
+				auto child = memberNode->get();
+
+				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
+					outh << "\t" << requestType(memberNode->type) << " (*" << node->getName() << ")(";
+
+					outh << ");" << std::endl;
+				}
+			}
+		}
 	}
 
 	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode) {
@@ -339,11 +355,26 @@ namespace yaplc { namespace cemit {
 			{"float", "float"},
 			{"double", "double"},
 
-			{"string", "yapl$String"}
+			{"void", "void"},
+
+			{"size", "unsigned long"}
 		};
 
 		auto typeName = typeNameNode->type;
 
+		auto it = typeNameMapping.find(typeName);
+		if (it != typeNameMapping.end()) {
+			return it->second;
+		}
+
+		auto type = getType(typeName);
+		if (type == nullptr) {
+			// TODO: error undefined type
+
+			return "void";
+		}
+
+		return "struct " + convertName(type->name->type);
 	}
 
 	void CEmitter::emitInStruct(const structure::SpecialNode *specialNode) {

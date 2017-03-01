@@ -18,9 +18,13 @@ namespace yaplc { namespace process {
 		std::string const *code;
 		std::vector<CompilingError *> *errors;
 
+		std::vector<std::string> types;
+
 	public:
 		Processor();
 		~Processor();
+
+		void addObject(structure::RootNode *rootNode);
 
 		void process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors);
 		void process(structure::PackageNode *packageNode, Context &context);

@@ -25,8 +25,6 @@ namespace yaplc { namespace cemit {
 		CEmitter(const fs::path &emitPath);
 		virtual ~CEmitter();
 
-		virtual void addObject(structure::RootNode *rootNode);
-
 	private:
 		void generateMain();
 

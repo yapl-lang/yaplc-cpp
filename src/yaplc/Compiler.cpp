@@ -191,6 +191,11 @@ namespace yaplc {
 		}
 
 		process::Processor processor;
+
+		for (auto file : files) {
+			processor.addObject(file.root);
+		}
+
 		for (auto &file : files) {
 			std::vector<CompilingError *> errors;
 			processor.process(file.root, file.code, errors);
@@ -213,6 +218,10 @@ namespace yaplc {
 
 		delete emitter;
 		emitter = new cemit::CEmitter(outRootPath);
+
+		for (auto file : files) {
+			emitter->addObject(file.root);
+		}
 
 		for (auto file : files) {
 			emitter->startEmit(file.root);

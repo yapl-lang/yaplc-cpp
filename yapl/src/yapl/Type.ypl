@@ -1,6 +1,6 @@
 package yapl;
 
-public class Type extends Object {
+public class Type {
 	#special "yapl.Type"
 
 	public String getName() {

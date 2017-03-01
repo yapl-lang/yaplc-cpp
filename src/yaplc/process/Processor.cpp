@@ -2,6 +2,7 @@
 #include "LogicalError.h"
 #include "yaplc/util/getlineandcolumn.h"
 #include "regex/regex.h"
+#include <functional>
 
 namespace yaplc { namespace process {
 	Processor::Processor() {
@@ -11,6 +12,30 @@ namespace yaplc { namespace process {
 	Processor::~Processor() {
 		
 	}
+
+	void Processor::addObject(structure::RootNode *rootNode) {
+		std::function<void(structure::TypeNode *, const std::string &)> processType = [&](structure::TypeNode *typeNode, const std::string &path) {
+			auto npath = path + "." + typeNode->name->type;
+
+			for (auto node : *typeNode) {
+				if (auto typeNode = dynamic_cast<structure::TypeNode *>(node)) {
+					processType(typeNode, npath);
+				}
+			}
+
+			types.push_back(npath);
+		};
+
+		for (auto node : *rootNode) {
+			if (auto packageNode = dynamic_cast<structure::PackageNode *>(node)) {
+				for (auto node : *packageNode) {
+					if (auto typeNode = dynamic_cast<structure::TypeNode *>(node)) {
+						processType(typeNode, packageNode->name);
+					}
+				}
+			}
+		}
+	}
 	
 	void Processor::process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors) {
 		this->code = &code;
@@ -18,7 +43,7 @@ namespace yaplc { namespace process {
 
 		for (auto node : *rootNode) {
 			if (auto packageNode = dynamic_cast<structure::PackageNode *>(node)) {
-				Context packageContext;
+				Context packageContext(types);
 				process(packageNode, packageContext);
 			}
 		}
