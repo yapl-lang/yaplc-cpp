@@ -332,6 +332,33 @@ namespace yaplc { namespace cemit {
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
 					outh << "\t" << requestType(memberNode->type) << " (*" << node->getName() << ")(";
 
+					structure::TypeNameNode *type;
+					std::string name;
+					structure::ExpressionNode *value;
+
+					auto printArgument = [this, &type, &name, &value]() {
+						outh << requestType(type) << " " << name;
+					};
+
+					auto arguments = methodMemberNode->arguments->arguments;
+					auto it = arguments.begin();
+
+					if (it == arguments.end()) {
+						outh << "void";
+					} else {
+						std::tie(type, name, value) = *it;
+						printArgument();
+
+						++it;
+
+						for (; it != arguments.end(); ++it) {
+							outh << ", ";
+
+							std::tie(type, name, value) = *it;
+							printArgument();
+						}
+					}
+
 					outh << ");" << std::endl;
 				}
 			}
