@@ -135,7 +135,10 @@ namespace yaplc { namespace process {
 			std::tie(type, name, value) = argument;
 
 			process(type, context);
-			process(value, context);
+
+			if (value != nullptr) {
+				process(value, context);
+			}
 		}
 	}
 
