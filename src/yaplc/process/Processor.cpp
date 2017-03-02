@@ -96,6 +96,8 @@ namespace yaplc { namespace process {
 	}
 
 	void Processor::process(structure::MemberNode *memberNode, Context &context) {
+		memberNode->setName(context.path + "." + memberNode->getName());
+
 		process(memberNode->type, context);
 
 		if (auto variableMemberNode = memberNode->get<structure::VariableMemberNode>()) {

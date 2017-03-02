@@ -308,10 +308,18 @@ namespace yaplc { namespace cemit {
 		auto child = memberNode->get();
 
 		if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-
+			emit(methodMemberNode);
 		} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
-
+			emit(variableMemberNode);
 		}
+	}
+
+	void CEmitter::emit(const structure::MethodMemberNode *methodMemberNode) {
+
+	}
+
+	void CEmitter::emit(const structure::VariableMemberNode *variableMemberNode) {
+
 	}
 
 	void CEmitter::placeVTable(const structure::ClassNode *classNode) {
@@ -477,5 +485,11 @@ namespace yaplc { namespace cemit {
 		auto copy = original;
 		std::replace(copy.begin(), copy.end(), '.', '$');
 		return "yapl$name$" + copy;
+	}
+
+	std::string CEmitter::getLast(const std::string &name) {
+		auto pos = name.find('.');
+
+
 	}
 } }

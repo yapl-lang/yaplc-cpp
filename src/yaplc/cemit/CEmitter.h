@@ -8,6 +8,7 @@
 #include "yaplc/structure/MethodMemberNode.h"
 #include "yaplc/structure/SpecialNode.h"
 #include <fstream>
+#include <yaplc/structure/VariableMemberNode.h>
 
 namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
@@ -34,6 +35,8 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::TypeNode *typeNode);
 		void emit(const structure::ClassNode *classNode);
 		void emit(const structure::MemberNode *memberNode);
+		void emit(const structure::MethodMemberNode *methodMemberNode);
+		void emit(const structure::VariableMemberNode *variableMemberNode);
 
 		void placeVTable(const structure::ClassNode *classNode);
 
@@ -47,5 +50,6 @@ namespace yaplc { namespace cemit {
 
 	private:
 		static std::string convertName(const std::string &original);
+		static std::string getLast(const std::string &name);
 	};
 } }
