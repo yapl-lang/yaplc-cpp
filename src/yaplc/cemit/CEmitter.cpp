@@ -282,7 +282,7 @@ namespace yaplc { namespace cemit {
 
 				} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
 					if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
-						outh << "\t" << requestType(memberNode->type) << std::endl;
+						outh << "\t" << requestTypeRef(memberNode->type) << std::endl;
 					}
 				}
 			} else if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
@@ -330,23 +330,27 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << "\t" << requestType(memberNode->type) << " (*" << node->getName() << ")(";
+					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << node->getName() << ")(";
 
 					structure::TypeNameNode *type;
 					std::string name;
 					structure::ExpressionNode *value;
 
 					auto printArgument = [this, &type, &name, &value]() {
-						outh << requestType(type) << " " << name;
+						outh << requestTypeRef(type) << " " << name;
 					};
+
+					type = classNode->name;
+					name = "$this";
+					printArgument();
 
 					auto arguments = methodMemberNode->arguments->arguments;
 					auto it = arguments.begin();
 
-					if (it == arguments.end()) {
-						outh << "void";
-					} else {
+					if (it != arguments.end()) {
 						std::tie(type, name, value) = *it;
+
+						outh << ", ";
 						printArgument();
 
 						++it;
@@ -363,6 +367,45 @@ namespace yaplc { namespace cemit {
 				}
 			}
 		}
+	}
+
+	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode) {
+		static std::map<std::string, std::string> typeNameMapping {
+			{"bool", "unsigned char"},
+			{"char", "char"},
+
+			{"byte", "unsigned char"},
+			{"sbyte", "signed char"},
+			{"short", "signed short"},
+			{"ushort", "unsigned short"},
+			{"int", "signed long"},
+			{"uint", "unsigned long"},
+			{"long", "signed long long"},
+			{"ulong", "unsigned long long"},
+
+			{"float", "float"},
+			{"double", "double"},
+
+			{"void", "void"},
+
+			{"size", "unsigned long"}
+		};
+
+		auto typeName = typeNameNode->type;
+
+		auto it = typeNameMapping.find(typeName);
+		if (it != typeNameMapping.end()) {
+			return it->second;
+		}
+
+		auto type = getType(typeName);
+		if (type == nullptr) {
+			// TODO: error undefined type
+
+			return "void";
+		}
+
+		return "struct yapl$objectref";
 	}
 
 	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode) {

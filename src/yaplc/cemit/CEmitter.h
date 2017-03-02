@@ -39,6 +39,7 @@ namespace yaplc { namespace cemit {
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
 
+		std::string requestTypeRef(const structure::TypeNameNode *typeNameNode);
 		std::string requestType(const structure::TypeNameNode *typeNameNode);
 
 	public:
