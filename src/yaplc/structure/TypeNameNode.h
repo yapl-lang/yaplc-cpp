@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include "ExpressionNode.h"
 #include <vector>
 #include <string>
 
@@ -9,6 +10,7 @@ namespace yaplc { namespace structure {
 	public:
 		std::string type;
 		std::vector<TypeNameNode *> templateArguments;
+		std::vector<ExpressionNode *> dimens;
 
 	public:
 		inline TypeNameNode() :

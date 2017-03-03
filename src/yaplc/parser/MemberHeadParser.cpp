@@ -20,6 +20,8 @@ namespace yaplc { namespace parser {
 			std::vector<std::tuple<structure::TypeNameNode *, unsigned long, unsigned long>> entries;
 
 			while (true) {
+				save();
+
 				structure::TypeNameNode *typeNameNode = nullptr;
 
 				skipEmpty();
@@ -28,6 +30,24 @@ namespace yaplc { namespace parser {
 					break;
 				}
 
+				if (typeNameNode->type == "operator") {
+					restore();
+
+					start = position();
+					std::string nameBuffer;
+					if (!getWord(nameBuffer)) {
+						error("Wrong context.");
+						cancelFatal();
+					}
+
+					typeNameNode->type = nameBuffer;
+					typeNameNode->templateArguments.clear();
+					typeNameNode->dimens.clear();
+					entries.push_back(std::make_tuple(typeNameNode, start, position() - 1));
+					break;
+				}
+
+				norestore();
 				entries.push_back(std::make_tuple(typeNameNode, start, position() - 1));
 			}
 

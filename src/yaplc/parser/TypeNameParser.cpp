@@ -1,4 +1,5 @@
 #include "TypeNameParser.h"
+#include "ExpressionParser.h"
 
 namespace yaplc { namespace parser {
 	void TypeNameParser::handle(structure::TypeNameNode **typeNameNode) {
@@ -62,6 +63,33 @@ end:
 		} else {
 			restore();
 		}
+
+		while (true) {
+			save();
+			skipEmpty();
+
+			if (get() == '[') {
+				norestore();
+				skip();
+
+				skipEmpty();
+				if (get() != ']') {
+					auto expression = new structure::ExpressionNode();
+					if (!parse<ExpressionParser>(expression, true)) {
+						error("Expression expected.");
+						cancelFatal();
+					}
+
+					node->dimens.push_back(expression);
+				}
+
+				expected(']');
+			} else {
+				restore();
+				break;
+			}
+		}
+
 
 		end(node);
 	}
