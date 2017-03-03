@@ -495,6 +495,10 @@ namespace yaplc { namespace cemit {
 	std::string CEmitter::getLast(const std::string &name) {
 		auto pos = name.find('.');
 
+		if (pos == std::string::npos) {
+			return name;
+		}
 
+		return name.substr(pos + 1);
 	}
 } }
