@@ -44,6 +44,8 @@ namespace yaplc { namespace structure {
 			Array, // []
 			Whitespace, // expression1 expression2
 		};
+		
+		static std::vector<std::pair<std::string, structure::OperatorNode::Type>> Operators;
 
 	public:
 		Type type;
