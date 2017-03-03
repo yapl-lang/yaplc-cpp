@@ -1,7 +1,7 @@
 #include "CEmitter.h"
+#include "yaplc/structure/VariableMemberNode.h"
 #include <algorithm>
 #include <stdlib.h>
-#include <yaplc/structure/VariableMemberNode.h>
 
 namespace yaplc { namespace cemit {
 	static std::string HEADER_H = "/* THIS FILE IS CREATED USING YAPLC */";
@@ -159,33 +159,38 @@ namespace yaplc { namespace cemit {
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
 
 			outh << std::endl
-				<< "struct yapl$objectref {" << std::endl
+				<< "struct yapl$objectref$item {" << std::endl
 				<< "\tstruct Object *target;" << std::endl
 				<< "\tunsigned long count;" << std::endl
 				<< "};" << std::endl;
 
 			outh << std::endl
-				<< "void yapl$objectref$init(struct yapl$objectref *ref, struct Object *object);" << std::endl
-				<< "void yapl$objectref$push(struct yapl$objectref *ref);" << std::endl
-				<< "void yapl$objectref$pop(struct yapl$objectref *ref);" << std::endl;
+				<< "struct yapl$objectref {" << std::endl
+				<< "\tstruct yapl$objectref$item *item;" << std::endl
+				<< "};" << std::endl;
+
+			outh << std::endl
+				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object);" << std::endl
+				<< "void yapl$objectref$push(struct yapl$objectref ref);" << std::endl
+				<< "void yapl$objectref$pop(struct yapl$objectref ref);" << std::endl;
 
 			outc << std::endl
-				<< "void yapl$objectref$init(struct yapl$objectref *ref, struct Object *object) {" << std::endl
-				<< "\tref->count = 1;" << std::endl
-				<< "\tref->target = object;" << std::endl
+				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << std::endl
+				<< "\tref.item = malloc(sizeof(yapl$objectref$item));" << std::endl
+				<< "\tref.item->count = 1;" << std::endl
+				<< "\tref.item->target = object;" << std::endl
 				<< "}" << std::endl
 				<< std::endl
-				<< "void yapl$objectref$push(struct yapl$objectref *ref) {" << std::endl
-				<< "\t++ref->count;" << std::endl
+				<< "void yapl$objectref$push(struct yapl$objectref ref) {" << std::endl
+				<< "\t++ref.item->count;" << std::endl
 				<< "}" << std::endl
 				<< std::endl
-				<< "void yapl$objectref$pop(struct yapl$objectref *ref) {" << std::endl
-				<< "\tif (ref->count == 1) {" << std::endl
-				<< "\t\tfree(ref->target);" << std::endl
-				<< "\t\tref->target = NULL;" << std::endl
-				<< "\t\tfree(ref);" << std::endl
+				<< "void yapl$objectref$pop(struct yapl$objectref ref) {" << std::endl
+				<< "\tif (ref.item->count == 1) {" << std::endl
+				<< "\t\tfree(ref.item->target);" << std::endl
+				<< "\t\tfree(ref.item);" << std::endl
 				<< "\t} else {" << std::endl
-				<< "\t\t--ref->count;" << std::endl
+				<< "\t\t--ref.item->count;" << std::endl
 				<< "\t}" << std::endl
 				<< "}" << std::endl;
 
@@ -298,7 +303,7 @@ namespace yaplc { namespace cemit {
 		outc << std::endl
 			<< "struct yapl$objectref " << classSymbolName << "$create() {" << std::endl
 			<< "\tstruct yapl$objectref result;" << std::endl
-			<< "\tyapl$objectref$init(&result, malloc(sizeof(struct " << classSymbolName << ")));" << std::endl
+			<< "\tyapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << std::endl
 			<< "\treturn result;" << std::endl
 			<< "}" << std::endl
 			<< std::endl;
