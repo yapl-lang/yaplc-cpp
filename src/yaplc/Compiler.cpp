@@ -9,8 +9,10 @@
 #include "yaplc/process/Processor.h"
 
 namespace yaplc {
-	void showError(const std::string &code,
+	void showError(const std::string &context, const std::string &code,
 	               const CompilingError *error, std::ostream &out) {
+		out << "[File: " << context << "] ";
+
 		out << "[";
 
 		switch (error->type) {
@@ -242,7 +244,7 @@ namespace yaplc {
 
 	void Compiler::reportErrors(std::ostream &stream) {
 		for (auto error : errors) {
-			showError(error.file->code, error.error, stream);
+			showError(error.file->sourceFile.full_name(), error.file->code, error.error, stream);
 		}
 	}
 }
