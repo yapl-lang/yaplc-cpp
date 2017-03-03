@@ -176,7 +176,7 @@ namespace yaplc { namespace cemit {
 
 			outc << std::endl
 				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << std::endl
-				<< "\tref.item = malloc(sizeof(yapl$objectref$item));" << std::endl
+				<< "\tref.item = malloc(sizeof(struct yapl$objectref$item));" << std::endl
 				<< "\tref.item->count = 1;" << std::endl
 				<< "\tref.item->target = object;" << std::endl
 				<< "}" << std::endl
