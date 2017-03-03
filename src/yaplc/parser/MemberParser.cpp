@@ -31,8 +31,8 @@ namespace yaplc { namespace parser {
 			cancel();
 		}
 
-		parse<MethodMemberParser>(memberNode, isInterface || isStruct)
-		|| parse<OperatorMemberParser>(memberNode, isInterface || isStruct)
+		parse<OperatorMemberParser>(memberNode, isInterface || isStruct)
+		|| parse<MethodMemberParser>(memberNode, isInterface || isStruct)
 		|| ((isClass || isStruct) && parse<VariableMemberParser>(memberNode))
 		|| cancel();
 
