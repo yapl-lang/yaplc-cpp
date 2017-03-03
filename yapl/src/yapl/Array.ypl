@@ -1,0 +1,29 @@
+package yapl;
+
+public class Array<T> {
+	#special "yapl.Array"
+
+	public Array() {
+		#special "yapl.Array.constructor"
+	}
+
+	public Array(size size) {
+		#special "yapl.Array.constructor.size"
+	}
+
+	public Array(Array<T> values) {
+		#special "yapl.Array.constructor.values"
+	}
+
+	public size size() {
+		#special "yapl.Array.size"
+	}
+	
+	public T operator [](size position) {
+		#special "yapl.Array.get"
+	}
+
+	public T operator []=(size position, T value) {
+		#special "yapl.Array.set"
+	}
+}

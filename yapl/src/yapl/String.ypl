@@ -3,7 +3,23 @@ package yapl;
 public class String {
 	#special "yapl.String"
 
-	public size getLength() {
+	public String() {
+		#special "yapl.String.constructor"
+	}
+
+	public size length() {
 		#special "yapl.String.getLength"
+	}
+
+	public char[] chars() {
+		#special "yapl.String.chars"
+	}
+
+	public String substr(size start) {
+		#special "yapl.String.substr.start"
+	}
+
+	public String substr(size start, size length) {
+		#special "yapl.String.substr.start-length"
 	}
 }
