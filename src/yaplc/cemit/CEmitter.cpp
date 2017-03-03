@@ -343,7 +343,7 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << node->getName() << ")(";
+					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getLast(node->getName()) << ")(";
 
 					structure::TypeNameNode *type;
 					std::string name;
@@ -493,7 +493,7 @@ namespace yaplc { namespace cemit {
 	}
 
 	std::string CEmitter::getLast(const std::string &name) {
-		auto pos = name.find('.');
+		auto pos = name.find_last_of('.');
 
 		if (pos == std::string::npos) {
 			return name;
