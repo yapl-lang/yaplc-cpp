@@ -1,7 +1,7 @@
 #include "OperatorNode.h"
 
 namespace yaplc { namespace structure {
-	std::vector<std::pair<std::string, OperatorNode::Type>> OperatorNode::Operators = {
+	std::vector<std::pair<std::string, OperatorNode::Type>> OperatorNode::Operators {
 		{"==", OperatorNode::Type::Equality},
 		{"equals", OperatorNode::Type::Equality},
 		{"!=", OperatorNode::Type::Inequality},

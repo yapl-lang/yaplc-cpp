@@ -2,6 +2,8 @@
 
 #include "Node.h"
 #include "ExpressionNode.h"
+#include <vector>
+#include <map>
 
 namespace yaplc { namespace structure {
 	class OperatorNode : public Node {
@@ -42,10 +44,11 @@ namespace yaplc { namespace structure {
 			// Other
 			Call, // ()
 			Array, // []
+			ArraySet, // []=
 			Whitespace, // expression1 expression2
 		};
-		
-		static std::vector<std::pair<std::string, structure::OperatorNode::Type>> Operators;
+
+		static std::vector<std::pair<std::string, Type>> Operators;
 
 	public:
 		Type type;
