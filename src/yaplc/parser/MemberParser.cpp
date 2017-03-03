@@ -3,6 +3,7 @@
 #include "MemberHeadParser.h"
 #include "VariableMemberParser.h"
 #include "MethodMemberParser.h"
+#include "OperatorMemberParser.h"
 #include "yaplc/structure/ClassNode.h"
 
 namespace yaplc { namespace parser {
@@ -31,6 +32,7 @@ namespace yaplc { namespace parser {
 		}
 
 		parse<MethodMemberParser>(memberNode, isInterface || isStruct)
+		|| parse<OperatorMemberParser>(memberNode, isInterface || isStruct)
 		|| ((isClass || isStruct) && parse<VariableMemberParser>(memberNode))
 		|| cancel();
 
