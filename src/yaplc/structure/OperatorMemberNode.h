@@ -1,18 +1,25 @@
 #pragma once
 
 #include "Node.h"
+#include "OperatorNode.h"
+#include "MethodMemberNode.h"
 
 namespace yaplc { namespace structure {
-	class OperatorMemberNode : public Node {
+	class OperatorMemberNode : public MethodMemberNode {
 	public:
+		OperatorNode::Type type;
 
 	public:
 		virtual void load(const binstream::stream &stream) {
-			Node::load(stream);
+			MethodMemberNode::load(stream);
+
+			stream.get((unsigned char &)type);
 		}
 
 		virtual void save(binstream::stream &stream) const {
-			Node::save(stream);
+			MethodMemberNode::save(stream);
+
+			stream.put((unsigned char)type);
 		}
 	};
 } }
