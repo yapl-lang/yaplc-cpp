@@ -89,6 +89,29 @@ namespace yaplc { namespace structure {
 
 				stream << ">";
 			})
+
+			NODE_PROP(dimens, {
+				auto it = dimens.begin();
+				auto end = dimens.end();
+
+				if (it != end) {
+					stream << "[";
+					if ((*it) != nullptr) {
+						(*it)->show(stream, indent + 2);
+					}
+					stream << "]";
+
+					++it;
+
+					for (; it != end; ++it) {
+						stream << "[";
+						if ((*it) != nullptr) {
+							(*it)->show(stream, indent + 2);
+						}
+						stream << "]";
+					}
+				}
+			})
 		)
 
 	public:
@@ -102,14 +125,26 @@ namespace yaplc { namespace structure {
 			}
 			templateArguments.clear();
 
-			unsigned long count;
-			stream.get(count);
-			templateArguments.reserve(count);
+			{
+				unsigned long count;
+				stream.get(count);
+				templateArguments.reserve(count);
 
-			while (count-- != 0) {
-				auto node = new TypeNameNode();
-				NodeFactory::loadNode(stream, node);
-				templateArguments.push_back(node);
+				while (count-- != 0) {
+					auto node = new TypeNameNode();
+					NodeFactory::loadNode(stream, node);
+					templateArguments.push_back(node);
+				}
+			}
+
+			{
+				unsigned long count;
+				stream.get(count);
+				templateArguments.reserve(count);
+
+				while (count-- != 0) {
+					dimens.push_back((ExpressionNode *)NodeFactory::loadNode(stream));
+				}
 			}
 		}
 
@@ -121,6 +156,11 @@ namespace yaplc { namespace structure {
 			stream.put((unsigned long)templateArguments.size());
 			for (auto argument : templateArguments) {
 				NodeFactory::saveNode(stream, argument);
+			}
+
+			stream.put((unsigned long)dimens.size());
+			for (auto dimen : dimens) {
+				NodeFactory::saveNode(stream, dimen);
 			}
 		}
 	};
