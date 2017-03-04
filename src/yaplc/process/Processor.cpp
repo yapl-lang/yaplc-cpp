@@ -108,6 +108,39 @@ namespace yaplc { namespace process {
 				printf("require %s\n", typeNameNode->hashName().c_str());
 			}
 		}
+
+		if (typeNameNode->dimens.size() != 0) {
+			bool hasSize = false;
+
+			for (auto dimen : typeNameNode->dimens) {
+				if (dimen != nullptr) {
+					hasSize = true;
+					break;
+				}
+			}
+
+			if (!hasSize) {
+				auto dimens = typeNameNode->dimens.size();
+
+				auto realNode = new structure::TypeNameNode();
+				realNode->type = typeNameNode->type;
+				realNode->templateArguments = typeNameNode->templateArguments;
+				realNode->dimens = typeNameNode->dimens;
+
+				typeNameNode->type = "yapl.Array";
+				typeNameNode->templateArguments.clear();
+				typeNameNode->dimens.clear();
+
+				for (unsigned long i = 1; i < dimens; ++i) {
+					auto subNode = new structure::TypeNameNode();
+					subNode->type = "yapl.Array";
+					typeNameNode->templateArguments.push_back(subNode);
+					typeNameNode = subNode;
+				}
+
+				typeNameNode->templateArguments.push_back(realNode);
+			}
+		}
 	}
 
 	void Processor::process(structure::MemberNode *memberNode, Context &context) {

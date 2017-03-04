@@ -11,7 +11,7 @@ public class String {
 		#special "yapl.String.getLength"
 	}
 
-	public Array<char> chars() {
+	public char[] chars() {
 		#special "yapl.String.chars"
 	}
 
