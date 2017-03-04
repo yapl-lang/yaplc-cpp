@@ -16,9 +16,11 @@
 #include "Node.h"
 #include "NullNode.h"
 #include "NumberNode.h"
+#include "OperatorMemberNode.h"
 #include "OperatorNode.h"
 #include "PackageNode.h"
 #include "RootNode.h"
+#include "SpecialNode.h"
 #include "StringNode.h"
 #include "TypeExpressionNode.h"
 #include "TypeNameNode.h"
@@ -112,9 +114,12 @@ namespace yaplc { namespace structure {
 	REGISTER_NODE(MethodMemberNode)
 	REGISTER_NODE(Node)
 	REGISTER_NODE(NullNode)
+	REGISTER_NODE(NumberNode)
+	REGISTER_NODE(OperatorMemberNode)
 	REGISTER_NODE(OperatorNode)
 	REGISTER_NODE(PackageNode)
 	REGISTER_NODE(RootNode)
+	REGISTER_NODE(SpecialNode)
 	REGISTER_NODE(StringNode)
 	REGISTER_NODE(TypeExpressionNode)
 	REGISTER_NODE(TypeNameNode)
