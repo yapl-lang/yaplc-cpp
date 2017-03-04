@@ -59,7 +59,7 @@ namespace yaplc { namespace structure {
 				return (Node *)listableParent;
 			}
 
-			if (childableParent != nullptr) {
+			if (containerParent != nullptr) {
 				return (Node *)containerParent;
 			}
 
