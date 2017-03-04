@@ -83,6 +83,8 @@ end:
 					node->dimens.push_back(expression);
 				}
 
+				node->dimens.push_back(nullptr);
+
 				expected(']');
 			} else {
 				restore();
