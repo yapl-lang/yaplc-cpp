@@ -96,19 +96,6 @@ namespace yaplc { namespace process {
 	void Processor::process(structure::TypeNameNode *typeNameNode, Context &context) {
 		context.fullName(typeNameNode->type);
 
-		if (typeNameNode->templateArguments.size() != 0) {
-			auto templateRequirements = templatesRequirements[typeNameNode->type];
-			auto &templateRequirement = templateRequirements[typeNameNode->hashName()];
-
-			if (templateRequirement.size() == 0) {
-				for (auto templateArgument : typeNameNode->templateArguments) {
-					templateRequirement.push_back(templateArgument);
-				}
-
-				printf("require %s\n", typeNameNode->hashName().c_str());
-			}
-		}
-
 		if (typeNameNode->dimens.size() != 0) {
 			bool hasSize = false;
 
@@ -138,6 +125,23 @@ namespace yaplc { namespace process {
 				}
 
 				typeNameNode->templateArguments.push_back(realNode);
+			}
+		}
+
+		if (typeNameNode->templateArguments.size() != 0) {
+			for (auto templateArgument : typeNameNode->templateArguments) {
+				process(templateArgument, context);
+			}
+
+			auto templateRequirements = templatesRequirements[typeNameNode->type];
+			auto &templateRequirement = templateRequirements[typeNameNode->hashName()];
+
+			if (templateRequirement.size() == 0) {
+				for (auto templateArgument : typeNameNode->templateArguments) {
+					templateRequirement.push_back(templateArgument);
+				}
+
+				printf("require %s\n", typeNameNode->hashName().c_str());
 			}
 		}
 	}
