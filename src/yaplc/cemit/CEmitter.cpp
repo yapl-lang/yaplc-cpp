@@ -473,7 +473,13 @@ namespace yaplc { namespace cemit {
 
 		if (data == "yapl.String") {
 			outh << "\tchar *buffer;" << std::endl;
-			outh << "\tunsigned long size;" << std::endl;
+			outh << "\tunsigned long length;" << std::endl;
+		} else if (data == "yapl.Array") {
+			// Template argument
+			structure::TypeNameNode typeNameNode;
+			typeNameNode.type = "T";
+			outh << "\t" << requestTypeRef(&typeNameNode) << " *elements;" << std::endl;
+			outh << "\tunsigned long count;" << std::endl;
 		} else {
 			// TODO: error
 		}
