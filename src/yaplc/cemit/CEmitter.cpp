@@ -287,7 +287,7 @@ namespace yaplc { namespace cemit {
 
 				} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
 					if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
-						outh << "\t" << requestTypeRef(memberNode->type) << std::endl;
+						outh << "\t" << requestTypeRef(memberNode->type) << " " << getLast(memberNode->getName()) << ";" << std::endl;
 					}
 				}
 			} else if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
@@ -511,7 +511,7 @@ namespace yaplc { namespace cemit {
 	}
 
 	std::string CEmitter::getShortMethodName(const structure::MethodMemberNode *methodMemberNode) {
-			if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getParent())) {
+		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getParent())) {
 			auto result = getLast(memberNode->getName());
 
 			switch (memberNode->staticality) {
