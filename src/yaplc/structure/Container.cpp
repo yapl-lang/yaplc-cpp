@@ -52,10 +52,12 @@ namespace yaplc { namespace structure {
 			child->listableParent->remove(child);
 		} else if (child->containerParent != nullptr) {
 			child->containerParent->set(nullptr);
+			child->containerParent = nullptr;
 		}
 		
 		delete this->child;
-		
+
+		child->containerParent = this;
 		return this->child = child;
 	}
 

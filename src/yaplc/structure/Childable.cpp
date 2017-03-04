@@ -49,6 +49,7 @@ namespace yaplc { namespace structure {
 			child->listableParent = nullptr;
 		} else if (child->containerParent != nullptr) {
 			child->containerParent->set(nullptr);
+			child->containerParent = nullptr;
 		}
 		
 		child->childableParent = this;
