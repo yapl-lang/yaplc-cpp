@@ -50,6 +50,22 @@ namespace yaplc { namespace structure {
 
 		virtual void clear() {}
 
+		inline Node *getParent() const {
+			if (childableParent != nullptr) {
+				return (Node *)childableParent;
+			}
+
+			if (listableParent != nullptr) {
+				return (Node *)listableParent;
+			}
+
+			if (childableParent != nullptr) {
+				return (Node *)containerParent;
+			}
+
+			return nullptr;
+		}
+
 		inline Childable *getChildableParent() const {
 			return childableParent;
 		}
