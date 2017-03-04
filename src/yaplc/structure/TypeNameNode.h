@@ -24,6 +24,10 @@ namespace yaplc { namespace structure {
 			for (auto templateArgument : templateArguments) {
 				delete templateArgument;
 			}
+
+			for (auto dimen : dimens) {
+				delete dimen;
+			}
 		}
 
 		inline std::string shortType() const {
