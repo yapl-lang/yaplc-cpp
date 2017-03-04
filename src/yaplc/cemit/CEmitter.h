@@ -42,14 +42,15 @@ namespace yaplc { namespace cemit {
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
 
-		std::string requestTypeRef(const structure::TypeNameNode *typeNameNode);
-		std::string requestType(const structure::TypeNameNode *typeNameNode);
+		std::string requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct = true);
+		std::string requestType(const structure::TypeNameNode *typeNameNode, bool prependStruct = true);
 
 	public:
 		virtual void build();
 
 	private:
-		static std::string convertName(const std::string &original);
-		static std::string getLast(const std::string &name);
+		std::string convertName(const std::string &original);
+		std::string getLast(const std::string &name);
+		std::string getShortMethodName(const structure::MethodMemberNode *methodMemberNode);
 	};
 } }

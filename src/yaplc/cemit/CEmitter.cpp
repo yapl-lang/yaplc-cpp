@@ -343,7 +343,7 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getLast(node->getName()) << ")(";
+					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")(";
 
 					structure::TypeNameNode *type;
 					std::string name;
@@ -382,7 +382,7 @@ namespace yaplc { namespace cemit {
 		}
 	}
 
-	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode) {
+	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
 		static std::map<std::string, std::string> typeNameMapping {
 			{"bool", "unsigned char"},
 			{"char", "char"},
@@ -418,10 +418,14 @@ namespace yaplc { namespace cemit {
 			return "void";
 		}
 
-		return "struct yapl$objectref";
+		if (prependStruct) {
+			return "struct yapl$objectref";
+		}
+
+		return "yapl$objectref";
 	}
 
-	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode) {
+	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
 		static std::map<std::string, std::string> typeNameMapping {
 			{"bool", "unsigned char"},
 			{"char", "char"},
@@ -457,7 +461,11 @@ namespace yaplc { namespace cemit {
 			return "void";
 		}
 
-		return "struct " + convertName(type->name->type);
+		if (prependStruct) {
+			return "struct " + convertName(type->name->type);
+		}
+
+		return convertName(type->name->type);
 	}
 
 	void CEmitter::emitInStruct(const structure::SpecialNode *specialNode) {
@@ -500,5 +508,39 @@ namespace yaplc { namespace cemit {
 		}
 
 		return name.substr(pos + 1);
+	}
+
+	std::string CEmitter::getShortMethodName(const structure::MethodMemberNode *methodMemberNode) {
+			if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getParent())) {
+			auto result = getLast(memberNode->getName());
+
+			switch (memberNode->staticality) {
+			case structure::MemberNode::Staticality::Dynamic:
+				if (auto typeNode = dynamic_cast<structure::TypeNode *>(memberNode->getParent())) {
+					auto selfType = requestType(typeNode->name, false);
+					selfType.erase(std::remove_if(selfType.begin(), selfType.end(), ::isspace), selfType.end());
+					result += "$" + selfType;
+				}
+				break;
+			case structure::MemberNode::Staticality::Static:
+				break;
+			}
+
+			for (auto argument : methodMemberNode->arguments->arguments) {
+				structure::TypeNameNode *type;
+				std::string name;
+				structure::ExpressionNode *value;
+
+				std::tie(type, name, value) = argument;
+
+				auto argumentType = requestType(type, false);
+				argumentType.erase(std::remove_if(argumentType.begin(), argumentType.end(), ::isspace), argumentType.end());
+				result += "$" + argumentType;
+			}
+
+			return result;
+		}
+
+		return "";
 	}
 } }
