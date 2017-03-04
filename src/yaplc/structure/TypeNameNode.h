@@ -36,6 +36,30 @@ namespace yaplc { namespace structure {
 			return type.substr(pos + 1);
 		}
 
+		inline std::string hashName() {
+			std::stringstream result;
+			result << type;
+
+			auto templateArgument = templateArguments.begin();
+			if (templateArgument != templateArguments.end()) {
+				result << "<";
+
+				result << (*templateArgument)->hashName();
+				++templateArgument;
+				for (; templateArgument != templateArguments.end(); ++templateArgument) {
+					result << ", " << (*templateArgument)->hashName();
+				}
+
+				result << ">";
+			}
+
+			for (auto dimen : dimens) {
+				result << "[]";
+			}
+
+			return result.str();
+		}
+
 		NODE_PROPS(
 			NODE_PROP(type, stream << type;)
 

@@ -68,9 +68,11 @@ namespace yaplc { namespace process {
 	void Processor::process(structure::TypeNode *typeNode, Context &context) {
 		typeNode->name->type = context.path + "." + typeNode->name->type;
 
-		if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
-			auto context2 = context.clone();
-			process(classNode, context2);
+		if (typeNode->name->templateArguments.size() == 0) {
+			if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
+				auto context2 = context.clone();
+				process(classNode, context2);
+			}
 		}
 	}
 	
@@ -93,6 +95,19 @@ namespace yaplc { namespace process {
 	
 	void Processor::process(structure::TypeNameNode *typeNameNode, Context &context) {
 		context.fullName(typeNameNode->type);
+
+		if (typeNameNode->templateArguments.size() != 0) {
+			auto templateRequirements = templatesRequirements[typeNameNode->type];
+			auto &templateRequirement = templateRequirements[typeNameNode->hashName()];
+
+			if (templateRequirement.size() == 0) {
+				for (auto templateArgument : typeNameNode->templateArguments) {
+					templateRequirement.push_back(templateArgument);
+				}
+
+				printf("require %s\n", typeNameNode->hashName().c_str());
+			}
+		}
 	}
 
 	void Processor::process(structure::MemberNode *memberNode, Context &context) {

@@ -224,6 +224,10 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::emit(const structure::TypeNode *typeNode) {
+		if (typeNode->name->templateArguments.size() != 0) {
+			return;
+		}
+
 		auto packagePath = ((structure::PackageNode *)typeNode->getListableParent())->name;
 		std::replace(packagePath.begin(), packagePath.end(), '.', fs::path::PathDelim);
 

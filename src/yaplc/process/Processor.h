@@ -20,6 +20,8 @@ namespace yaplc { namespace process {
 
 		std::vector<std::string> types;
 
+		std::map<std::string, std::map<std::string, std::vector<structure::TypeNameNode *>>> templatesRequirements;
+
 	public:
 		Processor();
 		~Processor();
