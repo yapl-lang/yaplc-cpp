@@ -125,7 +125,6 @@ namespace yaplc { namespace process {
 				auto realNode = new structure::TypeNameNode();
 				realNode->type = typeNameNode->type;
 				realNode->templateArguments = typeNameNode->templateArguments;
-				realNode->dimens = typeNameNode->dimens;
 
 				typeNameNode->type = "yapl.Array";
 				typeNameNode->templateArguments.clear();
