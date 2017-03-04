@@ -19,7 +19,11 @@ namespace yaplc { namespace structure {
 		void add(Node *child);
 		void remove(Node *child);
 		virtual void clear();
-		
+
+		inline unsigned long size() const {
+			return children.size();
+		}
+
 		inline std::vector<Node *>::const_iterator begin() const {
 			return children.begin();
 		}

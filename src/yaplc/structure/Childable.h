@@ -24,6 +24,10 @@ namespace yaplc { namespace structure {
 
 		virtual void clear();
 
+		inline unsigned long size() const {
+			return children.size();
+		}
+
 		inline std::vector<std::pair<std::string, Node *>>::const_iterator begin() const {
 			return children.begin();
 		}
