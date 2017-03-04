@@ -118,5 +118,7 @@ namespace yaplc { namespace structure {
 	public:
 		virtual void load(const binstream::stream &stream);
 		virtual void save(binstream::stream &stream) const;
+
+		virtual Node *clone() const;
 	};
 } }
