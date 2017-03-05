@@ -50,6 +50,7 @@ namespace yaplc { namespace cemit {
 
 	private:
 		std::string convertName(const std::string &original);
+		std::string getNotLast(const std::string &name);
 		std::string getLast(const std::string &name);
 		std::string getShortMethodName(const structure::MethodMemberNode *methodMemberNode);
 	};

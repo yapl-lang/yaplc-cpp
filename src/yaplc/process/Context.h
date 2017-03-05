@@ -1,7 +1,7 @@
 #pragma once
 
+#include "yaplc/structure/TypeNode.h"
 #include <string>
-#include <vector>
 #include <map>
 
 namespace yaplc { namespace process {
@@ -10,10 +10,10 @@ namespace yaplc { namespace process {
 		std::string package;
 		std::string path;
 		std::map<std::string, std::string> names;
-		std::vector<std::string> const &types;
+		std::map<std::string, structure::TypeNode *> const &types;
 	
 	public:
-		Context(const std::vector<std::string> &types) : types(types) {
+		Context(const std::map<std::string, structure::TypeNode *> &types) : types(types) {
 			name("Object", "yapl.Object");
 			name("String", "yapl.String");
 			name("object", "yapl.Object");
@@ -36,8 +36,8 @@ namespace yaplc { namespace process {
 					auto beginning = name.substr(0, delim);
 
 					for (auto type : types) {
-						if ((type.size() > beginning.size()) && (type.substr(0, beginning.size()) == beginning)) {
-							this->name(type);
+						if ((type.first.size() > beginning.size()) && (type.first.substr(0, beginning.size()) == beginning)) {
+							this->name(type.first);
 						}
 					}
 				} else {
@@ -75,8 +75,8 @@ namespace yaplc { namespace process {
 			}
 
 			for (auto type : types) {
-				if ((type.size() > package.size()) && (type.substr(0, package.size()) == package) && (type.substr(package.size() + 1) == name)) {
-					name = type;
+				if ((type.first.size() > package.size()) && (type.first.substr(0, package.size()) == package) && (type.first.substr(package.size() + 1) == name)) {
+					name = type.first;
 				}
 			}
 		}

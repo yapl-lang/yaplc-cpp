@@ -228,7 +228,7 @@ namespace yaplc { namespace cemit {
 			return;
 		}
 
-		auto packagePath = ((structure::PackageNode *)typeNode->getListableParent())->name;
+		auto packagePath = getNotLast(typeNode->name->type);
 		std::replace(packagePath.begin(), packagePath.end(), '.', fs::path::PathDelim);
 
 		auto packageHeader = includePath/packagePath/(typeNode->name->shortType() + ".h");
@@ -269,6 +269,12 @@ namespace yaplc { namespace cemit {
 			packageSource,
 			packageObject
 		});
+
+		for (auto node : *typeNode) {
+			if (auto subTypeNode = dynamic_cast<structure::TypeNode *>(node)) {
+				emit(subTypeNode);
+			}
+		}
 	}
 
 	void CEmitter::emit(const structure::ClassNode *classNode) {
@@ -508,6 +514,16 @@ namespace yaplc { namespace cemit {
 		auto copy = original;
 		std::replace(copy.begin(), copy.end(), '.', '$');
 		return "yapl$name$" + copy;
+	}
+
+	std::string CEmitter::getNotLast(const std::string &name) {
+		auto pos = name.find_last_of('.');
+
+		if (pos == std::string::npos) {
+			return name;
+		}
+
+		return name.substr(0, pos);
 	}
 
 	std::string CEmitter::getLast(const std::string &name) {

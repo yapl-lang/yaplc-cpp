@@ -23,7 +23,7 @@ namespace yaplc { namespace process {
 				}
 			}
 
-			types.push_back(npath);
+			types[npath] = typeNode;
 		};
 
 		for (auto node : *rootNode) {
@@ -66,19 +66,18 @@ namespace yaplc { namespace process {
 	}
 
 	void Processor::process(structure::TypeNode *typeNode, Context &context) {
+		auto context2 = context.clone();
+		context2.pushPath(typeNode->name->type);
 		typeNode->name->type = context.path + "." + typeNode->name->type;
 
 		if (typeNode->name->templateArguments.size() == 0) {
 			if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
-				auto context2 = context.clone();
 				process(classNode, context2);
 			}
 		}
 	}
 	
 	void Processor::process(structure::ClassNode *classNode, Context &context) {
-		context.pushPath(classNode->name->type);
-
 		process(classNode->base, context);
 		for (auto interface : classNode->interfaces) {
 			process(interface, context);

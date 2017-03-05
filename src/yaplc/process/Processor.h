@@ -18,7 +18,7 @@ namespace yaplc { namespace process {
 		std::string const *code;
 		std::vector<CompilingError *> *errors;
 
-		std::vector<std::string> types;
+		std::map<std::string, structure::TypeNode *> types;
 
 		std::map<std::string, std::map<std::string, std::vector<structure::TypeNameNode *>>> templatesRequirements;
 
