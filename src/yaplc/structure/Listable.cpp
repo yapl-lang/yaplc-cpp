@@ -54,6 +54,21 @@ namespace yaplc { namespace structure {
 		child->listableParent = this;
 		children.push_back(child);
 	}
+
+	void Listable::addBeginning(Node *child) {
+		if (child->childableParent != nullptr) {
+			child->childableParent->remove(child);
+			child->childableParent = nullptr;
+		} else if (child->listableParent != nullptr) {
+			child->listableParent->remove(child);
+		} else if (child->containerParent != nullptr) {
+			child->containerParent->set(nullptr);
+			child->containerParent = nullptr;
+		}
+
+		child->listableParent = this;
+		children.insert(children.begin(), child);
+	}
 	
 	void Listable::remove(Node *child) {
 		if (child->listableParent == this) {

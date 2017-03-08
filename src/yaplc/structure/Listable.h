@@ -17,6 +17,7 @@ namespace yaplc { namespace structure {
 		virtual ~Listable();
 		
 		void add(Node *child);
+		void addBeginning(Node *child);
 		void remove(Node *child);
 		virtual void clear();
 
