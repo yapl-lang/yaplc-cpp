@@ -1,7 +1,9 @@
 #include "CEmitter.h"
 #include "yaplc/structure/VariableMemberNode.h"
+#include "yaplc/util/replace.h"
 #include <algorithm>
 #include <stdlib.h>
+#include <iostream>
 
 namespace yaplc { namespace cemit {
 	static std::string HEADER_H = "/* THIS FILE IS CREATED USING YAPLC */";
@@ -231,9 +233,10 @@ namespace yaplc { namespace cemit {
 		auto packagePath = getNotLast(typeNode->name->type);
 		std::replace(packagePath.begin(), packagePath.end(), '.', fs::path::PathDelim);
 
-		auto packageHeader = includePath/packagePath/(typeNode->name->shortType() + ".h");
-		auto packageSource = sourcePath/packagePath/(typeNode->name->shortType() + ".c");
-		auto packageObject = objectPath/packagePath/(typeNode->name->shortType() + ".o");
+		auto name = shortName(typeNode->name);
+		auto packageHeader = includePath/packagePath/(name + ".h");
+		auto packageSource = sourcePath/packagePath/(name + ".c");
+		auto packageObject = objectPath/packagePath/(name + ".o");
 		packageHeader.parent().mkdirs();
 		packageSource.parent().mkdirs();
 		packageObject.parent().mkdirs();
@@ -245,6 +248,8 @@ namespace yaplc { namespace cemit {
 
 		auto moduleHash = typeNode->name->type;
 		std::replace(moduleHash.begin(), moduleHash.end(), '.', '$');
+		std::replace(moduleHash.begin(), moduleHash.end(), '<', '$');
+		std::replace(moduleHash.begin(), moduleHash.end(), '>', '$');
 		std::transform(moduleHash.begin(), moduleHash.end(), moduleHash.begin(), ::toupper);
 
 		outh << std::endl
@@ -290,7 +295,7 @@ namespace yaplc { namespace cemit {
 			<< "struct " << classSymbolName << " {" << std::endl
 			<< "\tstruct " << classSymbolName << "$class *$class;" << std::endl;
 		for (auto node : *classNode) {
-			if (auto memberNode = dynamic_cast<structure::MemberNode* >(node)) {
+			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
@@ -497,15 +502,21 @@ namespace yaplc { namespace cemit {
 
 	void CEmitter::build() {
 		for (auto file : files) {
-			system(("gcc -I\"" + fs::escape(includePath) + "\" -c \"" + fs::escape(file.source) + "\" -o \"" + fs::escape(file.object) + "\"").c_str());
+			system(("gcc -I\"" +
+				util::replace(fs::escape(includePath), "$", "\\$") +
+				"\" -c \"" +
+				util::replace(fs::escape(file.source), "$", "\\$") +
+				"\" -o \"" +
+					util::replace(fs::escape(file.object), "$", "\\$") +
+				"\"").c_str());
 		}
 
 		std::stringstream ss;
 		ss << "gcc ";
 		for (auto file : files) {
-			ss << "\"" << fs::escape(file.object) << "\" ";
+			ss << "\"" << util::replace(fs::escape(file.object), "$", "\\$") << "\" ";
 		}
-		ss << "-o \"" << fs::escape(binPath/"exe") << "\"";
+		ss << "-o \"" << util::replace(fs::escape(binPath/"exe"), "$", "\\$") << "\"";
 
 		system(ss.str().c_str());
 	}
@@ -513,6 +524,10 @@ namespace yaplc { namespace cemit {
 	std::string CEmitter::convertName(const std::string &original) {
 		auto copy = original;
 		std::replace(copy.begin(), copy.end(), '.', '$');
+		std::replace(copy.begin(), copy.end(), '<', '$');
+		std::replace(copy.begin(), copy.end(), '>', '$');
+		std::replace(copy.begin(), copy.end(), '[', '$');
+		std::replace(copy.begin(), copy.end(), ']', '$');
 		return "yapl$name$" + copy;
 	}
 
@@ -567,6 +582,20 @@ namespace yaplc { namespace cemit {
 			return result;
 		}
 
+		methodMemberNode->show(std::cout);
+		std::cout << std::endl;
+
 		return "";
+	}
+
+	std::string CEmitter::shortName(const structure::TypeNameNode *typeNameNode) const {
+		auto name = typeNameNode->shortType();
+		std::replace(name.begin(), name.end(), '.', '$');
+		std::replace(name.begin(), name.end(), '<', '$');
+		std::replace(name.begin(), name.end(), '>', '$');
+		std::replace(name.begin(), name.end(), '[', '$');
+		std::replace(name.begin(), name.end(), ']', '$');
+
+		return name;
 	}
 } }
