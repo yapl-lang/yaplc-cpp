@@ -107,7 +107,7 @@ namespace yaplc { namespace structure {
 
 	Node *Node::clone() const {
 		binstream::stream stream;
-		save(stream);
+		NodeFactory::saveNode(stream, this);
 		return NodeFactory::loadNode(stream);
 	}
 } }
