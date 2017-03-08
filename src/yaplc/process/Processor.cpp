@@ -43,12 +43,12 @@ namespace yaplc { namespace process {
 		}
 	}
 
-	bool Processor::resolveTemplates(std::vector<structure::RootNode *> &newRoots) {
-		newRoots.clear();
-
+	bool Processor::resolveTemplates() {
 		if (templatesRequirements.size() == 0) {
 			return false;
 		}
+
+		std::vector<structure::RootNode *> newRoots;
 
 		for (auto templateRequirements : templatesRequirements) {
 			for (auto templateRequirement : templateRequirements.second) {
@@ -72,12 +72,32 @@ namespace yaplc { namespace process {
 						continue;
 					}
 
-					root = (structure::RootNode *)root->clone();
+					auto clonedType = (structure::TypeNode *)realType->clone();
 
+					auto argumentNames = clonedType->name->templateArguments;
+					auto argumentValues = templateRequirement.second;
 
-					addObject(root, true);
+					auto argumentName = argumentNames.begin();
+					auto argumentValue = argumentValues.begin();
+
+					for (; argumentName != argumentNames.end(); ++argumentName, ++argumentValue) {
+						auto importNode = new structure::ImportNode();
+						importNode->name = (*argumentName)->type;
+						importNode->target = (*argumentName)->type = (*argumentValue)->type;
+						clonedType->addBeginning(importNode);
+					}
+
+					clonedType->name->type = clonedType->name->hashName();
+					clonedType->name->templateArguments.clear();
+					realType->getListableParent()->add(clonedType);
+
+					newRoots.push_back(root);
 				}
 			}
+		}
+
+		for (auto root : newRoots) {
+			addObject(root, true);
 		}
 
 		return newRoots.size() != 0;
@@ -118,7 +138,6 @@ namespace yaplc { namespace process {
 
 		auto context2 = context.clone();
 		context2.pushPath(typeNode->name->type);
-		typeNode->name->type = context.path + "." + typeNode->name->type;
 
 		if (typeNode->name->templateArguments.size() == 0) {
 			if (auto classNode = dynamic_cast<structure::ClassNode *>(typeNode)) {
@@ -128,13 +147,27 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::ClassNode *classNode, Context &context) {
+		if (classNode->name->templateArguments.size() != 0) {
+			return;
+		}
+
+		auto path = context.path;
+		auto pos = path.find_last_of('.');
+		if (pos != std::string::npos) {
+			path = path.substr(0, pos);
+		}
+
+		classNode->name->type = path + "." + classNode->name->type;
+
 		process(classNode->base, context);
 		for (auto interface : classNode->interfaces) {
 			process(interface, context);
 		}
 		
 		for (auto member : *classNode) {
-			if (auto typeNode = dynamic_cast<structure::TypeNode *>(member)) {
+			if (auto importNode = dynamic_cast<structure::ImportNode *>(member)) {
+				process(importNode, context);
+			} else if (auto typeNode = dynamic_cast<structure::TypeNode *>(member)) {
 				process(typeNode, context);
 			} else if (auto memberNode = dynamic_cast<structure::MemberNode *>(member)) {
 				process(memberNode, context);

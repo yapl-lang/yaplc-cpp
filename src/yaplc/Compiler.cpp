@@ -204,18 +204,21 @@ namespace yaplc {
 			for (auto error : errors) {
 				this->errors.push_back({&file, error});
 			}
-
-			file.root->show(std::cout);
-			std::cout << std::endl;
 		}
 
-		std::vector<structure::RootNode *> newRoots;
-		while (processor.resolveTemplates(newRoots)) {
-			for (auto root : newRoots) {
-				files.push_back({fs::path(), "", "", root});
+		while (processor.resolveTemplates()) {
+			for (auto &file : files) {
+				std::vector<CompilingError *> errors;
+				processor.process(file.root, file.code, errors);
+				for (auto error : errors) {
+					this->errors.push_back({&file, error});
+				}
 			}
+		}
 
-			newRoots.clear();
+		for (auto &file : files) {
+			file.root->show(std::cout);
+			std::cout << std::endl;
 		}
 	}
 

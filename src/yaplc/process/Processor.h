@@ -30,7 +30,7 @@ namespace yaplc { namespace process {
 		~Processor();
 
 		void addObject(structure::RootNode *rootNode, bool resolved = false);
-		bool resolveTemplates(std::vector<structure::RootNode *> &newRoots);
+		bool resolveTemplates();
 
 		void process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors);
 		void process(structure::PackageNode *packageNode, Context &context);
