@@ -16,6 +16,10 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
+		inline ImportNode() : isStatic(false),
+			name(),
+			target() {}
+
 		virtual void load(const binstream::stream &stream) {
 			Node::load(stream);
 
