@@ -72,11 +72,11 @@ namespace yaplc { namespace structure {
 			while (count-- != 0) {
 				auto type = new TypeNameNode();
 				std::string name;
-				auto value = new ExpressionNode();
+				ExpressionNode *value = nullptr;
 
 				NodeFactory::loadNode(stream, type);
 				stream.getString(name);
-				NodeFactory::loadNode(stream, value);
+				value = (ExpressionNode *)NodeFactory::loadNode(stream);
 
 				arguments.push_back(std::make_tuple(type, name, value));
 			}
