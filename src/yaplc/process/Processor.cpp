@@ -5,6 +5,12 @@
 #include <functional>
 
 namespace yaplc { namespace process {
+#define CHECK_PROCESSED(node) if (std::find(this->processed.begin(), this->processed.end(), node) != this->processed.end()) { \
+		return; \
+	} \
+	\
+	this->processed.push_back(node);
+
 	Processor::Processor() {
 		
 	}
@@ -103,10 +109,14 @@ namespace yaplc { namespace process {
 	}
 	
 	void Processor::process(structure::ImportNode *importNode, Context &context) {
+		CHECK_PROCESSED(importNode);
+
 		context.name(importNode->name, importNode->target);
 	}
 
 	void Processor::process(structure::TypeNode *typeNode, Context &context) {
+		CHECK_PROCESSED(typeNode);
+
 		auto context2 = context.clone();
 		context2.pushPath(typeNode->name->type);
 		typeNode->name->type = context.path + "." + typeNode->name->type;

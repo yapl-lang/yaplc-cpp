@@ -23,6 +23,8 @@ namespace yaplc { namespace process {
 		std::map<std::string, std::map<std::string, std::vector<structure::TypeNameNode *>>> templatesRequirements;
 		std::vector<std::string> resolvedTemplates;
 
+		std::vector<structure::Node *> processed;
+
 	public:
 		Processor();
 		~Processor();
