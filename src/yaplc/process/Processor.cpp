@@ -13,9 +13,9 @@ namespace yaplc { namespace process {
 		
 	}
 
-	void Processor::addObject(structure::RootNode *rootNode) {
+	void Processor::addObject(structure::RootNode *rootNode, bool resolved) {
 		std::function<void(structure::TypeNode *, const std::string &)> processType = [&](structure::TypeNode *typeNode, const std::string &path) {
-			auto npath = path + "." + typeNode->name->type;
+			auto npath = path + "." + (resolved ? typeNode->name->hashName() : typeNode->name->type);
 
 			for (auto node : *typeNode) {
 				if (auto typeNode = dynamic_cast<structure::TypeNode *>(node)) {
@@ -35,6 +35,47 @@ namespace yaplc { namespace process {
 				}
 			}
 		}
+	}
+
+	bool Processor::resolveTemplates(std::vector<structure::RootNode *> &newRoots) {
+		if (templatesRequirements.size() == 0) {
+			return false;
+		}
+
+		bool hasResolved = false;
+
+		for (auto templateRequirements : templatesRequirements) {
+			for (auto templateRequirement : templateRequirements.second) {
+				if (std::find(resolvedTemplates.begin(), resolvedTemplates.end(), templateRequirement.first) != resolvedTemplates.end()) {
+					continue;
+				}
+
+				hasResolved = true;
+				resolvedTemplates.push_back(templateRequirement.first);
+
+				if (auto realType = types[templateRequirements.first]) {
+					structure::Node *rootNode = realType;
+					structure::RootNode *root;
+
+					while (!(root = dynamic_cast<structure::RootNode *>(rootNode))) {
+						if (!(rootNode = rootNode->getParent())) {
+							break;
+						}
+					}
+
+					if (root == nullptr) {
+						continue;
+					}
+
+					root = (structure::RootNode *)root->clone();
+
+
+					addObject(root, true);
+				}
+			}
+		}
+
+		return hasResolved;
 	}
 	
 	void Processor::process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors) {
@@ -132,15 +173,13 @@ namespace yaplc { namespace process {
 				process(templateArgument, context);
 			}
 
-			auto templateRequirements = templatesRequirements[typeNameNode->type];
+			auto &templateRequirements = templatesRequirements[typeNameNode->type];
 			auto &templateRequirement = templateRequirements[typeNameNode->hashName()];
 
 			if (templateRequirement.size() == 0) {
 				for (auto templateArgument : typeNameNode->templateArguments) {
 					templateRequirement.push_back(templateArgument);
 				}
-
-				printf("require %s\n", typeNameNode->hashName().c_str());
 			}
 		}
 	}

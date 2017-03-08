@@ -208,6 +208,15 @@ namespace yaplc {
 			file.root->show(std::cout);
 			std::cout << std::endl;
 		}
+
+		std::vector<structure::RootNode *> newRoots;
+		while (processor.resolveTemplates(newRoots)) {
+			for (auto root : newRoots) {
+				files.push_back({fs::path(), "", "", root});
+			}
+
+			newRoots.clear();
+		}
 	}
 
 	void Compiler::emit() {

@@ -21,12 +21,14 @@ namespace yaplc { namespace process {
 		std::map<std::string, structure::TypeNode *> types;
 
 		std::map<std::string, std::map<std::string, std::vector<structure::TypeNameNode *>>> templatesRequirements;
+		std::vector<std::string> resolvedTemplates;
 
 	public:
 		Processor();
 		~Processor();
 
-		void addObject(structure::RootNode *rootNode);
+		void addObject(structure::RootNode *rootNode, bool resolved = false);
+		bool resolveTemplates(std::vector<structure::RootNode *> &newRoots);
 
 		void process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors);
 		void process(structure::PackageNode *packageNode, Context &context);
