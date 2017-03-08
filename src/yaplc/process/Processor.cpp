@@ -44,11 +44,11 @@ namespace yaplc { namespace process {
 	}
 
 	bool Processor::resolveTemplates(std::vector<structure::RootNode *> &newRoots) {
+		newRoots.clear();
+
 		if (templatesRequirements.size() == 0) {
 			return false;
 		}
-
-		bool hasResolved = false;
 
 		for (auto templateRequirements : templatesRequirements) {
 			for (auto templateRequirement : templateRequirements.second) {
@@ -56,7 +56,6 @@ namespace yaplc { namespace process {
 					continue;
 				}
 
-				hasResolved = true;
 				resolvedTemplates.push_back(templateRequirement.first);
 
 				if (auto realType = types[templateRequirements.first]) {
@@ -81,7 +80,7 @@ namespace yaplc { namespace process {
 			}
 		}
 
-		return hasResolved;
+		return newRoots.size() != 0;
 	}
 	
 	void Processor::process(structure::RootNode *rootNode, const std::string &code, std::vector<CompilingError *> &errors) {
