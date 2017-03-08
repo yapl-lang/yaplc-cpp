@@ -87,8 +87,7 @@ namespace yaplc { namespace structure {
 	void Container::load(const binstream::stream &stream) {
 		Node::load(stream);
 
-		delete child;
-		child = NodeFactory::loadNode(stream);
+		set(NodeFactory::loadNode(stream));
 	}
 
 	void Container::save(binstream::stream &stream) const {
