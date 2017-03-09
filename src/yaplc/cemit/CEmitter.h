@@ -39,6 +39,7 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::VariableMemberNode *variableMemberNode);
 
 		void placeVTable(const structure::ClassNode *classNode);
+		void showArguments(std::ostream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
 
@@ -53,6 +54,7 @@ namespace yaplc { namespace cemit {
 		std::string getNotLast(const std::string &name);
 		std::string getLast(const std::string &name);
 		std::string getShortMethodName(const structure::MethodMemberNode *methodMemberNode);
+		std::string getFullMethodName(const structure::MethodMemberNode *methodMemberNode);
 
 		std::string shortName(const structure::TypeNameNode *typeNameNode) const;
 	};

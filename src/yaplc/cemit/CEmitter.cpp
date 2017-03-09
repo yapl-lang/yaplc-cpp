@@ -322,6 +322,16 @@ namespace yaplc { namespace cemit {
 			<< "\treturn result;" << std::endl
 			<< "}" << std::endl
 			<< std::endl;
+
+		for (auto node : *classNode) {
+			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
+				auto child = memberNode->get();
+
+				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
+					emit(methodMemberNode);
+				}
+			}
+		}
 	}
 
 	void CEmitter::emit(const structure::MemberNode *memberNode) {
@@ -335,7 +345,18 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::emit(const structure::MethodMemberNode *methodMemberNode) {
+		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getContainerParent())) {
+			outh << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
+			showArguments(outh, methodMemberNode->arguments);
+			outh << ";" << std::endl;
 
+			outc << std::endl;
+			outc << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
+			showArguments(outc, methodMemberNode->arguments);
+			outc << " {" << std::endl;
+
+			outc << "}" << std::endl;
+		}
 	}
 
 	void CEmitter::emit(const structure::VariableMemberNode *variableMemberNode) {
@@ -358,43 +379,58 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")(";
-
-					structure::TypeNameNode *type;
-					std::string name;
-					structure::ExpressionNode *value;
-
-					auto printArgument = [this, &type, &name, &value]() {
-						outh << requestTypeRef(type) << " " << name;
-					};
-
-					type = classNode->name;
-					name = "$this";
-					printArgument();
-
-					auto arguments = methodMemberNode->arguments->arguments;
-					auto it = arguments.begin();
-
-					if (it != arguments.end()) {
-						std::tie(type, name, value) = *it;
-
-						outh << ", ";
-						printArgument();
-
-						++it;
-
-						for (; it != arguments.end(); ++it) {
-							outh << ", ";
-
-							std::tie(type, name, value) = *it;
-							printArgument();
-						}
-					}
-
-					outh << ");" << std::endl;
+					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")";
+					showArguments(outh, methodMemberNode->arguments, classNode);
+					outh << ";" << std::endl;
 				}
 			}
 		}
+	}
+
+	void CEmitter::showArguments(std::ostream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode) {
+		stream << "(";
+
+		bool printComma = false;
+
+		structure::TypeNameNode *type;
+		std::string name;
+		structure::ExpressionNode *value;
+
+		auto printArgument = [this, &stream, &type, &name, &value]() {
+			stream << requestTypeRef(type) << " " << name;
+		};
+
+		if (typeNode != nullptr) {
+			type = typeNode->name;
+			name = "$this";
+			printComma = true;
+			printArgument();
+		}
+
+		auto arguments = argumentsNode->arguments;
+		auto it = arguments.begin();
+
+		if (it != arguments.end()) {
+			std::tie(type, name, value) = *it;
+
+			if (printComma) {
+				stream << ", ";
+			}
+
+			printComma = true;
+			printArgument();
+
+			++it;
+
+			for (; it != arguments.end(); ++it) {
+				stream << ", ";
+
+				std::tie(type, name, value) = *it;
+				printArgument();
+			}
+		}
+
+		stream << ")";
 	}
 
 	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
@@ -580,6 +616,14 @@ namespace yaplc { namespace cemit {
 			}
 
 			return result;
+		}
+
+		return "";
+	}
+
+	std::string CEmitter::getFullMethodName(const structure::MethodMemberNode *methodMemberNode) {
+		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getParent())) {
+			return convertName(getNotLast(memberNode->getName())) + getShortMethodName(methodMemberNode);
 		}
 
 		return "";
