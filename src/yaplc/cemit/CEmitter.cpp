@@ -582,9 +582,6 @@ namespace yaplc { namespace cemit {
 			return result;
 		}
 
-		methodMemberNode->show(std::cout);
-		std::cout << std::endl;
-
 		return "";
 	}
 
