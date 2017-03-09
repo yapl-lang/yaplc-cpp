@@ -564,7 +564,7 @@ namespace yaplc { namespace cemit {
 		std::replace(copy.begin(), copy.end(), '>', '$');
 		std::replace(copy.begin(), copy.end(), '[', '$');
 		std::replace(copy.begin(), copy.end(), ']', '$');
-		return "yapl$name$" + copy;
+		return copy;
 	}
 
 	std::string CEmitter::getNotLast(const std::string &name) {
