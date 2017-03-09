@@ -419,7 +419,7 @@ namespace yaplc { namespace cemit {
 			{"size", "unsigned long"}
 		};
 
-		auto typeName = typeNameNode->type;
+		auto typeName = typeNameNode->hashName();
 
 		auto it = typeNameMapping.find(typeName);
 		if (it != typeNameMapping.end()) {
@@ -462,7 +462,7 @@ namespace yaplc { namespace cemit {
 			{"size", "unsigned long"}
 		};
 
-		auto typeName = typeNameNode->type;
+		auto typeName = typeNameNode->hashName();
 
 		auto it = typeNameMapping.find(typeName);
 		if (it != typeNameMapping.end()) {

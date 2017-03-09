@@ -40,7 +40,7 @@ namespace yaplc { namespace structure {
 			return type.substr(pos + 1);
 		}
 
-		inline std::string hashName() {
+		inline std::string hashName() const {
 			std::stringstream result;
 			result << type;
 
