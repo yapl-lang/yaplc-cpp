@@ -3,5 +3,6 @@
 #include <string>
 
 namespace yaplc { namespace util {
+	std::string replace(const std::string &string, char source, char target);
 	std::string replace(const std::string &string, const std::string &source, const std::string &target);
 } }
