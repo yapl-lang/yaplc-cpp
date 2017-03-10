@@ -42,6 +42,7 @@ namespace yaplc { namespace cemit {
 		void showArguments(std::ostream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
+		void emitInMethod(const structure::SpecialNode *specialNode);
 
 		std::string requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct = true);
 		std::string requestType(const structure::TypeNameNode *typeNameNode, bool prependStruct = true);

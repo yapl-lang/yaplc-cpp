@@ -347,12 +347,12 @@ namespace yaplc { namespace cemit {
 	void CEmitter::emit(const structure::MethodMemberNode *methodMemberNode) {
 		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getContainerParent())) {
 			outh << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
-			showArguments(outh, methodMemberNode->arguments);
+			showArguments(outh, methodMemberNode->arguments, dynamic_cast<const structure::TypeNode *>(memberNode->getParent()));
 			outh << ";" << std::endl;
 
 			outc << std::endl;
 			outc << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
-			showArguments(outc, methodMemberNode->arguments);
+			showArguments(outc, methodMemberNode->arguments, dynamic_cast<const structure::TypeNode *>(memberNode->getParent()));
 			outc << " {" << std::endl;
 
 			outc << "}" << std::endl;
@@ -531,7 +531,23 @@ namespace yaplc { namespace cemit {
 			typeNameNode.type = "T";
 			outh << "\t" << requestTypeRef(&typeNameNode) << " *elements;" << std::endl;
 			outh << "\tunsigned long count;" << std::endl;
+		} else if (data == "yapl.Type") {
+
 		} else {
+			printf("%s\n", data.c_str());
+			// TODO: error
+		}
+	}
+
+	void CEmitter::emitInMethod(const structure::SpecialNode *specialNode) {
+		auto data = specialNode->data;
+
+		if (data == "yapl.String.constructor") {
+			outh << "\t((yapl$String *)$this->target)->buffer = calloc(0, 1);" << std::endl;
+		} else if (data == "yapl.String.constructor.string") {
+			outh << "\t" << std::endl;
+		} else {
+			printf("%s\n", data.c_str());
 			// TODO: error
 		}
 	}

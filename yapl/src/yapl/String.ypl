@@ -7,6 +7,10 @@ public class String {
 		#special "yapl.String.constructor"
 	}
 
+	public String(String string) {
+		#special "yapl.String.constructor.string"
+	}
+
 	public size length() {
 		#special "yapl.String.getLength"
 	}
