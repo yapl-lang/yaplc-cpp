@@ -14,12 +14,16 @@ namespace yaplc { namespace cemit {
 		includePath(emitPath/"include"),
 		sourcePath(emitPath/"src"),
 		objectPath(emitPath/"obj"),
-		binPath(emitPath/"bin") {
+		binPath(emitPath/"bin"),
+		context(nullptr) {
 		emitPath.mkdir();
 		includePath.mkdir();
 		sourcePath.mkdir();
 		objectPath.mkdir();
 		binPath.mkdir();
+
+		contextStack.push_back({});
+		context = &contextStack[0];
 
 		generateMain();
 	}
@@ -39,22 +43,22 @@ namespace yaplc { namespace cemit {
 			outh.open(packageHeader.full_name());
 			outc.open(packageSource.full_name());
 
-			outh << HEADER_H << std::endl;
-			outc << HEADER_C << std::endl;
+			outh << HEADER_H << endl(this);
+			outc << HEADER_C << endl(this);
 
-			outh << std::endl
-				<< "#ifndef YAPL_MAIN" << std::endl
-				<< "#define YAPL_MAIN" << std::endl
-				<< "#include \"yapl/yapl.h\"" << std::endl;
-			outc << std::endl
-				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+			outh << endl(this)
+				<< "#ifndef YAPL_MAIN" << endl(this)
+				<< "#define YAPL_MAIN" << endl(this)
+				<< "#include \"yapl/yapl.h\"" << endl(this);
+			outc << endl(this)
+				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
-			outc << std::endl
-				<< "int main(char **argc, int argv) {" << std::endl
-				<< "\treturn yapl$main(argc, argv);" << std::endl
-				<< "}" << std::endl;
+			outc << endl(this)
+				<< "int main(char **argc, int argv) {" << endl(this)
+				<< "\treturn yapl$main(argc, argv);" << endl(this)
+				<< "}" << endl(this);
 
-			outh << std::endl
+			outh << endl(this)
 				<< "#endif";
 
 			files.push_back({
@@ -74,26 +78,26 @@ namespace yaplc { namespace cemit {
 			outh.open(packageHeader.full_name());
 			outc.open(packageSource.full_name());
 
-			outh << HEADER_H << std::endl;
-			outc << HEADER_C << std::endl;
+			outh << HEADER_H << endl(this);
+			outc << HEADER_C << endl(this);
 
-			outh << std::endl
-				<< "#ifndef YAPL_YAPL" << std::endl
-				<< "#define YAPL_YAPL" << std::endl
-				<< "#include <stdlib.h>" << std::endl
-				<< std::endl
-				<< "#include \"yapl/class.h\"" << std::endl
-				<< "#include \"yapl/objectref.h\"" << std::endl;
-			outc << std::endl
-				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+			outh << endl(this)
+				<< "#ifndef YAPL_YAPL" << endl(this)
+				<< "#define YAPL_YAPL" << endl(this)
+				<< "#include <stdlib.h>" << endl(this)
+				<< endl(this)
+				<< "#include \"yapl/class.h\"" << endl(this)
+				<< "#include \"yapl/objectref.h\"" << endl(this);
+			outc << endl(this)
+				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
-			outh << std::endl
-				<< "int yapl$main(char **argc, int argv);" << std::endl;
-			outc << std::endl
-				<< "int yapl$main(char **argc, int argv) {" << std::endl
-				<< "}" << std::endl;
+			outh << endl(this)
+				<< "int yapl$main(char **argc, int argv);" << endl(this);
+			outc << endl(this)
+				<< "int yapl$main(char **argc, int argv) {" << endl(this)
+				<< "}" << endl(this);
 
-			outh << std::endl
+			outh << endl(this)
 				<< "#endif";
 
 			files.push_back({
@@ -113,24 +117,24 @@ namespace yaplc { namespace cemit {
 			outh.open(packageHeader.full_name());
 			outc.open(packageSource.full_name());
 
-			outh << HEADER_H << std::endl;
-			outc << HEADER_C << std::endl;
+			outh << HEADER_H << endl(this);
+			outc << HEADER_C << endl(this);
 
-			outh << std::endl
-				<< "#ifndef YAPL_CLASS" << std::endl
-				<< "#define YAPL_CLASS" << std::endl;
-			outc << std::endl
-				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+			outh << endl(this)
+				<< "#ifndef YAPL_CLASS" << endl(this)
+				<< "#define YAPL_CLASS" << endl(this);
+			outc << endl(this)
+				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
-			outh << std::endl
-				<< "struct yapl$class {" << std::endl
-				<< "\tstruct yapl$class *parent;" << std::endl
-				<< "\tstruct yapl$class **interfaces;" << std::endl
-				<< "\tchar *name;" << std::endl
-				<< "\tvoid **vtable;" << std::endl
-				<< "};" << std::endl;
+			outh << endl(this)
+				<< "struct yapl$class {" << endl(this)
+				<< "\tstruct yapl$class *parent;" << endl(this)
+				<< "\tstruct yapl$class **interfaces;" << endl(this)
+				<< "\tchar *name;" << endl(this)
+				<< "\tvoid **vtable;" << endl(this)
+				<< "};" << endl(this);
 
-			outh << std::endl
+			outh << endl(this)
 				<< "#endif";
 
 			files.push_back({
@@ -150,53 +154,53 @@ namespace yaplc { namespace cemit {
 			outh.open(packageHeader.full_name());
 			outc.open(packageSource.full_name());
 
-			outh << HEADER_H << std::endl;
-			outc << HEADER_C << std::endl;
+			outh << HEADER_H << endl(this);
+			outc << HEADER_C << endl(this);
 
-			outh << std::endl
-				<< "#ifndef YAPL_OBJECTREF" << std::endl
-				<< "#define YAPL_OBJECTREF" << std::endl
-				<< "#include \"Object.h\"" << std::endl;
-			outc << std::endl
-				<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+			outh << endl(this)
+				<< "#ifndef YAPL_OBJECTREF" << endl(this)
+				<< "#define YAPL_OBJECTREF" << endl(this)
+				<< "#include \"Object.h\"" << endl(this);
+			outc << endl(this)
+				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
-			outh << std::endl
-				<< "struct yapl$objectref$item {" << std::endl
-				<< "\tstruct Object *target;" << std::endl
-				<< "\tunsigned long count;" << std::endl
-				<< "};" << std::endl;
+			outh << endl(this)
+				<< "struct yapl$objectref$item {" << endl(this)
+				<< "\tstruct Object *target;" << endl(this)
+				<< "\tunsigned long count;" << endl(this)
+				<< "};" << endl(this);
 
-			outh << std::endl
-				<< "struct yapl$objectref {" << std::endl
-				<< "\tstruct yapl$objectref$item *item;" << std::endl
-				<< "};" << std::endl;
+			outh << endl(this)
+				<< "struct yapl$objectref {" << endl(this)
+				<< "\tstruct yapl$objectref$item *item;" << endl(this)
+				<< "};" << endl(this);
 
-			outh << std::endl
-				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object);" << std::endl
-				<< "void yapl$objectref$push(struct yapl$objectref ref);" << std::endl
-				<< "void yapl$objectref$pop(struct yapl$objectref ref);" << std::endl;
+			outh << endl(this)
+				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object);" << endl(this)
+				<< "void yapl$objectref$push(struct yapl$objectref ref);" << endl(this)
+				<< "void yapl$objectref$pop(struct yapl$objectref ref);" << endl(this);
 
-			outc << std::endl
-				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << std::endl
-				<< "\tref.item = malloc(sizeof(struct yapl$objectref$item));" << std::endl
-				<< "\tref.item->count = 1;" << std::endl
-				<< "\tref.item->target = object;" << std::endl
-				<< "}" << std::endl
-				<< std::endl
-				<< "void yapl$objectref$push(struct yapl$objectref ref) {" << std::endl
-				<< "\t++ref.item->count;" << std::endl
-				<< "}" << std::endl
-				<< std::endl
-				<< "void yapl$objectref$pop(struct yapl$objectref ref) {" << std::endl
-				<< "\tif (ref.item->count == 1) {" << std::endl
-				<< "\t\tfree(ref.item->target);" << std::endl
-				<< "\t\tfree(ref.item);" << std::endl
-				<< "\t} else {" << std::endl
-				<< "\t\t--ref.item->count;" << std::endl
-				<< "\t}" << std::endl
-				<< "}" << std::endl;
+			outc << endl(this)
+				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << endl(this)
+				<< "\tref.item = malloc(sizeof(struct yapl$objectref$item));" << endl(this)
+				<< "\tref.item->count = 1;" << endl(this)
+				<< "\tref.item->target = object;" << endl(this)
+				<< "}" << endl(this)
+				<< endl(this)
+				<< "void yapl$objectref$push(struct yapl$objectref ref) {" << endl(this)
+				<< "\t++ref.item->count;" << endl(this)
+				<< "}" << endl(this)
+				<< endl(this)
+				<< "void yapl$objectref$pop(struct yapl$objectref ref) {" << endl(this)
+				<< "\tif (ref.item->count == 1) {" << endl(this)
+				<< "\t\tfree(ref.item->target);" << endl(this)
+				<< "\t\tfree(ref.item);" << endl(this)
+				<< "\t} else {" << endl(this)
+				<< "\t\t--ref.item->count;" << endl(this)
+				<< "\t}" << endl(this)
+				<< "}" << endl(this);
 
-			outh << std::endl
+			outh << endl(this)
 				<< "#endif";
 
 			files.push_back({
@@ -207,6 +211,29 @@ namespace yaplc { namespace cemit {
 			outh.close();
 			outc.close();
 		}
+	}
+
+	void CEmitter::push() {
+		//contextStack.push_back(context);
+		//context = *(--contextStack.end());
+	}
+
+	void CEmitter::pop() {
+		//contextStack.pop_back();
+		//context = *(--contextStack.end());
+	}
+
+	std::ostream &operator <<(std::ostream &stream, const CEmitter::endlt &value) {
+		auto self = value.self;
+
+		stream << "\n";
+		util::leftpad(stream, self->context->indentation, self->context->indentationChar);
+
+		return stream;
+	}
+
+	CEmitter::endlt CEmitter::endl(CEmitter *self) {
+		return {self};
 	}
 
 	void CEmitter::emit(const structure::RootNode *rootNode) {
@@ -243,8 +270,8 @@ namespace yaplc { namespace cemit {
 		outh.open(packageHeader.full_name());
 		outc.open(packageSource.full_name());
 
-		outh << HEADER_H << std::endl;
-		outc << HEADER_C << std::endl;
+		outh << HEADER_H << endl(this);
+		outc << HEADER_C << endl(this);
 
 		auto moduleHash = typeNode->name->type;
 		std::replace(moduleHash.begin(), moduleHash.end(), '.', '$');
@@ -252,18 +279,18 @@ namespace yaplc { namespace cemit {
 		std::replace(moduleHash.begin(), moduleHash.end(), '>', '$');
 		std::transform(moduleHash.begin(), moduleHash.end(), moduleHash.begin(), ::toupper);
 
-		outh << std::endl
-			<< "#ifndef YAPL_MODULE_" << moduleHash << std::endl
-			<< "#define YAPL_MODULE_" << moduleHash << std::endl
-			<< "#include \"yapl/yapl.h\"" << std::endl;
-		outc << std::endl
-			<< "#include \"" << includePath.relative(packageHeader) << "\"" << std::endl;
+		outh << endl(this)
+			<< "#ifndef YAPL_MODULE_" << moduleHash << endl(this)
+			<< "#define YAPL_MODULE_" << moduleHash << endl(this)
+			<< "#include \"yapl/yapl.h\"" << endl(this);
+		outc << endl(this)
+			<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
 		if (auto classNode = dynamic_cast<const structure::ClassNode *>(typeNode)) {
 			emit(classNode);
 		}
 
-		outh << std::endl
+		outh << endl(this)
 			<< "#endif";
 
 		outh.close();
@@ -285,15 +312,15 @@ namespace yaplc { namespace cemit {
 	void CEmitter::emit(const structure::ClassNode *classNode) {
 		auto classSymbolName = convertName(classNode->name->type);
 
-		outh << std::endl
-			<< "struct " << classSymbolName << "$class {" << std::endl
-			<< "\tstruct yapl$class $common;" << std::endl;
+		outh << endl(this)
+			<< "struct " << classSymbolName << "$class {" << endl(this)
+			<< "\tstruct yapl$class $common;" << endl(this);
 		placeVTable(classNode);
-		outh << "};" << std::endl;
+		outh << "};" << endl(this);
 
-		outh << std::endl
-			<< "struct " << classSymbolName << " {" << std::endl
-			<< "\tstruct " << classSymbolName << "$class *$class;" << std::endl;
+		outh << endl(this)
+			<< "struct " << classSymbolName << " {" << endl(this)
+			<< "\tstruct " << classSymbolName << "$class *$class;" << endl(this);
 		for (auto node : *classNode) {
 			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
 				auto child = memberNode->get();
@@ -302,26 +329,26 @@ namespace yaplc { namespace cemit {
 
 				} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
 					if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
-						outh << "\t" << requestTypeRef(memberNode->type) << " " << getLast(memberNode->getName()) << ";" << std::endl;
+						outh << "\t" << requestTypeRef(memberNode->type) << " " << getLast(memberNode->getName()) << ";" << endl(this);
 					}
 				}
 			} else if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
 				emitInStruct(specialNode);
 			}
 		}
-		outh << "};" << std::endl;
+		outh << "};" << endl(this);
 
-		outh << std::endl
-			<< "struct yapl$objectref " << classSymbolName << "$create();" << std::endl
-			<< std::endl;
+		outh << endl(this)
+			<< "struct yapl$objectref " << classSymbolName << "$create();" << endl(this)
+			<< endl(this);
 
-		outc << std::endl
-			<< "struct yapl$objectref " << classSymbolName << "$create() {" << std::endl
-			<< "\tstruct yapl$objectref result;" << std::endl
-			<< "\tyapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << std::endl
-			<< "\treturn result;" << std::endl
-			<< "}" << std::endl
-			<< std::endl;
+		outc << endl(this)
+			<< "struct yapl$objectref " << classSymbolName << "$create() {" << endl(this)
+			<< "\tstruct yapl$objectref result;" << endl(this)
+			<< "\tyapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << endl(this)
+			<< "\treturn result;" << endl(this)
+			<< "}" << endl(this)
+			<< endl(this);
 
 		for (auto node : *classNode) {
 			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
@@ -344,23 +371,33 @@ namespace yaplc { namespace cemit {
 		}
 	}
 
+	void CEmitter::emit(const structure::VariableMemberNode *variableMemberNode) {
+
+	}
+
 	void CEmitter::emit(const structure::MethodMemberNode *methodMemberNode) {
 		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getContainerParent())) {
 			outh << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
 			showArguments(outh, methodMemberNode->arguments, dynamic_cast<const structure::TypeNode *>(memberNode->getParent()));
-			outh << ";" << std::endl;
+			outh << ";" << endl(this);
 
-			outc << std::endl;
+			outc << endl(this);
 			outc << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
 			showArguments(outc, methodMemberNode->arguments, dynamic_cast<const structure::TypeNode *>(memberNode->getParent()));
-			outc << " {" << std::endl;
-
-			outc << "}" << std::endl;
+			outc << " {" << endl(this);
+			emit(methodMemberNode->body);
+			outc << "}" << endl(this);
 		}
 	}
 
-	void CEmitter::emit(const structure::VariableMemberNode *variableMemberNode) {
-
+	void CEmitter::emit(const structure::ExpressionNode *expressionNode) {
+		push();
+		for (auto node : *expressionNode) {
+			if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
+				emitInStruct(specialNode);
+			}
+		}
+		pop();
 	}
 
 	void CEmitter::placeVTable(const structure::ClassNode *classNode) {
@@ -381,7 +418,7 @@ namespace yaplc { namespace cemit {
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
 					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")";
 					showArguments(outh, methodMemberNode->arguments, classNode);
-					outh << ";" << std::endl;
+					outh << ";" << endl(this);
 				}
 			}
 		}
@@ -523,14 +560,14 @@ namespace yaplc { namespace cemit {
 		auto data = specialNode->data;
 
 		if (data == "yapl.String") {
-			outh << "\tchar *buffer;" << std::endl;
-			outh << "\tunsigned long length;" << std::endl;
+			outh << "\tchar *buffer;" << endl(this);
+			outh << "\tunsigned long length;" << endl(this);
 		} else if (data == "yapl.Array") {
 			// Template argument
 			structure::TypeNameNode typeNameNode;
 			typeNameNode.type = "T";
-			outh << "\t" << requestTypeRef(&typeNameNode) << " *elements;" << std::endl;
-			outh << "\tunsigned long count;" << std::endl;
+			outh << "\t" << requestTypeRef(&typeNameNode) << " *elements;" << endl(this);
+			outh << "\tunsigned long count;" << endl(this);
 		} else if (data == "yapl.Type") {
 
 		} else {
@@ -543,9 +580,9 @@ namespace yaplc { namespace cemit {
 		auto data = specialNode->data;
 
 		if (data == "yapl.String.constructor") {
-			outh << "\t((yapl$String *)$this->target)->buffer = calloc(0, 1);" << std::endl;
+			outh << "\t((yapl$String *)$this->target)->buffer = calloc(0, 1);" << endl(this);
 		} else if (data == "yapl.String.constructor.string") {
-			outh << "\t" << std::endl;
+			outh << "\t" << endl(this);
 		} else {
 			printf("%s\n", data.c_str());
 			// TODO: error

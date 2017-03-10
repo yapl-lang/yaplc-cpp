@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Context.h"
 #include "yaplc/emit/Emitter.h"
 #include "yaplc/structure/PackageNode.h"
 #include "yaplc/structure/TypeNode.h"
@@ -7,8 +8,9 @@
 #include "yaplc/structure/MemberNode.h"
 #include "yaplc/structure/MethodMemberNode.h"
 #include "yaplc/structure/SpecialNode.h"
+#include "yaplc/structure/VariableMemberNode.h"
 #include <fstream>
-#include <yaplc/structure/VariableMemberNode.h>
+#include <functional>
 
 namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
@@ -22,6 +24,9 @@ namespace yaplc { namespace cemit {
 		};
 		std::vector<FileEntry> files;
 
+		std::vector<Context> contextStack;
+		Context *context;
+
 	public:
 		CEmitter(const fs::path &emitPath);
 		virtual ~CEmitter();
@@ -30,13 +35,23 @@ namespace yaplc { namespace cemit {
 		void generateMain();
 
 	protected:
+		void push();
+		void pop();
+
+		struct endlt {
+			CEmitter *self;
+		};
+		friend std::ostream &operator <<(std::ostream &stream, const endlt &value);
+		static endlt endl(CEmitter *self);
+
 		virtual void emit(const structure::RootNode *rootNode);
 		void emit(const structure::PackageNode *packageNode);
 		void emit(const structure::TypeNode *typeNode);
 		void emit(const structure::ClassNode *classNode);
 		void emit(const structure::MemberNode *memberNode);
-		void emit(const structure::MethodMemberNode *methodMemberNode);
 		void emit(const structure::VariableMemberNode *variableMemberNode);
+		void emit(const structure::MethodMemberNode *methodMemberNode);
+		void emit(const structure::ExpressionNode *expressionNode);
 
 		void placeVTable(const structure::ClassNode *classNode);
 		void showArguments(std::ostream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
