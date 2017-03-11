@@ -6,6 +6,8 @@
 #include "yaplc/Compiler.h"
 #include "yaplc/NotReadyException.h"
 
+#include "machineid/machineid.h"
+
 int main(int argc, char **argv) {
 	yaplc::Compiler compiler;
 

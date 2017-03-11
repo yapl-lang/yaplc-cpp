@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Context.h"
+#include "CodeStream.h"
 #include "yaplc/emit/Emitter.h"
 #include "yaplc/structure/PackageNode.h"
 #include "yaplc/structure/TypeNode.h"
@@ -17,7 +18,8 @@ namespace yaplc { namespace cemit {
 	private:
 		fs::path emitPath, includePath, sourcePath, objectPath, binPath;
 
-		std::ofstream outh, outc;
+		std::ofstream outstreamh, outstreamc;
+		CodeStream outh, outc;
 
 		struct FileEntry {
 			fs::path header, source, object;
@@ -38,26 +40,6 @@ namespace yaplc { namespace cemit {
 		void push();
 		void pop();
 
-		struct endlt { CEmitter *self; };
-		friend std::ostream &operator <<(std::ostream &stream, const endlt &value);
-		static endlt endl(CEmitter *self);
-
-		struct indentt { CEmitter *self; };
-		friend std::ostream &operator <<(std::ostream &stream, const indentt &value);
-		static indentt indent(CEmitter *self);
-
-		struct pusht { CEmitter *self; };
-		friend std::ostream &operator <<(std::ostream &stream, const pusht &value);
-		static pusht push(CEmitter *self);
-
-		struct popt { CEmitter *self; };
-		friend std::ostream &operator <<(std::ostream &stream, const popt &value);
-		static popt pop(CEmitter *self);
-
-		struct pushindentt { CEmitter *self; };
-		friend std::ostream &operator <<(std::ostream &stream, const pushindentt &value);
-		static pushindentt pushindent(CEmitter *self);
-
 		virtual void emit(const structure::RootNode *rootNode);
 		void emit(const structure::PackageNode *packageNode);
 		void emit(const structure::TypeNode *typeNode);
@@ -68,7 +50,7 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::ExpressionNode *expressionNode);
 
 		void placeVTable(const structure::ClassNode *classNode);
-		void showArguments(std::ostream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
+		void showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
 		void emitInMethod(const structure::SpecialNode *specialNode);
