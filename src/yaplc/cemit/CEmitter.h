@@ -38,11 +38,25 @@ namespace yaplc { namespace cemit {
 		void push();
 		void pop();
 
-		struct endlt {
-			CEmitter *self;
-		};
+		struct endlt { CEmitter *self; };
 		friend std::ostream &operator <<(std::ostream &stream, const endlt &value);
 		static endlt endl(CEmitter *self);
+
+		struct indentt { CEmitter *self; };
+		friend std::ostream &operator <<(std::ostream &stream, const indentt &value);
+		static indentt indent(CEmitter *self);
+
+		struct pusht { CEmitter *self; };
+		friend std::ostream &operator <<(std::ostream &stream, const pusht &value);
+		static pusht push(CEmitter *self);
+
+		struct popt { CEmitter *self; };
+		friend std::ostream &operator <<(std::ostream &stream, const popt &value);
+		static popt pop(CEmitter *self);
+
+		struct pushindentt { CEmitter *self; };
+		friend std::ostream &operator <<(std::ostream &stream, const pushindentt &value);
+		static pushindentt pushindent(CEmitter *self);
 
 		virtual void emit(const structure::RootNode *rootNode);
 		void emit(const structure::PackageNode *packageNode);

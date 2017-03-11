@@ -54,9 +54,9 @@ namespace yaplc { namespace cemit {
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
 			outc << endl(this)
-				<< "int main(char **argc, int argv) {" << endl(this)
-				<< "\treturn yapl$main(argc, argv);" << endl(this)
-				<< "}" << endl(this);
+				<< "int main(char **argc, int argv) {" << pushindent(this) << endl(this)
+				<< "return yapl$main(argc, argv);" << endl(this)
+				<< pop(this) << "}" << endl(this);
 
 			outh << endl(this)
 				<< "#endif";
@@ -127,12 +127,12 @@ namespace yaplc { namespace cemit {
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
 			outh << endl(this)
-				<< "struct yapl$class {" << endl(this)
-				<< "\tstruct yapl$class *parent;" << endl(this)
-				<< "\tstruct yapl$class **interfaces;" << endl(this)
-				<< "\tchar *name;" << endl(this)
-				<< "\tvoid **vtable;" << endl(this)
-				<< "};" << endl(this);
+				<< "struct yapl$class {" << pushindent(this) << endl(this)
+				<< "struct yapl$class *parent;" << endl(this)
+				<< "struct yapl$class **interfaces;" << endl(this)
+				<< "char *name;" << endl(this)
+				<< "void **vtable;" << endl(this)
+				<< pop(this) << "};" << endl(this);
 
 			outh << endl(this)
 				<< "#endif";
@@ -165,15 +165,15 @@ namespace yaplc { namespace cemit {
 				<< "#include \"" << includePath.relative(packageHeader) << "\"" << endl(this);
 
 			outh << endl(this)
-				<< "struct yapl$objectref$item {" << endl(this)
-				<< "\tstruct Object *target;" << endl(this)
-				<< "\tunsigned long count;" << endl(this)
-				<< "};" << endl(this);
+				<< "struct yapl$objectref$item {"<< pushindent(this)  << endl(this)
+				<< "struct Object *target;" << endl(this)
+				<< "unsigned long count;" << endl(this)
+				<< pop(this) << "};" << endl(this);
 
 			outh << endl(this)
-				<< "struct yapl$objectref {" << endl(this)
-				<< "\tstruct yapl$objectref$item *item;" << endl(this)
-				<< "};" << endl(this);
+				<< "struct yapl$objectref {" << pushindent(this) << endl(this)
+				<< "struct yapl$objectref$item *item;" << endl(this)
+				<< pop(this) << "};" << endl(this);
 
 			outh << endl(this)
 				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object);" << endl(this)
@@ -181,24 +181,24 @@ namespace yaplc { namespace cemit {
 				<< "void yapl$objectref$pop(struct yapl$objectref ref);" << endl(this);
 
 			outc << endl(this)
-				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << endl(this)
-				<< "\tref.item = malloc(sizeof(struct yapl$objectref$item));" << endl(this)
-				<< "\tref.item->count = 1;" << endl(this)
-				<< "\tref.item->target = object;" << endl(this)
-				<< "}" << endl(this)
+				<< "void yapl$objectref$init(struct yapl$objectref ref, struct Object *object) {" << pushindent(this) << endl(this)
+				<< "ref.item = malloc(sizeof(struct yapl$objectref$item));" << endl(this)
+				<< "ref.item->count = 1;" << endl(this)
+				<< "ref.item->target = object;" << endl(this)
+				<< pop(this) << "}" << endl(this)
 				<< endl(this)
-				<< "void yapl$objectref$push(struct yapl$objectref ref) {" << endl(this)
-				<< "\t++ref.item->count;" << endl(this)
-				<< "}" << endl(this)
+				<< "void yapl$objectref$push(struct yapl$objectref ref) {" << pushindent(this) << endl(this)
+				<< "++ref.item->count;" << endl(this)
+				<< pop(this) << "}" << endl(this)
 				<< endl(this)
-				<< "void yapl$objectref$pop(struct yapl$objectref ref) {" << endl(this)
-				<< "\tif (ref.item->count == 1) {" << endl(this)
-				<< "\t\tfree(ref.item->target);" << endl(this)
-				<< "\t\tfree(ref.item);" << endl(this)
-				<< "\t} else {" << endl(this)
-				<< "\t\t--ref.item->count;" << endl(this)
-				<< "\t}" << endl(this)
-				<< "}" << endl(this);
+				<< "void yapl$objectref$pop(struct yapl$objectref ref) {" << pushindent(this) << endl(this)
+				<< "if (ref.item->count == 1) {" << pushindent(this) << endl(this)
+				<< "free(ref.item->target);" << endl(this)
+				<< "free(ref.item);" << endl(this)
+				<< pop(this) << "} else {" << pushindent(this) << endl(this)
+				<< "--ref.item->count;" << endl(this)
+				<< pop(this) << "}" << endl(this)
+				<< pop(this) << "}" << endl(this);
 
 			outh << endl(this)
 				<< "#endif";
@@ -214,25 +214,77 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::push() {
-		//contextStack.push_back(context);
-		//context = *(--contextStack.end());
+		contextStack.push_back(*context);
+		context = &*(--contextStack.end());
 	}
 
 	void CEmitter::pop() {
-		//contextStack.pop_back();
-		//context = *(--contextStack.end());
+		contextStack.pop_back();
+		context = &*(--contextStack.end());
 	}
 
 	std::ostream &operator <<(std::ostream &stream, const CEmitter::endlt &value) {
 		auto self = value.self;
 
 		stream << "\n";
-		util::leftpad(stream, self->context->indentation, self->context->indentationChar);
+		util::leftpad(stream, self->context->indentation * self->context->indentationWidth, self->context->indentationChar);
 
 		return stream;
 	}
 
 	CEmitter::endlt CEmitter::endl(CEmitter *self) {
+		return {self};
+	}
+
+	std::ostream &operator <<(std::ostream &stream, const CEmitter::indentt &value) {
+		auto self = value.self;
+
+		self->context->indent();
+
+		return stream;
+	}
+
+	CEmitter::indentt CEmitter::indent(CEmitter *self) {
+		return {self};
+	}
+
+	std::ostream &operator <<(std::ostream &stream, const CEmitter::pusht &value) {
+		auto self = value.self;
+
+		self->push();
+
+		return stream;
+	}
+
+	CEmitter::pusht CEmitter::push(CEmitter *self) {
+		return {self};
+	}
+
+	std::ostream &operator <<(std::ostream &stream, const CEmitter::popt &value) {
+		auto self = value.self;
+
+		auto oldIndentation = self->context->indentation;
+		self->pop();
+		auto indentationDiff = oldIndentation - self->context->indentation;
+		stream.seekp(-indentationDiff * self->context->indentationWidth, std::ios_base::cur);
+
+		return stream;
+	}
+
+	CEmitter::popt CEmitter::pop(CEmitter *self) {
+		return {self};
+	}
+
+	std::ostream &operator <<(std::ostream &stream, const CEmitter::pushindentt &value) {
+		auto self = value.self;
+
+		self->push();
+		self->context->indent();
+
+		return stream;
+	}
+
+	CEmitter::pushindentt CEmitter::pushindent(CEmitter *self) {
 		return {self};
 	}
 
@@ -313,14 +365,14 @@ namespace yaplc { namespace cemit {
 		auto classSymbolName = convertName(classNode->name->type);
 
 		outh << endl(this)
-			<< "struct " << classSymbolName << "$class {" << endl(this)
-			<< "\tstruct yapl$class $common;" << endl(this);
+			<< "struct " << classSymbolName << "$class {" << pushindent(this) << endl(this)
+			<< "struct yapl$class $common;" << endl(this);
 		placeVTable(classNode);
-		outh << "};" << endl(this);
+		outh << pop(this) << "};" << endl(this);
 
 		outh << endl(this)
-			<< "struct " << classSymbolName << " {" << endl(this)
-			<< "\tstruct " << classSymbolName << "$class *$class;" << endl(this);
+			<< "struct " << classSymbolName << " {" << pushindent(this) << endl(this)
+			<< "struct " << classSymbolName << "$class *$class;" << endl(this);
 		for (auto node : *classNode) {
 			if (auto memberNode = dynamic_cast<structure::MemberNode *>(node)) {
 				auto child = memberNode->get();
@@ -329,25 +381,25 @@ namespace yaplc { namespace cemit {
 
 				} else if (auto variableMemberNode = dynamic_cast<structure::VariableMemberNode *>(child)) {
 					if (memberNode->staticality == structure::MemberNode::Staticality::Dynamic) {
-						outh << "\t" << requestTypeRef(memberNode->type) << " " << getLast(memberNode->getName()) << ";" << endl(this);
+						outh << requestTypeRef(memberNode->type) << " " << getLast(memberNode->getName()) << ";" << endl(this);
 					}
 				}
 			} else if (auto specialNode = dynamic_cast<structure::SpecialNode *>(node)) {
 				emitInStruct(specialNode);
 			}
 		}
-		outh << "};" << endl(this);
+		outh << pop(this) << "};" << endl(this);
 
 		outh << endl(this)
 			<< "struct yapl$objectref " << classSymbolName << "$create();" << endl(this)
 			<< endl(this);
 
 		outc << endl(this)
-			<< "struct yapl$objectref " << classSymbolName << "$create() {" << endl(this)
-			<< "\tstruct yapl$objectref result;" << endl(this)
-			<< "\tyapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << endl(this)
-			<< "\treturn result;" << endl(this)
-			<< "}" << endl(this)
+			<< "struct yapl$objectref " << classSymbolName << "$create() {" << pushindent(this) << endl(this)
+			<< "struct yapl$objectref result;" << endl(this)
+			<< "yapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << endl(this)
+			<< "return result;" << endl(this)
+			<< pop(this) << "}" << endl(this)
 			<< endl(this);
 
 		for (auto node : *classNode) {
@@ -416,7 +468,7 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << "\t" << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")";
+					outh << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")";
 					showArguments(outh, methodMemberNode->arguments, classNode);
 					outh << ";" << endl(this);
 				}
@@ -560,14 +612,14 @@ namespace yaplc { namespace cemit {
 		auto data = specialNode->data;
 
 		if (data == "yapl.String") {
-			outh << "\tchar *buffer;" << endl(this);
-			outh << "\tunsigned long length;" << endl(this);
+			outh << "char *buffer;" << endl(this);
+			outh << "unsigned long length;" << endl(this);
 		} else if (data == "yapl.Array") {
 			// Template argument
 			structure::TypeNameNode typeNameNode;
 			typeNameNode.type = "T";
-			outh << "\t" << requestTypeRef(&typeNameNode) << " *elements;" << endl(this);
-			outh << "\tunsigned long count;" << endl(this);
+			outh << "" << requestTypeRef(&typeNameNode) << " *elements;" << endl(this);
+			outh << "unsigned long count;" << endl(this);
 		} else if (data == "yapl.Type") {
 
 		} else {
@@ -580,9 +632,9 @@ namespace yaplc { namespace cemit {
 		auto data = specialNode->data;
 
 		if (data == "yapl.String.constructor") {
-			outh << "\t((yapl$String *)$this->target)->buffer = calloc(0, 1);" << endl(this);
+			outh << "((yapl$String *)$this->target)->buffer = calloc(0, 1);" << endl(this);
 		} else if (data == "yapl.String.constructor.string") {
-			outh << "\t" << endl(this);
+			outh << endl(this);
 		} else {
 			printf("%s\n", data.c_str());
 			// TODO: error
