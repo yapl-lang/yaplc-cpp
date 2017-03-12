@@ -5,7 +5,6 @@ struct yapl$class {
 	struct yapl$class *parent;
 	struct yapl$class **interfaces;
 	char *name;
-	void **vtable;
 };
 
 #endif

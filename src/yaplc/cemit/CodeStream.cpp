@@ -138,6 +138,13 @@ namespace yaplc { namespace cemit {
 		return *this;
 	}
 
+	CodeStream &CodeStream::write(CodeBackup &backup) {
+		backup.includeEntries = includeEntries;
+		backup.codeEntries = codeEntries;
+
+		return *this;
+	}
+
 	CodeStream &CodeStream::reset() {
 		config.lineDelimiter = "\n";
 		config.indentation = "\t";

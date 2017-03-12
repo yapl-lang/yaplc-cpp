@@ -2,6 +2,7 @@
 
 #include "Context.h"
 #include "CodeStream.h"
+#include "GCC.h"
 #include "yaplc/emit/Emitter.h"
 #include "yaplc/structure/PackageNode.h"
 #include "yaplc/structure/TypeNode.h"
@@ -16,8 +17,9 @@
 namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
 	private:
+		GCC gcc;
+
 		fs::path emitPath, includePath, sourcePath, objectPath, binPath;
-		std::vector<fs::path> includePaths;
 
 		std::ofstream outstreamh, outstreamc;
 		CodeStream outh, outc;
@@ -50,7 +52,7 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::MethodMemberNode *methodMemberNode);
 		void emit(const structure::ExpressionNode *expressionNode);
 
-		void placeVTable(const structure::ClassNode *classNode);
+		void placeVTable(const structure::ClassNode *classNode, CodeStream &structMembers, CodeStream &initializator);
 		void showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
 
 		void emitInStruct(const structure::SpecialNode *specialNode);

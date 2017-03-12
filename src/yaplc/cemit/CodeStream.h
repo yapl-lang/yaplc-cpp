@@ -12,26 +12,28 @@ namespace yaplc { namespace cemit {
 		static struct OpenBlockT {} OpenBlock;
 		static struct CloseBlockT {} CloseBlock;
 
-	private:
-		struct {
-			std::string lineDelimiter;
-			std::string indentation;
-		} config;
-
-
 		struct IncludeEntry {
 			std::string path;
 			bool global;
 		};
-
-		std::vector<IncludeEntry> includeEntries;
-
 
 		struct CodeEntry {
 			enum class Type {NewLine, OpenBlock, CloseBlock, Text} type;
 			std::string value;
 		};
 
+		struct CodeBackup {
+			std::vector<IncludeEntry> includeEntries;
+			std::vector<CodeEntry> codeEntries;
+		};
+
+	private:
+		struct {
+			std::string lineDelimiter;
+			std::string indentation;
+		} config;
+
+		std::vector<IncludeEntry> includeEntries;
 		std::vector<CodeEntry> codeEntries;
 
 
@@ -63,6 +65,13 @@ namespace yaplc { namespace cemit {
 			return push(stream.str());
 		}
 
+		template<class T = const CodeBackup &> inline CodeStream &operator <<(const CodeBackup &value) {
+			includeEntries.insert(includeEntries.end(), value.includeEntries.begin(), value.includeEntries.end());
+			codeEntries.insert(codeEntries.end(), value.codeEntries.begin(), value.codeEntries.end());
+
+			return *this;
+		}
+
 		template<class T = NewLineT> inline CodeStream &operator <<(NewLineT value) {
 			return newline();
 		}
@@ -80,6 +89,7 @@ namespace yaplc { namespace cemit {
 
 	public:
 		CodeStream &write(std::ostream &stream);
+		CodeStream &write(CodeBackup &backup);
 		CodeStream &reset();
 	};
 } }

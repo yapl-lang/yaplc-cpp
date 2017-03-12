@@ -3,6 +3,7 @@
 #include "fs/fs.h"
 #include <string>
 #include <vector>
+#include <map>
 
 namespace yaplc { namespace cemit {
 	class GCC {

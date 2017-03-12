@@ -23,7 +23,8 @@ namespace yaplc { namespace cemit {
 		objectPath.mkdir();
 		binPath.mkdir();
 
-		includePaths.push_back(includePath);
+		gcc.argument("-DNULL=0");
+		gcc.includePath(includePath);
 
 		contextStack.push_back({});
 		context = &contextStack[0];
@@ -39,6 +40,7 @@ namespace yaplc { namespace cemit {
 		static std::vector<std::string> objects {
 			"yapl/class",
 			"yapl/main",
+			"yapl/memory",
 			"yapl/objectref",
 			"yapl/yapl"
 		};
@@ -59,6 +61,8 @@ namespace yaplc { namespace cemit {
 			throw std::runtime_error("The path \"" + srcDirectory.full_name() + "\" is not exist.");
 		}
 
+		gcc.includePath(includeDirectory);
+
 		auto objDirectory = emitData/"obj";
 
 		auto machineHash = machineid::machineHash();
@@ -76,20 +80,8 @@ namespace yaplc { namespace cemit {
 			auto srcFile = srcDirectory/(object + ".c");
 			auto objFile = objDirectory/(object + ".o");
 
-			if (!objFile.exists()) {
-				objFile.parent().mkdirs();
-
-				system(("gcc -I\"" +
-					util::replace(fs::escape(includeDirectory), "$", "\\$") +
-					"\" -c \"" +
-					util::replace(fs::escape(srcFile), "$", "\\$") +
-					"\" -o \"" +
-					util::replace(fs::escape(objFile), "$", "\\$") +
-					"\"").c_str());
-			}
+			gcc.compile(srcFile, objFile);
 		}
-
-		includePaths.push_back(includeDirectory);
 	}
 
 	void CEmitter::push() {
@@ -148,6 +140,7 @@ namespace yaplc { namespace cemit {
 		outstreamc.open(packageSource.full_name());
 		outh.header(HEADER_H).includeGuard("YAPL_MODULE_" + moduleHash).write(outstreamh).reset();
 		outc.header(HEADER_C).include(includePath.relative(packageHeader)).write(outstreamc).reset();
+		gcc.compile(packageSource, packageObject);
 		outstreamh.close();
 		outstreamc.close();
 
@@ -165,12 +158,19 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::emit(const structure::ClassNode *classNode) {
+		outh.include("yapl/class.h");
+
 		auto classSymbolName = convertName(classNode->name->type);
 
 		outh << CodeStream::NewLine
 			<< "struct " << classSymbolName << "$class " << CodeStream::OpenBlock << CodeStream::NewLine
 			<< "struct yapl$class $common;" << CodeStream::NewLine;
-		placeVTable(classNode);
+		CodeStream::CodeBackup initializatorBackup;
+		{
+			CodeStream initializator;
+			placeVTable(classNode, outh, initializator);
+			initializator.write(initializatorBackup);
+		}
 		outh << CodeStream::CloseBlock << ";" << CodeStream::NewLine;
 
 		outh << CodeStream::NewLine
@@ -192,6 +192,20 @@ namespace yaplc { namespace cemit {
 			}
 		}
 		outh << CodeStream::CloseBlock << ";" << CodeStream::NewLine;
+
+		outc << CodeStream::NewLine
+			<< "struct " << classSymbolName << "$class " << classSymbolName << "$class() " << CodeStream::OpenBlock << CodeStream::NewLine
+				<< "static struct " << classSymbolName << "$class *instance = NULL;" << CodeStream::NewLine
+				<< CodeStream::NewLine
+				<< "if (instance == NULL) " << CodeStream::OpenBlock << CodeStream::NewLine
+					<< "instance = malloc(struct " << classSymbolName << "$class);" << CodeStream::NewLine
+					<< CodeStream::NewLine
+				<< CodeStream::CloseBlock << CodeStream::NewLine
+				<< CodeStream::NewLine
+				<< initializatorBackup << CodeStream::NewLine
+				<< "return instance;" << CodeStream::NewLine
+				<< CodeStream::CloseBlock << CodeStream::NewLine
+			<< CodeStream::NewLine;
 
 		outh << CodeStream::NewLine
 			<< "struct yapl$objectref " << classSymbolName << "$create();" << CodeStream::NewLine
@@ -239,9 +253,9 @@ namespace yaplc { namespace cemit {
 			outc << CodeStream::NewLine;
 			outc << requestTypeRef(memberNode->type) << " " << getFullMethodName(methodMemberNode);
 			showArguments(outc, methodMemberNode->arguments, dynamic_cast<const structure::TypeNode *>(memberNode->getParent()));
-			outc << " {" << CodeStream::NewLine;
+			outc << " " << CodeStream::OpenBlock << CodeStream::NewLine;
 			emit(methodMemberNode->body);
-			outc << "}" << CodeStream::NewLine;
+			outc << CodeStream::CloseBlock << CodeStream::NewLine;
 		}
 	}
 
@@ -255,14 +269,16 @@ namespace yaplc { namespace cemit {
 		pop();
 	}
 
-	void CEmitter::placeVTable(const structure::ClassNode *classNode) {
+	void CEmitter::placeVTable(const structure::ClassNode *classNode, CodeStream &structMembers, CodeStream &initializator) {
 		if (auto parentClass = dynamic_cast<structure::ClassNode *>(getType(classNode->base->type))) {
 			if (classNode == parentClass) {
-				if (classNode->name->type != "yapl.Object") {
+				if (classNode->name->type == "yapl.Object") {
+					structMembers << "void (*yapl$handleGC)();" << CodeStream::NewLine;
+				} else {
 					// TODO: Error, recursive extend
 				}
 			} else {
-				placeVTable(parentClass);
+				placeVTable(parentClass, structMembers, initializator);
 			}
 		}
 
@@ -271,9 +287,13 @@ namespace yaplc { namespace cemit {
 				auto child = memberNode->get();
 
 				if (auto methodMemberNode = dynamic_cast<structure::MethodMemberNode *>(child)) {
-					outh << requestTypeRef(memberNode->type) << " (*" << getShortMethodName(methodMemberNode) << ")";
-					showArguments(outh, methodMemberNode->arguments, classNode);
-					outh << ";" << CodeStream::NewLine;
+					auto shortMethodName = getShortMethodName(methodMemberNode);
+
+					structMembers << requestTypeRef(memberNode->type) << " (*" << shortMethodName << ")";
+					showArguments(structMembers, methodMemberNode->arguments, classNode);
+					structMembers << ";" << CodeStream::NewLine;
+
+					initializator << "instance->" << shortMethodName << " = " << getFullMethodName(methodMemberNode) << ";" << CodeStream::NewLine;
 				}
 			}
 		}
@@ -445,33 +465,7 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::build() {
-		std::string includeString;
-		{
-			std::stringstream ss;
-			for (auto includePath : includePaths) {
-				ss << "-I\"" << util::replace(fs::escape(includePath), "$", "\\$") << "\" ";
-			}
-
-			includeString = ss.str();
-		}
-
-		for (auto file : files) {
-			system(("gcc " + includeString +
-				"-c \"" +
-				util::replace(fs::escape(file.source), "$", "\\$") +
-				"\" -o \"" +
-				util::replace(fs::escape(file.object), "$", "\\$") +
-				"\"").c_str());
-		}
-
-		std::stringstream ss;
-		ss << "gcc ";
-		for (auto file : files) {
-			ss << "\"" << util::replace(fs::escape(file.object), "$", "\\$") << "\" ";
-		}
-		ss << "-o \"" << util::replace(fs::escape(binPath/"exe"), "$", "\\$") << "\"";
-
-		system(ss.str().c_str());
+		gcc.build(fs::escape(binPath/"exe"));
 	}
 
 	std::string CEmitter::convertName(const std::string &original) {
@@ -511,9 +505,7 @@ namespace yaplc { namespace cemit {
 			switch (memberNode->staticality) {
 			case structure::MemberNode::Staticality::Dynamic:
 				if (auto typeNode = dynamic_cast<structure::TypeNode *>(memberNode->getParent())) {
-					auto selfType = requestType(typeNode->name, false);
-					selfType.erase(std::remove_if(selfType.begin(), selfType.end(), ::isspace), selfType.end());
-					result += "$" + selfType;
+					result += "$this";
 				}
 				break;
 			case structure::MemberNode::Staticality::Static:
@@ -540,7 +532,7 @@ namespace yaplc { namespace cemit {
 
 	std::string CEmitter::getFullMethodName(const structure::MethodMemberNode *methodMemberNode) {
 		if (auto memberNode = dynamic_cast<structure::MemberNode *>(methodMemberNode->getParent())) {
-			return convertName(getNotLast(memberNode->getName())) + getShortMethodName(methodMemberNode);
+			return convertName(getNotLast(memberNode->getName())) + "$" + getShortMethodName(methodMemberNode);
 		}
 
 		return "";
