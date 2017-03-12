@@ -1,6 +1,7 @@
 #include "CEmitter.h"
 #include "yaplc/structure/VariableMemberNode.h"
 #include "yaplc/util/replace.h"
+#include "machineid/machineid.h"
 #include <algorithm>
 #include <stdlib.h>
 #include <iostream>
@@ -22,6 +23,8 @@ namespace yaplc { namespace cemit {
 		objectPath.mkdir();
 		binPath.mkdir();
 
+		includePaths.push_back(includePath);
+
 		contextStack.push_back({});
 		context = &contextStack[0];
 
@@ -34,10 +37,10 @@ namespace yaplc { namespace cemit {
 
 	void CEmitter::generateMain() {
 		static std::vector<std::string> objects {
-			"class",
-			"main",
-			"objectref",
-			"yapl"
+			"yapl/class",
+			"yapl/main",
+			"yapl/objectref",
+			"yapl/yapl"
 		};
 
 		auto emitData = fs::relative("./data/c");
@@ -57,11 +60,36 @@ namespace yaplc { namespace cemit {
 		}
 
 		auto objDirectory = emitData/"obj";
+
+		auto machineHash = machineid::machineHash();
+		auto machineHashFile = emitData/".machine";
+
+		if ((!machineHashFile.exists()) || (machineHashFile.content() != machineHash)) {
+			machineHashFile.content(machineHash);
+
+			objDirectory.remove();
+		}
+
 		objDirectory.mkdir();
 
 		for (auto object : objects) {
+			auto srcFile = srcDirectory/(object + ".c");
+			auto objFile = objDirectory/(object + ".o");
 
+			if (!objFile.exists()) {
+				objFile.parent().mkdirs();
+
+				system(("gcc -I\"" +
+					util::replace(fs::escape(includeDirectory), "$", "\\$") +
+					"\" -c \"" +
+					util::replace(fs::escape(srcFile), "$", "\\$") +
+					"\" -o \"" +
+					util::replace(fs::escape(objFile), "$", "\\$") +
+					"\"").c_str());
+			}
 		}
+
+		includePaths.push_back(includeDirectory);
 	}
 
 	void CEmitter::push() {
@@ -417,10 +445,19 @@ namespace yaplc { namespace cemit {
 	}
 
 	void CEmitter::build() {
+		std::string includeString;
+		{
+			std::stringstream ss;
+			for (auto includePath : includePaths) {
+				ss << "-I\"" << util::replace(fs::escape(includePath), "$", "\\$") << "\" ";
+			}
+
+			includeString = ss.str();
+		}
+
 		for (auto file : files) {
-			system(("gcc -I\"" +
-				util::replace(fs::escape(includePath), "$", "\\$") +
-				"\" -c \"" +
+			system(("gcc " + includeString +
+				"-c \"" +
 				util::replace(fs::escape(file.source), "$", "\\$") +
 				"\" -o \"" +
 					util::replace(fs::escape(file.object), "$", "\\$") +

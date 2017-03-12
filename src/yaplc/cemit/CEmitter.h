@@ -17,6 +17,7 @@ namespace yaplc { namespace cemit {
 	class CEmitter : public emit::Emitter {
 	private:
 		fs::path emitPath, includePath, sourcePath, objectPath, binPath;
+		std::vector<fs::path> includePaths;
 
 		std::ofstream outstreamh, outstreamc;
 		CodeStream outh, outc;
