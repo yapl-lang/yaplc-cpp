@@ -460,7 +460,7 @@ namespace yaplc { namespace cemit {
 				"-c \"" +
 				util::replace(fs::escape(file.source), "$", "\\$") +
 				"\" -o \"" +
-					util::replace(fs::escape(file.object), "$", "\\$") +
+				util::replace(fs::escape(file.object), "$", "\\$") +
 				"\"").c_str());
 		}
 
