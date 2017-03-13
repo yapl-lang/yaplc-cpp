@@ -77,6 +77,20 @@ namespace yaplc { namespace structure {
 		inline Container *getContainerParent() const {
 			return containerParent;
 		}
+
+		template<class T> T *findParent() const {
+			auto parent = getParent();
+
+			while (parent) {
+				if (auto tParent = dynamic_cast<T *>(parent)) {
+					return tParent;
+				}
+
+				parent = parent->getParent();
+			}
+
+			return nullptr;
+		}
 		
 		
 		inline unsigned long getBegin() const {
