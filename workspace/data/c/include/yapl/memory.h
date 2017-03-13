@@ -7,8 +7,7 @@
 
 struct yapl$memory$Chunk {
 	struct yapl$memory$Chunk *next;
-
-	unsigned long offset, size;
+	unsigned long size;
 	unsigned char data[0];
 };
 
