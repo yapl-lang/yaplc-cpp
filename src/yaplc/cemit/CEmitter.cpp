@@ -195,6 +195,11 @@ namespace yaplc { namespace cemit {
 		}
 		outh << CodeStream::CloseBlock << ";" << CodeStream::NewLine;
 
+		include(outc, classNode->base);
+		for (auto interface : classNode->interfaces) {
+			include(outc, interface);
+		}
+
 		outh << "struct " << classSymbolName << "$class *" << classSymbolName << "$class();"<< CodeStream::NewLine;
 		outc.include("yapl/memory.h") << CodeStream::NewLine
 			<< "struct " << classSymbolName << "$class *" << classSymbolName << "$class() " << CodeStream::OpenBlock << CodeStream::NewLine
@@ -205,7 +210,7 @@ namespace yaplc { namespace cemit {
 					<< CodeStream::NewLine
 					<< "instance->common.size = sizeof(struct " << classSymbolName << ");" << CodeStream::NewLine
 					<< "instance->common.name = \"" << classNode->name->hashName() << "\";" << CodeStream::NewLine
-					<< "instance->common.parent = " << convertName(classNode->base->type) << "$class();" << CodeStream::NewLine
+					<< "instance->common.parent = (struct yapl$class *)" << convertName(classNode->base->type) << "$class();" << CodeStream::NewLine
 					<< CodeStream::NewLine
 					<< initializatorBackup
 				<< CodeStream::CloseBlock << CodeStream::NewLine
@@ -215,14 +220,11 @@ namespace yaplc { namespace cemit {
 			<< CodeStream::NewLine;
 
 		outh << CodeStream::NewLine
-			<< "struct yapl$objectref " << classSymbolName << "$create();" << CodeStream::NewLine
+			<< requestTypeRef(classNode->name) << " " << classSymbolName << "$create();" << CodeStream::NewLine
 			<< CodeStream::NewLine;
 
 		outc << CodeStream::NewLine
-			<< "struct yapl$objectref " << classSymbolName << "$create() " << CodeStream::OpenBlock << CodeStream::NewLine
-			<< "struct yapl$objectref result;" << CodeStream::NewLine
-			<< "yapl$objectref$init(result, malloc(sizeof(struct " << classSymbolName << ")));" << CodeStream::NewLine
-			<< "return result;" << CodeStream::NewLine
+			<< requestTypeRef(classNode->name) << " " << classSymbolName << "$create() " << CodeStream::OpenBlock << CodeStream::NewLine
 			<< CodeStream::CloseBlock << CodeStream::NewLine
 			<< CodeStream::NewLine;
 
@@ -297,16 +299,16 @@ namespace yaplc { namespace cemit {
 					auto shortMethodName = getShortMethodName(methodMemberNode);
 
 					structMembers << requestTypeRef(memberNode->type) << " (*" << shortMethodName << ")";
-					showArguments(structMembers, methodMemberNode->arguments, classNode);
+					showArguments(structMembers, methodMemberNode->arguments, classNode, false);
 					structMembers << ";" << CodeStream::NewLine;
 
-					initializator << "instance->" << shortMethodName << " = " << getFullMethodName(methodMemberNode) << ";" << CodeStream::NewLine;
+					initializator << "instance->" << shortMethodName << " = &" << getFullMethodName(methodMemberNode) << ";" << CodeStream::NewLine;
 				}
 			}
 		}
 	}
 
-	void CEmitter::showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode) {
+	void CEmitter::showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode, bool useNames) {
 		stream << "(";
 
 		bool printComma = false;
@@ -315,8 +317,11 @@ namespace yaplc { namespace cemit {
 		std::string name;
 		structure::ExpressionNode *value;
 
-		auto printArgument = [this, &stream, &type, &name, &value]() {
-			stream << requestTypeRef(type) << " " << name;
+		auto printArgument = [this, &stream, useNames, &type, &name, &value]() {
+			stream << requestTypeRef(type);
+			if (useNames) {
+				stream << " " << name;
+			}
 		};
 
 		if (typeNode != nullptr) {
@@ -350,6 +355,13 @@ namespace yaplc { namespace cemit {
 		}
 
 		stream << ")";
+	}
+
+	void CEmitter::include(CodeStream &stream, const structure::TypeNameNode *typeName) {
+		auto packageName = getNotLast(typeName->type);
+		std::replace(packageName.begin(), packageName.end(), '.', fs::path::PathDelim);
+
+		stream.include(packageName + fs::path::PathDelim + convertName(getLast(typeName->type)) + ".h");
 	}
 
 	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
@@ -389,10 +401,52 @@ namespace yaplc { namespace cemit {
 		}
 
 		if (prependStruct) {
+			return "struct " + convertName(type->name->type) + "*";
+		}
+
+		return convertName(type->name->type) + "*";
+
+		/*
+		static std::map<std::string, std::string> typeNameMapping {
+			{"bool", "unsigned char"},
+			{"char", "char"},
+
+			{"byte", "unsigned char"},
+			{"sbyte", "signed char"},
+			{"short", "signed short"},
+			{"ushort", "unsigned short"},
+			{"int", "signed long"},
+			{"uint", "unsigned long"},
+			{"long", "signed long long"},
+			{"ulong", "unsigned long long"},
+
+			{"float", "float"},
+			{"double", "double"},
+
+			{"void", "void"},
+
+			{"size", "unsigned long"}
+		};
+
+		auto typeName = typeNameNode->hashName();
+
+		auto it = typeNameMapping.find(typeName);
+		if (it != typeNameMapping.end()) {
+			return it->second;
+		}
+
+		auto type = getType(typeName);
+		if (type == nullptr) {
+			// TODO: error undefined type
+
+			return "void";
+		}
+
+		if (prependStruct) {
 			return "struct yapl$objectref";
 		}
 
-		return "yapl$objectref";
+		return "yapl$objectref";*/
 	}
 
 	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode, bool prependStruct) {

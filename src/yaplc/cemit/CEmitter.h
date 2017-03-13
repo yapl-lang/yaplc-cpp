@@ -53,7 +53,8 @@ namespace yaplc { namespace cemit {
 		void emit(const structure::ExpressionNode *expressionNode);
 
 		void placeVTable(const structure::ClassNode *classNode, CodeStream &structMembers, CodeStream &initializator);
-		void showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr);
+		void showArguments(CodeStream &stream, const structure::ArgumentsNode *argumentsNode, const structure::TypeNode *typeNode = nullptr, bool useNames = true);
+		void include(CodeStream &stream, const structure::TypeNameNode *typeName);
 
 		void emitInStruct(const structure::SpecialNode *specialNode);
 		void emitInMethod(const structure::SpecialNode *specialNode);
