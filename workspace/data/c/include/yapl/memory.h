@@ -11,7 +11,18 @@ struct yapl$memory$Chunk {
 	unsigned char data[0];
 };
 
+struct yapl$memory$Allocator {
+	struct yapl$memory$Chunk *firstChunk;
+	struct yapl$memory$Chunk *currentChunk;
+	unsigned long offset;
+};
+
+void yapl$memory$Allocator$init(struct yapl$memory$Allocator *allocator);
+struct yapl$memory$Chunk *yapl$memory$Allocator$createChunk(unsigned long size);
+void *yapl$memory$Allocator$alloc(struct yapl$memory$Allocator *allocator, unsigned long size);
+
 void yapl$memory$init();
-struct yapl$Object *yapl$memory$alloc(unsigned long size);
+void *yapl$memory$allocStatic(unsigned long size);
+struct yapl$Object *yapl$memory$allocObject(unsigned long size);
 
 #endif

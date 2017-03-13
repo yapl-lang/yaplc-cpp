@@ -22,6 +22,12 @@ namespace yaplc { namespace cemit {
 	}
 
 	CodeStream &CodeStream::include(const std::string &path, bool global) {
+		for (const auto &entry : includeEntries) {
+			if (path == entry.path) {
+				return *this;
+			}
+		}
+
 		includeEntries.push_back({path, global});
 
 		return *this;

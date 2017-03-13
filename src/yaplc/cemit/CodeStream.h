@@ -66,7 +66,9 @@ namespace yaplc { namespace cemit {
 		}
 
 		template<class T = const CodeBackup &> inline CodeStream &operator <<(const CodeBackup &value) {
-			includeEntries.insert(includeEntries.end(), value.includeEntries.begin(), value.includeEntries.end());
+			for (auto includeEntry : value.includeEntries) {
+				include(includeEntry.path, includeEntry.global);
+			}
 			codeEntries.insert(codeEntries.end(), value.codeEntries.begin(), value.codeEntries.end());
 
 			return *this;

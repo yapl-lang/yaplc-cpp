@@ -132,6 +132,8 @@ namespace yaplc { namespace cemit {
 		std::replace(moduleHash.begin(), moduleHash.end(), '>', '$');
 		std::transform(moduleHash.begin(), moduleHash.end(), moduleHash.begin(), ::toupper);
 
+		outc.include(includePath.relative(packageHeader));
+
 		if (auto classNode = dynamic_cast<const structure::ClassNode *>(typeNode)) {
 			emit(classNode);
 		}
@@ -139,7 +141,7 @@ namespace yaplc { namespace cemit {
 		outstreamh.open(packageHeader.full_name());
 		outstreamc.open(packageSource.full_name());
 		outh.header(HEADER_H).includeGuard("YAPL_MODULE_" + moduleHash).write(outstreamh).reset();
-		outc.header(HEADER_C).include(includePath.relative(packageHeader)).write(outstreamc).reset();
+		outc.header(HEADER_C).write(outstreamc).reset();
 		gcc.compile(packageSource, packageObject);
 		outstreamh.close();
 		outstreamc.close();
@@ -164,7 +166,7 @@ namespace yaplc { namespace cemit {
 
 		outh << CodeStream::NewLine
 			<< "struct " << classSymbolName << "$class " << CodeStream::OpenBlock << CodeStream::NewLine
-			<< "struct yapl$class $common;" << CodeStream::NewLine;
+			<< "struct yapl$class common;" << CodeStream::NewLine;
 		CodeStream::CodeBackup initializatorBackup;
 		{
 			CodeStream initializator;
@@ -193,16 +195,21 @@ namespace yaplc { namespace cemit {
 		}
 		outh << CodeStream::CloseBlock << ";" << CodeStream::NewLine;
 
-		outc << CodeStream::NewLine
-			<< "struct " << classSymbolName << "$class " << classSymbolName << "$class() " << CodeStream::OpenBlock << CodeStream::NewLine
+		outh << "struct " << classSymbolName << "$class *" << classSymbolName << "$class();"<< CodeStream::NewLine;
+		outc.include("yapl/memory.h") << CodeStream::NewLine
+			<< "struct " << classSymbolName << "$class *" << classSymbolName << "$class() " << CodeStream::OpenBlock << CodeStream::NewLine
 				<< "static struct " << classSymbolName << "$class *instance = NULL;" << CodeStream::NewLine
 				<< CodeStream::NewLine
 				<< "if (instance == NULL) " << CodeStream::OpenBlock << CodeStream::NewLine
-					<< "instance = malloc(struct " << classSymbolName << "$class);" << CodeStream::NewLine
+					<< "instance = yapl$memory$allocStatic(sizeof(struct " << classSymbolName << "$class));" << CodeStream::NewLine
 					<< CodeStream::NewLine
+					<< "instance->common.size = sizeof(struct " << classSymbolName << ");" << CodeStream::NewLine
+					<< "instance->common.name = \"" << classNode->name->hashName() << "\";" << CodeStream::NewLine
+					<< "instance->common.parent = " << convertName(classNode->base->type) << "$class();" << CodeStream::NewLine
+					<< CodeStream::NewLine
+					<< initializatorBackup
 				<< CodeStream::CloseBlock << CodeStream::NewLine
 				<< CodeStream::NewLine
-				<< initializatorBackup << CodeStream::NewLine
 				<< "return instance;" << CodeStream::NewLine
 				<< CodeStream::CloseBlock << CodeStream::NewLine
 			<< CodeStream::NewLine;
