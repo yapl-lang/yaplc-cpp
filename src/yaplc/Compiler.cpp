@@ -238,7 +238,11 @@ namespace yaplc {
 		}
 
 		for (auto file : files) {
-			emitter->startEmit(file.root);
+			std::vector<CompilingError *> errors;
+			emitter->startEmit(file.code, errors, file.root);
+			for (auto error : errors) {
+				this->errors.push_back({&file, error});
+			}
 		}
 	}
 
