@@ -176,6 +176,7 @@ namespace yaplc { namespace cemit {
 		}
 		outh << CodeStream::CloseBlock << ";" << CodeStream::NewLine;
 
+		outh.structPredeclaration(classSymbolName);
 		outh << CodeStream::NewLine
 			<< "struct " << classSymbolName << " " << CodeStream::OpenBlock << CodeStream::NewLine
 			<< "struct " << classSymbolName << "$class *$class;" << CodeStream::NewLine;
@@ -362,7 +363,7 @@ namespace yaplc { namespace cemit {
 		auto packageName = getNotLast(typeName->type);
 		std::replace(packageName.begin(), packageName.end(), '.', fs::path::PathDelim);
 
-		stream.include(packageName + fs::path::PathDelim + convertName(getLast(typeName->type)) + ".h");
+		stream.include(packageName + fs::path::PathDelim + convertName(typeName->shortType()) + ".h");
 	}
 
 	std::string CEmitter::requestTypeRef(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
@@ -400,6 +401,8 @@ namespace yaplc { namespace cemit {
 
 			return "void";
 		}
+
+		include(outh, typeNameNode);
 
 		if (prependStruct) {
 			return "struct " + convertName(type->name->type) + "*";
@@ -485,6 +488,8 @@ namespace yaplc { namespace cemit {
 
 			return "void";
 		}
+
+		include(outh, typeNameNode);
 
 		if (prependStruct) {
 			return "struct " + convertName(type->name->type);
