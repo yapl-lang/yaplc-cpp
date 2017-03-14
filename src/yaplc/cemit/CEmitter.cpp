@@ -409,48 +409,6 @@ namespace yaplc { namespace cemit {
 		}
 
 		return convertName(type->name->type) + "*";
-
-		/*
-		static std::map<std::string, std::string> typeNameMapping {
-			{"bool", "unsigned char"},
-			{"char", "char"},
-
-			{"byte", "unsigned char"},
-			{"sbyte", "signed char"},
-			{"short", "signed short"},
-			{"ushort", "unsigned short"},
-			{"int", "signed long"},
-			{"uint", "unsigned long"},
-			{"long", "signed long long"},
-			{"ulong", "unsigned long long"},
-
-			{"float", "float"},
-			{"double", "double"},
-
-			{"void", "void"},
-
-			{"size", "unsigned long"}
-		};
-
-		auto typeName = typeNameNode->hashName();
-
-		auto it = typeNameMapping.find(typeName);
-		if (it != typeNameMapping.end()) {
-			return it->second;
-		}
-
-		auto type = getType(typeName);
-		if (type == nullptr) {
-			// TODO: error undefined type
-
-			return "void";
-		}
-
-		if (prependStruct) {
-			return "struct yapl$objectref";
-		}
-
-		return "yapl$objectref";*/
 	}
 
 	std::string CEmitter::requestType(const structure::TypeNameNode *typeNameNode, bool prependStruct) {
