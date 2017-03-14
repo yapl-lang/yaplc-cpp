@@ -30,14 +30,58 @@ namespace yaplc { namespace structure {
 			}
 		}
 
-		inline std::string shortType() const {
-			auto pos = type.find_last_of('.');
+		std::string typePath() const {
+			auto type = hashName();
 
-			if (pos == std::string::npos) {
+			unsigned long lastDot = -1;
+
+			for (unsigned long i = 0; i < type.size(); ++i) {
+				switch (type[i]) {
+				case '.':
+					lastDot = i;
+					break;
+				case '<':
+				case '[':
+					if (lastDot == -1) {
+						return "";
+					}
+
+					return type.substr(0, lastDot - 1);
+				}
+			}
+
+			if (lastDot == -1) {
+				return "";
+			}
+
+			return type.substr(0, lastDot - 1);
+		}
+
+		std::string shortType() const {
+			auto type = hashName();
+
+			unsigned long lastDot = -1;
+
+			for (unsigned long i = 0; i < type.size(); ++i) {
+				switch (type[i]) {
+				case '.':
+					lastDot = i;
+					break;
+				case '<':
+				case '[':
+					if (lastDot == -1) {
+						return type.substr(0);
+					}
+
+					return type.substr(lastDot + 1);
+				}
+			}
+
+			if (lastDot == -1) {
 				return type;
 			}
 
-			return type.substr(pos + 1);
+			return type.substr(lastDot + 1);
 		}
 
 		inline std::string hashName() const {
