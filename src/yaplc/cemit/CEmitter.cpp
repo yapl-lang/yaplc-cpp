@@ -42,6 +42,7 @@ namespace yaplc { namespace cemit {
 			"yapl/main",
 			"yapl/memory",
 			"yapl/objectref",
+			"yapl/reference",
 			"yapl/yapl"
 		};
 
