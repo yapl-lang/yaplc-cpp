@@ -42,6 +42,8 @@ namespace yaplc { namespace cemit {
 
 			std::string header;
 			std::string includeGuard;
+
+			std::string structPredeclaration;
 		} context;
 
 	public:
@@ -50,6 +52,7 @@ namespace yaplc { namespace cemit {
 
 		CodeStream &header(const std::string &header);
 		CodeStream &includeGuard(const std::string &id);
+		CodeStream &structPredeclaration(const std::string &name);
 
 		CodeStream &include(const std::string &path, bool global = false);
 

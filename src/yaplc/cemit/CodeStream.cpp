@@ -21,6 +21,12 @@ namespace yaplc { namespace cemit {
 		return *this;
 	}
 
+	CodeStream &CodeStream::structPredeclaration(const std::string &name) {
+		context.structPredeclaration = name;
+
+		return *this;
+	}
+
 	CodeStream &CodeStream::include(const std::string &path, bool global) {
 		for (const auto &entry : includeEntries) {
 			if (path == entry.path) {
@@ -71,6 +77,11 @@ namespace yaplc { namespace cemit {
 		if (context.includeGuard != "") {
 			stream << "#ifndef " << context.includeGuard << config.lineDelimiter
 				<< "#define " << context.includeGuard << config.lineDelimiter
+				<< config.lineDelimiter;
+		}
+
+		if (context.structPredeclaration != "") {
+			stream << "struct " << context.structPredeclaration << ";" << config.lineDelimiter
 				<< config.lineDelimiter;
 		}
 
@@ -164,6 +175,7 @@ namespace yaplc { namespace cemit {
 		context.header = "";
 		context.includeGuard = "";
 
+		context.structPredeclaration = "";
 
 		return *this;
 	}
