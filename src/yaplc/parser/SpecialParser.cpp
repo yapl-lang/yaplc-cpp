@@ -8,18 +8,19 @@
 
 namespace yaplc { namespace parser {
 	void SpecialParser::handle(structure::Node *parentNode) {
+		skipEmpty();
+		begin();
 		if (!skip("#special")) {
 			cancel();
 		}
 
 		auto exp = new structure::ExpressionNode();
-		begin();
+
 		if (!parse<StringExpressionParser>(exp)) {
 			error("Special data expected.");
 			delete exp;
 			cancelFatal();
 		}
-		end(exp);
 
 		if (exp->end() - exp->begin() != 1) {
 			error("Special data expected.", exp->getBegin(), exp->getEnd());
@@ -28,6 +29,7 @@ namespace yaplc { namespace parser {
 		}
 
 		auto node = new structure::SpecialNode();
+		end(node);
 		node->data = ((structure::StringNode *)(*exp->begin()))->value;
 		delete exp;
 
