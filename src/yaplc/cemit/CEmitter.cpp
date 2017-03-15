@@ -286,7 +286,7 @@ namespace yaplc { namespace cemit {
 				if (classNode->name->type == "yapl.Object") {
 					structMembers << "void (*yapl$handleGC)();" << CodeStream::NewLine;
 				} else {
-					// TODO: Error, recursive extend
+					error("Invalid type in the context.", classNode->name);
 				}
 			} else {
 				placeVTable(parentClass, structMembers, initializator);
@@ -397,7 +397,7 @@ namespace yaplc { namespace cemit {
 
 		auto type = getType(typeName);
 		if (type == nullptr) {
-			// TODO: error undefined type
+			error("Invalid type in the context.", typeNameNode);
 
 			return "void";
 		}
@@ -442,7 +442,7 @@ namespace yaplc { namespace cemit {
 
 		auto type = getType(typeName);
 		if (type == nullptr) {
-			// TODO: error undefined type
+			error("Invalid type in the context.", typeNameNode);
 
 			return "void";
 		}
@@ -471,8 +471,7 @@ namespace yaplc { namespace cemit {
 		} else if (data == "yapl.Type") {
 
 		} else {
-			printf("%s\n", data.c_str());
-			// TODO: error
+			error("Invalid special value in the context.", specialNode);
 		}
 	}
 
@@ -484,8 +483,7 @@ namespace yaplc { namespace cemit {
 		} else if (data == "yapl.String.constructor.string") {
 			outh << CodeStream::NewLine;
 		} else {
-			printf("%s\n", data.c_str());
-			// TODO: error
+			error("Invalid special value in the context.", specialNode);
 		}
 	}
 
