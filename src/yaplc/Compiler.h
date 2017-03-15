@@ -19,8 +19,10 @@ namespace yaplc {
 		};
 
 		struct ErrorEntry {
-			CodeFile *file;
+			const CodeFile *file;
 			CompilingError *error;
+
+			inline ErrorEntry(const CodeFile *file, CompilingError *error) : file(file), error(error) {}
 		};
 
 		std::vector<ErrorEntry> errors;

@@ -106,7 +106,7 @@ namespace yaplc {
 		auto rootPath = this->root = fs::path(root);
 
 		if (!rootPath.exists()) {
-			errors.push_back({nullptr, new FatalError("Project root path '" + rootPath.full_name() + "' does not exists.")});
+			errors.emplace_back(nullptr, new FatalError("Project root path '" + rootPath.full_name() + "' does not exists."));
 
 			return;
 		}
@@ -114,7 +114,7 @@ namespace yaplc {
 		auto srcPath = rootPath/"src";
 
 		if (!srcPath.exists()) {
-			errors.push_back({nullptr, new FatalError("Project src path '" + srcPath.full_name() + "' does not exists.")});
+			errors.emplace_back(nullptr, new FatalError("Project src path '" + srcPath.full_name() + "' does not exists."));
 
 			return;
 		}
@@ -178,7 +178,7 @@ namespace yaplc {
 
 			file.root = parser.parse(file.code, errors);
 			for (auto error : errors) {
-				this->errors.push_back({&file, error});
+				this->errors.emplace_back(&file, error);
 			}
 
 			binstream::stream stream;
@@ -202,7 +202,7 @@ namespace yaplc {
 			std::vector<CompilingError *> errors;
 			processor.process(file.root, file.code, errors);
 			for (auto error : errors) {
-				this->errors.push_back({&file, error});
+				this->errors.emplace_back(&file, error);
 			}
 		}
 
@@ -210,8 +210,8 @@ namespace yaplc {
 			for (auto &file : files) {
 				std::vector<CompilingError *> errors;
 				processor.process(file.root, file.code, errors);
-				for (auto error : errors) {
-					this->errors.push_back({&file, error});
+				for (const auto &error : errors) {
+					this->errors.emplace_back(&file, error);
 				}
 			}
 		}
@@ -237,11 +237,11 @@ namespace yaplc {
 			emitter->addObject(file.root);
 		}
 
-		for (auto file : files) {
+		for (const auto &file : files) {
 			std::vector<CompilingError *> errors;
 			emitter->startEmit(file.code, errors, file.root);
 			for (auto error : errors) {
-				this->errors.push_back({&file, error});
+				this->errors.emplace_back(&file, error);
 			}
 		}
 	}
@@ -259,7 +259,7 @@ namespace yaplc {
 	}
 
 	void Compiler::reportErrors(std::ostream &stream) {
-		for (auto error : errors) {
+		for (const auto &error : errors) {
 			showError(error.file->sourceFile.full_name(), error.file->code, error.error, stream);
 		}
 	}
