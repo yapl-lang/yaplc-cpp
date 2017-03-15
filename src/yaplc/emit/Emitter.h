@@ -35,6 +35,6 @@ namespace yaplc { namespace emit {
 
 	protected:
 		void error(const std::string &message);
-		void error(const std::string &message, structure::Node *node);
+		void error(const std::string &message, const structure::Node *node);
 	};
 } }

@@ -52,7 +52,7 @@ namespace yaplc { namespace emit {
 		error(message, nullptr);
 	}
 
-	void Emitter::error(const std::string &message, structure::Node *node) {
+	void Emitter::error(const std::string &message, const structure::Node *node) {
 		unsigned long begin = 0, end = 0;
 
 		if (node != nullptr) {
