@@ -34,6 +34,8 @@ int main(int argc, char **argv) {
 		compiler.build();
 	} catch (const yaplc::NotReadyException &) {
 		compiler.reportErrors(std::cout);
+
+		return 1;
 	}
 
 	return 0;
