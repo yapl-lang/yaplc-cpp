@@ -10,3 +10,6 @@
 [submodule "src/machineid"]
 	path = src/machineid
 	url = git@github.com:Tarik02/machineid.git
+[submodule "src/scl"]
+	path = src/scl
+	url = git@github.com:Tarik02/scl.git
