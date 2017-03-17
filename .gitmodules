@@ -9,4 +9,4 @@
 	url = git@github.com:Tarik02/binstream.git
 [submodule "src/machineid"]
 	path = src/machineid
-	url = https://github.com/Tarik02/machineid.git
+	url = git@github.com:Tarik02/machineid.git
