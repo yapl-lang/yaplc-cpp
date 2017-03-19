@@ -9,7 +9,7 @@ function help {
 	yad_echo "Actions:"
 	yad_echo "	make:parser <parser name> - Creates a new parser with given name."
 	yad_echo "	make:struct <type(node/container/childable/listable)> <structure name> - Creates a new structure class with given name and type."
-	yad_echo "	build [target(auto/cmake/make/ndk)] - Compiles and builds yaplc."
+	yad_echo "	build [target(auto/cmake)] - Compiles and builds yaplc."
 	yad_echo "	help - Shows this text."
 }
 
@@ -29,25 +29,6 @@ function build_cmake {
 	cp "cmake-build-debug/yaplc" "bin/yaplc"
 	chmod +x "bin/yaplc"
 
-	yad_echo "Compilation and building done!"
-}
-
-function build_make {
-	yad_echo "Building yaplc using make..."
-	yad_echo "Running make..."
-	make
-
-	chmod +x "bin/yaplc"
-
-	yad_echo "Compilation and building done!"
-}
-
-function build_ndk {
-	yad_echo "Building yaplc using ndk..."
-	yad_echo "Running ndk-build..."
-	
-	ndk-build
-	
 	yad_echo "Compilation and building done!"
 }
 
@@ -142,12 +123,12 @@ namespace yaplc { namespace structure {
 	public:
 
 	public:
-		virtual void load(const binstream::stream &stream) {
-			$CLASS::load(stream);
+		virtual void load(const binstream::binstream &binstream) {
+			$CLASS::load(binstream);
 		}
 
-		virtual void save(binstream::stream &stream) const {
-			$CLASS::save(stream);
+		virtual void save(binstream::binstream &binstream) const {
+			$CLASS::save(binstream);
 		}
 	};
 } }" > "src/yaplc/structure/$NAME.h"
@@ -168,10 +149,8 @@ namespace yaplc { namespace structure {
 
 				if [ "$(command_exists cmake)" = "1" ]; then
 					build_cmake
-				elif [ "$(command_exists make)" = "1" ]; then
-					build_make
 				else
-					yad_echo "Install cmake or make to compile yad."
+					yad_echo "Install cmake to compile yaplc."
 					exit
 				fi
 			;;
@@ -186,24 +165,10 @@ namespace yaplc { namespace structure {
 				fi
 			;;
 			"make")
-				yad_echo "Building yad for [PC] using make..."
-
-				if [ "$(command_exists make)" = "1" ]; then
-					build_make
-				else
-					yad_echo "Make is not installed!"
-					exit
-				fi
+				yad_echo "Sorry, but building using make is not supported."
 			;;
 			"ndk")
-				yad_echo "Building yad for [ANDROID] using NDK..."
-
-				if [ "$(command_exists ndk-build)" = "1" ]; then
-					build_ndk
-				else
-					yad_echo "NDK is not installed!"
-					exit
-				fi
+				yad_echo "Sorry, but building using NDK is not supported."
 			;;
 			*)
 				help
