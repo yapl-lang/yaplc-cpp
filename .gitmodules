@@ -1,12 +1,9 @@
-[submodule "src/regex/slre"]
-	path = src/regex/slre
-	url = git@github.com:cesanta/slre.git
-[submodule "src/fs"]
-	path = src/fs
-	url = git@github.com:Tarik02/fs.git
-[submodule "src/binstream"]
-	path = src/binstream
-	url = git@github.com:Tarik02/binstream.git
-[submodule "src/machineid"]
-	path = src/machineid
-	url = git@github.com:Tarik02/machineid.git
+[submodule "third-party/binstream"]
+	path = third-party/binstream
+	url = git@github.com:Tarik02/binstream
+[submodule "third-party/fs"]
+	path = third-party/fs
+	url = git@github.com:Tarik02/fs
+[submodule "third-party/machineid"]
+	path = third-party/machineid
+	url = git@github.com:Tarik02/machineid
