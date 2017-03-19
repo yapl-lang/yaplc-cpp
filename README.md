@@ -13,21 +13,7 @@ Clone repository:
 	cd yaplc
 ```
 
-### Building for PC
-If you want to build, just type:
+### Building
 ```
 	./yad build
-```
-It will search cmake or make to build yaplc.
-
-Also you can build yad using given building system:
-```
-	./yad build cmake # Will build yaplc using cmake
-	./yad build make # Will build yaplc using make
-```
-
-### Building for Android
-Install NDK first and then type:
-```
-	./yad build ndk
 ```
