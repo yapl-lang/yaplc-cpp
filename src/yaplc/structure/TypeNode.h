@@ -29,14 +29,14 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Listable::load(stream);
 
 			stream.get((unsigned char &)visibility);
 			name = (TypeNameNode *)NodeFactory::loadNode(stream);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Listable::save(stream);
 
 			stream.put((unsigned char)visibility);

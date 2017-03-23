@@ -20,7 +20,7 @@ namespace yaplc { namespace structure {
 			name(),
 			target() {}
 
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Node::load(stream);
 
 			stream.get(isStatic);
@@ -28,7 +28,7 @@ namespace yaplc { namespace structure {
 			stream.getString(target);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Node::save(stream);
 
 			stream.put(isStatic);

@@ -12,13 +12,13 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Listable::load(stream);
 
 			stream.getString(name);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Listable::save(stream);
 
 			stream.putString(name);

@@ -151,14 +151,14 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Node::load(stream);
 
 			stream.get((unsigned char &)type);
 			NodeFactory::loadNode(stream, expression);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Node::save(stream);
 
 			stream.put((unsigned char)type);

@@ -1,11 +1,13 @@
 #include "MemberHeadParser.h"
-#include "regex/regex.h"
 #include "yaplc/util/map.h"
 #include "TypeNameParser.h"
 #include "yaplc/structure/TypeNameNode.h"
 #include <tuple>
 
 namespace yaplc { namespace parser {
+	std::regex MemberHeadParser::ModifierNameRegex{"^[A-Za-z_][A-Za-z0-9_]*$"};
+	std::regex MemberHeadParser::MemberNameRegex{"^[A-Za-z\\$_][A-Za-z0-9\\$_]*$"};
+
 	void MemberHeadParser::handle(structure::Listable *parentNode, structure::MemberNode **memberNode) {
 		skipEmpty();
 		begin();
@@ -76,7 +78,7 @@ namespace yaplc { namespace parser {
 				auto modifier = typeNode->type;
 				delete typeNode;
 
-				if (regex::match("^[A-Za-z_][A-Za-z0-9_]*$", modifier)) {
+				if (std::regex_match(modifier, ModifierNameRegex)) {
 					modifiers.push_back(std::make_tuple(modifier, begin, end - 1));
 				} else {
 					error("Invalid modifier name.", begin, end - 1);
@@ -84,7 +86,7 @@ namespace yaplc { namespace parser {
 			}
 		}
 
-		if (!regex::match("^[A-Za-z_][A-Za-z0-9_]*$", std::get<0>(name))) {
+		if (!std::regex_match(std::get<0>(name), MemberNameRegex)) {
 			error("Invalid member name.", std::get<1>(name), std::get<2>(name));
 		}
 
@@ -96,10 +98,11 @@ namespace yaplc { namespace parser {
 		{
 			std::map<std::string, std::string> outModifiers;
 			std::vector<std::tuple<std::string, unsigned long, unsigned long>> otherModifiers;
-			groupModifiers({
-				{"visibility", {"public", "protected", "private"}},
-				{"staticality", {"~dynamic", "static"}}
-			}, modifiers, outModifiers, otherModifiers);
+			groupModifiers(modifiers, {
+					{"visibility", {"public", "protected", "private"}},
+					{"staticality", {"~dynamic", "static"}}
+				}, outModifiers,
+				otherModifiers);
 
 			{
 				auto visibilityModifier = outModifiers["visibility"];

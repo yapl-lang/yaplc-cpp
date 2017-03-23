@@ -11,7 +11,9 @@
 namespace yaplc {
 	void showError(const std::string &context, const std::string &code,
 	               const CompilingError *error, std::ostream &out) {
-		out << "[File: " << context << "] ";
+		if (context != "") {
+			out << "[File: " << context << "] ";
+		}
 
 		out << "[";
 
@@ -165,7 +167,7 @@ namespace yaplc {
 
 			/*if ((file.sourceFile.exists()) && (objectFile.exists()) && (file.sourceFile.modifiedAt() < objectFile.modifiedAt())) {
 				try {
-					file.root = (structure::RootNode *)structure::NodeFactory::loadNode(binstream::stream{objectFile.content()});
+					file.root = (structure::RootNode *)structure::NodeFactory::loadNode(binstream::binstream{objectFile.content()});
 					continue;
 				} catch (...) {
 
@@ -181,7 +183,7 @@ namespace yaplc {
 				this->errors.emplace_back(&file, error);
 			}
 
-			binstream::stream stream;
+			binstream stream;
 			structure::NodeFactory::saveNode(stream, file.root);
 			objectFile.content(stream.buffer());
 		}
@@ -260,7 +262,11 @@ namespace yaplc {
 
 	void Compiler::reportErrors(std::ostream &stream) {
 		for (const auto &error : errors) {
-			showError(error.file->sourceFile.full_name(), error.file->code, error.error, stream);
+			if (error.file == nullptr) {
+				showError("", error.file->code, error.error, stream);
+			} else {
+				showError(error.file->sourceFile.full_name(), error.file->code, error.error, stream);
+			}
 		}
 	}
 }

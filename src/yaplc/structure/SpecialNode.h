@@ -8,13 +8,13 @@ namespace yaplc { namespace structure {
 		std::string data;
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Node::load(stream);
 
 			stream.getString(data);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Node::save(stream);
 
 			stream.putString(data);

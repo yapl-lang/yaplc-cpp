@@ -1,8 +1,9 @@
 #include "OperatorParser.h"
 #include "ExpressionParser.h"
-#include "regex/regex.h"
 
 namespace yaplc { namespace parser {
+	std::regex OperatorParser::WhitespaceRegex{"^[ \t]*$"};
+
 	void OperatorParser::handle(structure::Listable *parentNode) {
 		auto position1 = position();
 		save();
@@ -52,7 +53,7 @@ namespace yaplc { namespace parser {
 		auto position2 = position();
 		begin(position1);
 
-		if ((position1 != position2) && (regex::match("^[ \t]*$", configuration.code->substr(position1, position2 - position1)))) {
+		if ((position1 != position2) && (std::regex_match(configuration.code->substr(position1, position2 - position1), WhitespaceRegex))) {
 			auto node = new structure::OperatorNode();
 			node->type = structure::OperatorNode::Type::Whitespace;
 			parentNode->add(node);

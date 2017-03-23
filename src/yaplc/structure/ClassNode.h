@@ -44,7 +44,7 @@ namespace yaplc { namespace structure {
 		, TypeNode)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			TypeNode::load(stream);
 
 			NodeFactory::loadNode(stream, base);
@@ -65,7 +65,7 @@ namespace yaplc { namespace structure {
 			}
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			TypeNode::save(stream);
 
 			NodeFactory::saveNode(stream, base);

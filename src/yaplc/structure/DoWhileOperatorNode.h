@@ -25,14 +25,14 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Node::load(stream);
 
 			NodeFactory::loadNode(stream, condition);
 			NodeFactory::loadNode(stream, expression);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Node::save(stream);
 
 			NodeFactory::saveNode(stream, condition);

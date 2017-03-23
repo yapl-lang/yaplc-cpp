@@ -75,7 +75,7 @@ namespace yaplc { namespace structure {
 		)
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			Container::load(stream);
 
 			stream.get((unsigned char &)visibility);
@@ -99,7 +99,7 @@ namespace yaplc { namespace structure {
 			type = (TypeNameNode *)NodeFactory::loadNode(stream);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			Container::save(stream);
 
 			stream.put((unsigned char)visibility);

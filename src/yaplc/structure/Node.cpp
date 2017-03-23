@@ -2,7 +2,7 @@
 #include "Childable.h"
 #include "Listable.h"
 #include "Container.h"
-#include "regex/regex.h"
+#include <regex>
 #include <typeinfo>
 #include <cxxabi.h>
 
@@ -65,16 +65,17 @@ namespace yaplc { namespace structure {
 	}
 
 	std::string Node::getTypeName() const {
+		static std::regex ClassShortNameRegex{"([A-Za-z0-9]*)$"};
+
 		int status;
 		char *fullName = abi::__cxa_demangle(typeid(*this).name(), 0, 0, &status);
-
-		std::vector<std::string> caps;
-		regex::match("([A-Za-z0-9]*)$", fullName, caps, 1);
-		auto name = caps[0];
-
+		std::string fullNameString{fullName};
 		delete[] fullName;
 
-		return name;
+		std::smatch match;
+		std::regex_search(fullNameString, match, ClassShortNameRegex);
+
+		return match[1].str();
 	}
 
 	std::string Node::getShortName() const {
@@ -93,20 +94,20 @@ namespace yaplc { namespace structure {
 		showProps(stream, indent);
 	}
 
-	void Node::load(const binstream::stream &stream) {
+	void Node::load(const binstream &stream) {
 		stream.getString(name);
 		stream.get(begin);
 		stream.get(end);
 	}
 
-	void Node::save(binstream::stream &stream) const {
+	void Node::save(binstream &stream) const {
 		stream.putString(name);
 		stream.put(begin);
 		stream.put(end);
 	}
 
 	Node *Node::clone() const {
-		binstream::stream stream;
+		binstream stream;
 		NodeFactory::saveNode(stream, this);
 		return NodeFactory::loadNode(stream);
 	}

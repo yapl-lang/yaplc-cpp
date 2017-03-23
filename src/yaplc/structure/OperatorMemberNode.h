@@ -10,13 +10,13 @@ namespace yaplc { namespace structure {
 		OperatorNode::Type type;
 
 	public:
-		virtual void load(const binstream::stream &stream) {
+		virtual void load(const binstream &stream) {
 			MethodMemberNode::load(stream);
 
 			stream.get((unsigned char &)type);
 		}
 
-		virtual void save(binstream::stream &stream) const {
+		virtual void save(binstream &stream) const {
 			MethodMemberNode::save(stream);
 
 			stream.put((unsigned char)type);

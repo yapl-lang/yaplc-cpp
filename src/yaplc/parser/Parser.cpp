@@ -1,11 +1,15 @@
 #include "Parser.h"
 #include "SyntaxError.h"
 #include "yaplc/util/getlineandcolumn.h"
-#include "regex/regex.h"
 #include "CommentsParser.h"
 #include <algorithm>
 
 namespace yaplc { namespace parser {
+	std::regex BaseParser::WordRegex{"([A-Za-z][A-Za-z0-9]*)"};
+	std::regex BaseParser::LowercaseWordRegex{"([a-z][a-z0-9]*)"};
+	std::regex BaseParser::UppercaseWordRegex{"([A-Z][A-Z0-9]*)"};
+	std::regex BaseParser::WhitespaceRegex{"\\s*"};
+
 	BaseParser::BaseParser() :
 		parserManager(nullptr),
 		configuration() {
@@ -42,76 +46,103 @@ namespace yaplc { namespace parser {
 		return configuration.code->substr(configuration.position, count);
 	}
 
-	bool BaseParser::get(const std::string &pattern) {
-		return get(pattern, {});
+	bool BaseParser::get(const std::regex &pattern) {
+		std::smatch match;
+		return get(pattern, match);
 	}
 
-	bool BaseParser::get(const std::string &pattern, const std::vector<std::string *> &caps) {
-		std::vector<std::string> capsArray;
-
-		bool result = regex::match("^(" + pattern + ")", (*configuration.code).substr(configuration.position), capsArray, caps.size() + 1);
-
-		if (result) {
-			configuration.position += capsArray[0].size();
-
-			if (caps.size() != 0) {
-				auto capSource = ++capsArray.begin();
-				auto capTarget = caps.begin();
-
-				for (; capSource != capsArray.end(); ++capSource, ++capTarget) {
-					auto target = *capTarget;
-
-					if (target != nullptr) {
-						*target = *capSource;
-					}
-				}
-			}
+	bool BaseParser::get(const std::regex &pattern, std::smatch &match) {
+		if (!std::regex_search(configuration.code->begin() + configuration.position, configuration.code->end(), match, pattern, std::regex_constants::match_continuous)) {
+			return false;
 		}
+
+		skip((unsigned long)match[0].length());
+
+		return true;
+	}
+
+	bool BaseParser::get(const std::regex &pattern, std::smatch &match, std::pair<unsigned long, unsigned long> position) {
+		position.first = this->position();
+		auto result = get(pattern, match);
+		position.second = this->position();
 
 		return result;
 	}
 
-	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::string> &results) {
-		unsigned long count = 0;
-		std::string word;
+	unsigned long BaseParser::get(const std::regex &pattern, std::vector<std::smatch> &results) {
+		results.clear();
 
-		skipEmpty();
-		while (get("(" + pattern + ")", {&word})) {
-			results.push_back(word);
-			skipEmpty();
-			++count;
+		std::smatch match;
+		while (get(pattern, match)) {
+			results.push_back(match);
 		}
 
-		return count;
+		return results.size();
 	}
 
-	unsigned long BaseParser::get(const std::string &pattern, std::vector<std::tuple<std::string, unsigned long, unsigned long>> &results) {
-		unsigned long count = 0;
-		std::string word;
+	unsigned long BaseParser::get(const std::regex &pattern, std::vector<std::tuple<std::smatch, unsigned long, unsigned long>> &results) {
+		results.clear();
 
-		skipEmpty();
-		while (get("(" + pattern + ")", {&word})) {
-			results.push_back(std::make_tuple(word, position() - word.length(), position() - 1));
-			skipEmpty();
-			++count;
+		std::smatch match;
+		std::pair<unsigned long, unsigned long> position;
+		while (get(pattern, match, position)) {
+			results.emplace_back(match, position.first, position.second);
 		}
 
-		return count;
+		return results.size();
 	}
 
 	bool BaseParser::getWord(std::string &word) {
+		save();
 		skipEmpty();
-		
-		return get("([A-Za-z][A-Za-z0-9]*)", {&word});
+
+		std::smatch match;
+		if (get(WordRegex, match)) {
+			norestore();
+			word = match[1];
+
+			return true;
+		}
+
+		restore();
+		return false;
 	}
 	
 	bool BaseParser::getLowercaseWord(std::string &word) {
+		save();
 		skipEmpty();
-		
-		return get("([a-z][a-z0-9]*)", {&word});
+
+		std::smatch match;
+		if (get(LowercaseWordRegex, match)) {
+			norestore();
+			word = match[1];
+
+			return true;
+		}
+
+		restore();
+		return false;
+	}
+
+	bool BaseParser::getUppercaseWord(std::string &word) {
+		save();
+		skipEmpty();
+
+		std::smatch match;
+		if (get(UppercaseWordRegex, match)) {
+			norestore();
+			word = match[1];
+
+			return true;
+		}
+
+		restore();
+		return false;
 	}
 
 	unsigned long BaseParser::getWords(std::vector<std::string> &words) {
+		words.clear();
+
 		unsigned long count = 0;
 
 		std::string word;
@@ -127,7 +158,8 @@ namespace yaplc { namespace parser {
 	                              const std::map<std::string, std::vector<std::string>> &allowedModifiers,
 	                              std::map<std::string, std::string> &outModifiers,
 	                              std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
-		return getModifiers({beforeWord}, allowedModifiers, outModifiers, otherModifiers);
+		std::string beforeWordValue;
+		return getModifiers(std::vector<std::string>{beforeWord}, beforeWordValue, allowedModifiers, outModifiers, otherModifiers);
 	}
 	
 	bool BaseParser::getModifiers(const std::vector<std::string> &beforeWords,
@@ -157,131 +189,14 @@ namespace yaplc { namespace parser {
 				restore();
 				norestore();
 				beforeWord = word;
-				
-				groupModifiers(allowedModifiers, modifiers, outModifiers, otherModifiers);
+
+				groupModifiers(modifiers, allowedModifiers, outModifiers,
+					otherModifiers);
 				return true;
 			}
 			
 			modifiers.push_back(std::make_tuple(word, pos1, pos2 - 1));
 		}
-	}
-	
-	bool BaseParser::getModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {
-		save();
-		
-		while (true) {
-			save();
-			
-			std::string word;
-			if (!getWord(word)) {
-				restore();
-				break;
-			}
-			
-			for (auto allowedModifierSet : allowedModifiers) {
-				for (auto allowedModifier : allowedModifierSet.second) {
-					if ((word == allowedModifier) || ("~" + word == allowedModifier)) {
-						auto it = modifiers.find(allowedModifierSet.first);
-						
-						if (it != modifiers.end()) {
-							error("'" + word + "' and '" + (*it).second + "' modifiers are incompatible.", position() - word.length(), position() - 1);
-						} else {
-							modifiers[allowedModifierSet.first] = word;
-						}
-						
-						goto next;
-					}
-				}
-			}
-			
-			restore();
-			break;
-			
-next:
-			norestore();
-		}
-		
-		for (auto allowedModifier : allowedModifiers) {
-			if (modifiers.find(allowedModifier.first) == modifiers.end()) {
-				auto modifier = allowedModifier.second[0];
-				
-				if (modifier[0] == '~') {
-					modifiers[allowedModifier.first] = modifier.substr(1);
-				} else {
-					modifiers[allowedModifier.first] = modifier;
-				}
-			}
-		}
-		
-		norestore();
-		
-		return true;
-	}
-	
-	bool BaseParser::getName(std::string &name, const std::string &prevWord) {
-		std::map<std::string, std::vector<std::string>> allowedModifiers;
-		std::map<std::string, std::string> modifiers;
-		
-		return getName(name, prevWord, allowedModifiers, modifiers);
-	}
-	
-	bool BaseParser::getName(std::string &name, const std::string &prevWord, const std::map<std::string, std::vector<std::string>> &allowedModifiers, std::map<std::string, std::string> &modifiers) {
-		std::string word;
-		std::vector<std::pair<unsigned long, unsigned long>> otherModifiers;
-		
-		save();
-		
-		while (true) {
-			if (!getWord(word)) {
-				restore();
-				return false;
-			}
-			
-			if (word == prevWord) {
-				if (!getWord(name)) {
-					error("Name expected.");
-					restore();
-					return false;
-				}
-				
-				for (auto otherModifier : otherModifiers) {
-					error("Unknown modifier.", otherModifier.first, otherModifier.second);
-				}
-				
-				break;
-			}
-			
-			for (auto allowedModifierSet : allowedModifiers) {
-				for (auto allowedModifier : allowedModifierSet.second) {
-					if (word == allowedModifier) {
-						auto it = modifiers.find(allowedModifierSet.first);
-						
-						if (it != modifiers.end()) {
-							error("'" + word + "' and '" + (*it).second + "' modifiers are incompatible.", position() - word.length(), position() - 1);
-						} else {
-							modifiers[allowedModifierSet.first] = word;
-						}
-						
-						goto next;
-					}
-				}
-			}
-			
-			otherModifiers.push_back({position() - word.length(), position() - 1});
-			
-next:
-			continue;
-		}
-		
-		for (auto allowedModifier : allowedModifiers) {
-			if (modifiers.find(allowedModifier.first) == modifiers.end()) {
-				modifiers[allowedModifier.first] = allowedModifier.second[0];
-			}
-		}
-		
-		norestore();
-		
-		return true;
 	}
 
 	void BaseParser::jump(unsigned long position) {
@@ -335,7 +250,7 @@ next:
 	}
 	
 	void BaseParser::skipSpaces() {
-		get("\\s*");
+		get(WhitespaceRegex);
 	}
 	
 	void BaseParser::skipEmpty() {
@@ -478,10 +393,10 @@ next:
 		}
 	}
 
-	void BaseParser::groupModifiers(const std::map<std::string, std::vector<std::string>> &allowedModifiers,
-	                                const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,
-	                                std::map<std::string, std::string> &outModifiers,
-	                                std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
+	void BaseParser::groupModifiers(const std::vector<std::tuple<std::string, unsigned long, unsigned long>> modifiers,
+		const std::map<std::string, std::vector<std::string>> &allowedModifiers,
+		std::map<std::string, std::string> &outModifiers,
+		std::vector<std::tuple<std::string, unsigned long, unsigned long>> &otherModifiers) {
 		for (auto word : modifiers) {
 			for (auto allowedModifierSet : allowedModifiers) {
 				for (auto allowedModifier : allowedModifierSet.second) {

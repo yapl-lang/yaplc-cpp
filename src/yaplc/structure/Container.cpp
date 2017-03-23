@@ -84,13 +84,13 @@ namespace yaplc { namespace structure {
 		util::leftpad(stream, indent) << ">";
 	}
 
-	void Container::load(const binstream::stream &stream) {
+	void Container::load(const binstream &stream) {
 		Node::load(stream);
 
 		set(NodeFactory::loadNode(stream));
 	}
 
-	void Container::save(binstream::stream &stream) const {
+	void Container::save(binstream &stream) const {
 		Node::save(stream);
 
 		NodeFactory::saveNode(stream, child);

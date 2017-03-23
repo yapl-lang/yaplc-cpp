@@ -1,9 +1,11 @@
 #include "RootParser.h"
-#include "regex/regex.h"
 #include "TypeParser.h"
 #include "ImportParser.h"
 
 namespace yaplc { namespace parser {
+	std::regex RootParser::SimplePackageNameRegex{"([A-Za-z0-9\\.\\$_]*)"};
+	std::regex RootParser::PackageNameCheckRegex{"^([a-zA-Z\\$_][a-zA-Z\\$_0-9]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$"};
+
 	void RootParser::handle(structure::RootNode *rootNode) {
 		while (true) {
 			skipEmpty();
@@ -19,13 +21,16 @@ namespace yaplc { namespace parser {
 
 			skipEmpty();
 
-			std::string packageName;
-			if (!get("([A-Za-z0-9\\.\\$_]*)", {&packageName})) {
+			std::smatch match;
+
+			if (!get(SimplePackageNameRegex, match)) {
 				error("Expected package name.");
 				cancelFatal();
 			}
 
-			if (!regex::match("^([a-zA-Z\\$_][a-zA-Z\\$_0-9]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$", packageName)) {
+			auto packageName = match.str();
+
+			if (!std::regex_match(packageName, PackageNameCheckRegex)) {
 				error("Invalid package name.", position() - packageName.size(), position() - 1);
 			}
 

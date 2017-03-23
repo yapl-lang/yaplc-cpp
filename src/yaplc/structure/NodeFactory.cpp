@@ -44,7 +44,7 @@ namespace yaplc { namespace structure {
 		return it->second();
 	}
 
-	Node *NodeFactory::loadNode(const binstream::stream &stream) {
+	Node *NodeFactory::loadNode(const binstream &stream) {
 		bool hasNode;
 		stream.get(hasNode);
 
@@ -64,7 +64,7 @@ namespace yaplc { namespace structure {
 		return nullptr;
 	}
 
-	void NodeFactory::loadNode(const binstream::stream &stream, Node *node) {
+	void NodeFactory::loadNode(const binstream &stream, Node *node) {
 		bool hasNode;
 		stream.get(hasNode);
 
@@ -83,7 +83,7 @@ namespace yaplc { namespace structure {
 		}
 	}
 
-	void NodeFactory::saveNode(binstream::stream &stream, const Node *node) {
+	void NodeFactory::saveNode(binstream &stream, const Node *node) {
 		if (node == nullptr) {
 			stream.put(false);
 		} else {

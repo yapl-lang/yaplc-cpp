@@ -3,7 +3,7 @@
 #include "yaplc/CompilingError.h"
 #include "yaplc/structure/RootNode.h"
 #include "yaplc/structure/TypeNode.h"
-#include "fs/fs.h"
+#include <fs/fs.h>
 #include <vector>
 #include <map>
 #include <string>

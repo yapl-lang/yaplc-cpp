@@ -2,7 +2,7 @@
 
 #include "NodeFactory.h"
 #include "yaplc/util/leftpad.h"
-#include "binstream/stream.h"
+#include <binstream/binstream.h>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -130,8 +130,8 @@ namespace yaplc { namespace structure {
 		}
 
 	public:
-		virtual void load(const binstream::stream &stream);
-		virtual void save(binstream::stream &stream) const;
+		virtual void load(const binstream &stream);
+		virtual void save(binstream &stream) const;
 
 		virtual Node *clone() const;
 	};

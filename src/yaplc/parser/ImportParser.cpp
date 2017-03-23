@@ -1,7 +1,10 @@
 #include "ImportParser.h"
-#include "regex/regex.h"
 
 namespace yaplc { namespace parser {
+	std::regex ImportParser::SimpleImportNameRegex{"([A-Za-z0-9\\.\\$_]*)"};
+	std::regex ImportParser::ImportNameRegex{"^([a-zA-Z\\$_][a-zA-Z0-9\\$_]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$"};
+	std::regex ImportParser::LastNameRegex{"([A-Za-z0-9\\$_]*)$"};
+
 	void ImportParser::handle(structure::Listable *parentNode) {
 		skipEmpty();
 
@@ -34,10 +37,12 @@ namespace yaplc { namespace parser {
 get_import:
 		skipEmpty();
 
-		if (!get("([A-Za-z0-9\\.\\$_]*)", {&importName})) {
+		std::smatch match;
+		if (!get(SimpleImportNameRegex, match)) {
 			error("Expected import name.");
 			cancelFatal();
 		}
+		importName = match[1];
 
 		if ((!importStatic) && (importName == "static")) {
 			importStatic = true;
@@ -45,7 +50,7 @@ get_import:
 			goto get_import;
 		}
 
-		if (!regex::match("^([a-zA-Z\\$_][a-zA-Z0-9\\$_]*\\.)*[a-zA-Z\\$_][a-zA-Z0-9\\$_]*$", importName)) {
+		if (!std::regex_match(importName, ImportNameRegex)) {
 			error("Invalid import name.", position() - importName.size(), position() - 1);
 		}
 
@@ -77,15 +82,15 @@ get_import:
 			break;
 		default:
 			if ((get() == ';') || (prefix != "")) {
-				std::vector<std::string> caps;
-				regex::match("([A-Za-z0-9]*)$", importName, caps, 1);
-
-				auto importNode = new structure::ImportNode();
-				importNode->isStatic = importStatic;
-				importNode->name = caps[0];
-				importNode->target = importName;
-				parentNode->add(importNode);
-				parsedNodes.push_back(importNode);
+				std::smatch match;
+				if (std::regex_match(importName, match, LastNameRegex)) {
+					auto importNode = new structure::ImportNode();
+					importNode->isStatic = importStatic;
+					importNode->name = match[1];
+					importNode->target = importName;
+					parentNode->add(importNode);
+					parsedNodes.push_back(importNode);
+				}
 
 				if (get() == ';') {
 					skip();

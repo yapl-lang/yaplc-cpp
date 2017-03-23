@@ -115,7 +115,7 @@ namespace yaplc { namespace structure {
 		util::leftpad(stream, indent) << "}";
 	}
 
-	void Childable::load(const binstream::stream &stream) {
+	void Childable::load(const binstream &stream) {
 		Node::load(stream);
 
 		unsigned long count;
@@ -128,7 +128,7 @@ namespace yaplc { namespace structure {
 		}
 	}
 
-	void Childable::save(binstream::stream &stream) const {
+	void Childable::save(binstream &stream) const {
 		Node::save(stream);
 
 		stream.put((unsigned long)children.size());

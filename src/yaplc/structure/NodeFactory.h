@@ -1,6 +1,6 @@
 #pragma once
 
-#include "binstream/stream.h"
+#include <binstream/binstream.h>
 #include <string>
 
 namespace yaplc { namespace structure {
@@ -9,8 +9,8 @@ namespace yaplc { namespace structure {
 	class NodeFactory {
 	public:
 		static Node *create(const std::string &name);
-		static Node *loadNode(const binstream::stream &stream);
-		static void loadNode(const binstream::stream &stream, Node *node);
-		static void saveNode(binstream::stream &stream, const Node *node);
+		static Node *loadNode(const binstream &stream);
+		static void loadNode(const binstream &stream, Node *node);
+		static void saveNode(binstream &stream, const Node *node);
 	};
 } }

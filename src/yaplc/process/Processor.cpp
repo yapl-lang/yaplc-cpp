@@ -1,7 +1,6 @@
 #include "Processor.h"
 #include "LogicalError.h"
 #include "yaplc/util/getlineandcolumn.h"
-#include "regex/regex.h"
 #include <functional>
 
 namespace yaplc { namespace process {
