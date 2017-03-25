@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories("src")
 
 add_subdirectory(third-party/binstream)
+add_subdirectory(third-party/commandline)
 add_subdirectory(third-party/fs)
 add_subdirectory(third-party/machineid)
 
@@ -72,4 +73,4 @@ set(SOURCE_FILES
 	src/yaplc/PositionalError.cpp)
 
 add_executable(yaplc ${SOURCE_FILES})
-target_link_libraries(yaplc LINK_PUBLIC binstream fs machineid)
+target_link_libraries(yaplc LINK_PUBLIC binstream commandline fs machineid)

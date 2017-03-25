@@ -7,3 +7,6 @@
 [submodule "third-party/machineid"]
 	path = third-party/machineid
 	url = git@github.com:Tarik02/machineid
+[submodule "third-party/commandline"]
+	path = third-party/commandline
+	url = git@github.com:Tarik02/commandline.git

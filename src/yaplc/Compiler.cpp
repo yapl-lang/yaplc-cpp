@@ -7,6 +7,7 @@
 #include "yaplc/parser/ParserManager.h"
 #include "yaplc/structure/NodeFactory.h"
 #include "yaplc/process/Processor.h"
+#include <error.h>
 
 namespace yaplc {
 	void showError(const std::string &context, const std::string &code,
