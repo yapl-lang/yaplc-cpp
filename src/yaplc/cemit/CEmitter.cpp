@@ -466,10 +466,10 @@ namespace yaplc { namespace cemit {
 			// Template argument
 			structure::TypeNameNode typeNameNode;
 			typeNameNode.type = "T";
-			outh << "" << requestTypeRef(&typeNameNode) << " *elements;" << CodeStream::NewLine;
+			outh << requestTypeRef(&typeNameNode) << " *elements;" << CodeStream::NewLine;
 			outh << "unsigned long count;" << CodeStream::NewLine;
 		} else if (data == "yapl.Type") {
-
+			outh << "yapl$class *targetType;" << CodeStream::NewLine;
 		} else {
 			error("Invalid special value in the context.", specialNode);
 		}
@@ -479,9 +479,11 @@ namespace yaplc { namespace cemit {
 		auto data = specialNode->data;
 
 		if (data == "yapl.String.constructor") {
-			outh << "((yapl$String *)$this->target)->buffer = calloc(0, 1);" << CodeStream::NewLine;
+			outc << "((yapl$String *)$this->target)->buffer = calloc(0, 1);" << CodeStream::NewLine;
 		} else if (data == "yapl.String.constructor.string") {
-			outh << CodeStream::NewLine;
+			outc << CodeStream::NewLine;
+		} else if (data == "yapl.Type.getName") {
+			outc << "" << CodeStream::NewLine;
 		} else {
 			error("Invalid special value in the context.", specialNode);
 		}

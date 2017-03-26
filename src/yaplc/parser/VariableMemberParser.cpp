@@ -7,6 +7,11 @@ namespace yaplc { namespace parser {
 		skipEmpty();
 		begin();
 
+		/*if (parentNode->getName() == "size") {
+			error("");
+			cancelFatal();
+		}*/
+
 		switch (get()) {
 		case ';': {
 			skip();
@@ -32,7 +37,8 @@ namespace yaplc { namespace parser {
 			break;
 		}
 		default:
-			cancel();
+			error("Expected ';' or '=' after variable member.");
+			cancelFatal();
 		}
 
 		end(parentNode);

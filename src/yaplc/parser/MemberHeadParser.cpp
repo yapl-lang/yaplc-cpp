@@ -63,7 +63,7 @@ namespace yaplc { namespace parser {
 
 			auto nameEntry = *(--entries.end());
 			entries.pop_back();
-			name = std::make_tuple(std::get<0>(nameEntry)->type, std::get<1>(nameEntry), std::get<2>(nameEntry) - 1);
+			name = std::make_tuple(std::get<0>(nameEntry)->type, std::get<1>(nameEntry), std::get<2>(nameEntry));
 			delete std::get<0>(nameEntry);
 
 			type = std::get<0>(*(--entries.end()));
@@ -79,7 +79,7 @@ namespace yaplc { namespace parser {
 				delete typeNode;
 
 				if (std::regex_match(modifier, ModifierNameRegex)) {
-					modifiers.push_back(std::make_tuple(modifier, begin, end - 1));
+					modifiers.push_back(std::make_tuple(modifier, begin, end));
 				} else {
 					error("Invalid modifier name.", begin, end - 1);
 				}
