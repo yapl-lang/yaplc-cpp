@@ -1,14 +1,24 @@
 package yapl;
 
 public class String {
-	#special "yapl.String"
+	private char[] charArray;
+	private size offset;
+	private size size;
 
 	public String() {
 		#special "yapl.String.constructor"
 	}
 
 	public String(String string) {
-		#special "yapl.String.constructor.string"
+		charArray = string.charArray;
+        offset = string.offset;
+        size = string.size;
+	}
+
+	public String(String string, size offset, size size) {
+		charArray = string.charArray;
+		this.offset = offset;
+		this.size = size;
 	}
 
 	public size length() {
