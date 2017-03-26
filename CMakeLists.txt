@@ -3,12 +3,12 @@ project(yaplc)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories("src")
-
 add_subdirectory(third-party/binstream)
 add_subdirectory(third-party/commandline)
 add_subdirectory(third-party/fs)
 add_subdirectory(third-party/machineid)
+
+include_directories("src")
 
 set(SOURCE_FILES
 	src/main.cpp
@@ -63,6 +63,7 @@ set(SOURCE_FILES
 	src/yaplc/util/getlineandcolumn.cpp
 	src/yaplc/util/getstringwidth.cpp
 	src/yaplc/util/leftpad.cpp
+	src/yaplc/util/limitasync.cpp
 	src/yaplc/util/map.cpp
 	src/yaplc/util/markline.cpp
 	src/yaplc/util/replace.cpp
