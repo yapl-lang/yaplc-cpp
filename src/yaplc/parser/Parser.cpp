@@ -56,6 +56,10 @@ namespace yaplc { namespace parser {
 			return false;
 		}
 
+		if (match[0].length() == 0) {
+			return false;
+		}
+
 		skip((unsigned long)match[0].length());
 
 		return true;
