@@ -63,7 +63,6 @@ set(SOURCE_FILES
 	src/yaplc/util/getlineandcolumn.cpp
 	src/yaplc/util/getstringwidth.cpp
 	src/yaplc/util/leftpad.cpp
-	src/yaplc/util/limitasync.cpp
 	src/yaplc/util/map.cpp
 	src/yaplc/util/markline.cpp
 	src/yaplc/util/replace.cpp
